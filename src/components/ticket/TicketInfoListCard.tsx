@@ -1,5 +1,3 @@
-import { FiInfo } from 'react-icons/fi';
-
 interface TicketInfoListCardProps {
   title: string;
   items: readonly string[];
@@ -11,10 +9,8 @@ interface TicketInfoListItemProps {
 
 const TicketInfoListItem = ({ item }: TicketInfoListItemProps) => {
   return (
-    <li className="flex items-start gap-[8px] text-[14px] leading-[20px] text-[#314158]">
-      <span className="text-[14px] font-bold leading-[20px] text-[#615fff]" aria-hidden>
-        •
-      </span>
+    <li className="flex items-start gap-3 font-body-kr text-[16px] leading-6">
+      <span className="mt-2 size-[6px] shrink-0 rounded-full bg-rust" aria-hidden />
       <span>{item}</span>
     </li>
   );
@@ -22,15 +18,15 @@ const TicketInfoListItem = ({ item }: TicketInfoListItemProps) => {
 
 const TicketInfoListCard = ({ title, items }: TicketInfoListCardProps) => {
   return (
-    <section className="rounded-[24px] border border-[rgba(226,232,240,0.5)] bg-[rgba(255,255,255,0.7)] px-[25px] pt-[25px] pb-[24px]">
-      <div className="mb-[16px] flex items-center gap-[8px]">
-        <FiInfo className="size-[20px] text-[#615fff]" />
-        <h2 className="text-[18px] font-bold leading-[27px] tracking-[-0.4395px] text-[#1d293d]">
-          {title}
-        </h2>
+    <section className="rounded-[24px] border-2 border-ink bg-paper p-6 text-ink drop-shadow-[5px_5px_0px_var(--color-ink)]">
+      <div className="flex items-center gap-2">
+        <span className="flex size-6 items-center justify-center rounded-full border border-ink font-display text-[14px] leading-5">
+          !
+        </span>
+        <h2 className="font-display text-[20px] leading-7">{title}</h2>
       </div>
 
-      <ul className="flex flex-col gap-[8px]">
+      <ul className="flex flex-col gap-[10px] pt-4">
         {items.map((item, index) => (
           <TicketInfoListItem key={`${title}-${index}`} item={item} />
         ))}
