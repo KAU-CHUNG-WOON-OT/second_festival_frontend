@@ -1,22 +1,15 @@
 {
   "nav": {
     "home": "홈",
-    "myReservation": "내 예약",
     "notice": "공지사항",
     "timetable": "타임테이블",
-    "performance": "공연정보",
-    "foodtruck": "푸드트럭",
+    "performance": "공연 정보",
+    "foodtruck": "푸드 트럭",
     "pub": "주점 안내",
-    "yard": "마당사업",
+    "yard": "부스 정보",
     "makers": "만든이",
-    "ticketReservation": "팔찌 예약",
-    "infoGuide": "위치 안내, 굿즈, 제휴사",
-    "category": {
-      "main": "메인",
-      "schedule": "일정 및 공연",
-      "booth": "부스 및 음식 (위치정보)",
-      "info": "안내"
-    }
+    "ticketReservation": "팔찌 안내",
+    "infoGuide": "위치 안내, 굿즈, 제휴사"
   },
   "header": {
     "boothGuide": "부스 안내",

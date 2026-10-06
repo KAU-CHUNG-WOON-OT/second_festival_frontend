@@ -1,7 +1,6 @@
 ﻿{
   "nav": {
     "home": "Home",
-    "myReservation": "My Reservation",
     "notice": "Notice",
     "timetable": "Timetable",
     "performance": "Performance",
@@ -10,13 +9,7 @@
     "yard": "Yard Events",
     "makers": "Makers",
     "ticketReservation": "Wristband Reservation",
-    "infoGuide": "Location, Goods, Partners",
-    "category": {
-      "main": "Main",
-      "schedule": "Schedule & Performance",
-      "booth": "Booths & Food",
-      "info": "Info"
-    }
+    "infoGuide": "Location, Goods, Partners"
   },
   "header": {
     "boothGuide": "Booth Info",
