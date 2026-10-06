@@ -1,0 +1,152 @@
+{
+  "nav": {
+    "home": "홈",
+    "myReservation": "내 예약",
+    "notice": "공지사항",
+    "timetable": "타임테이블",
+    "performance": "공연정보",
+    "foodtruck": "푸드트럭",
+    "pub": "주점 안내",
+    "yard": "마당사업",
+    "makers": "만든이",
+    "maskedSinger": "복면가항",
+    "ticketReservation": "팔찌 예약",
+    "infoGuide": "위치 안내, 굿즈, 제휴사",
+    "category": {
+      "main": "메인",
+      "schedule": "일정 및 공연",
+      "booth": "부스 및 음식 (위치정보)",
+      "info": "안내"
+    }
+  },
+  "maskedSinger": {
+    "title": "복면가항",
+    "subtitle": "가장 우수한 참가자에게 한 표를 행사해주세요!",
+    "vote": "투표하기",
+    "voting": "투표 중...",
+    "voted": "투표완료",
+    "voteError": "투표에 실패했습니다. 잠시 후 다시 시도해주세요.",
+    "guideTitle": "투표 안내",
+    "guidePeriod": "투표 기간: 행사 시간 내 (5월 18일 - 20일)",
+    "guideOnePerUser": "1인 1표만 가능합니다",
+    "guideNoChange": "투표 후 변경이 불가능합니다",
+    "guideResult": "최종 결과는 행사 종료 후 공개됩니다",
+    "confirmTitle": "투표 확인",
+    "confirmVote": "{{name}} 후보에게 투표하시겠습니까? 변경할 수 없습니다.",
+    "voteSuccess": "투표가 완료되었습니다.",
+    "loading": "가수 목록을 불러오는 중...",
+    "loadError": "가수 목록을 불러오지 못했습니다.",
+    "empty": "투표 가능한 가수가 없습니다.",
+    "allEndedLine1": "전체 투표가 마감되었으며,",
+    "allEndedLine2": "결과 집계 중입니다.",
+    "resultReadyLine": "집계가 완료되었습니다.",
+    "viewResult": "결과보기",
+    "rankLabel": "{{rank}}위",
+    "backToVote": "◀ 투표 페이지로 돌아가기",
+    "resultEmpty": "아직 결과가 공개되지 않았습니다."
+  },
+  "header": {
+    "boothGuide": "부스 안내",
+    "pubGuide": "주점 안내",
+    "foodtruckGuide": "푸드트럭 안내"
+  },
+  "day": {
+    "festival": "활공제",
+    "day1": "첫째날",
+    "day2": "둘째날",
+    "day3": "셋째날"
+  },
+  "category": {
+    "all": "전체",
+    "snacks": "분식",
+    "dessert": "디저트",
+    "meal": "식사",
+    "department": "학과",
+    "club": "동아리",
+    "studentParticipation": "학생참여"
+  },
+  "search": {
+    "menuPlaceholder": "메뉴를 검색해주세요",
+    "pubPlaceholder": "주점명 혹은 학과를 입력해주세요",
+    "noResults": "검색 결과가 없습니다"
+  },
+  "footer": {
+    "organization": "한국항공대학교 제52대 총학생회 청운",
+    "copyright": "Copyright©2026. Kau_Students. All rights reserved."
+  },
+  "payment": {
+    "title": "결제 정보",
+    "copy": "복사",
+    "copied": "계좌번호가 복사되었습니다"
+  },
+  "common": {
+    "cancel": "취소",
+    "confirm": "확인",
+    "backToList": "돌아가기",
+    "boothNotFound": "부스를 찾을 수 없습니다",
+    "pubNotFound": "주점을 찾을 수 없습니다",
+    "truckNotFound": "푸드트럭을 찾을 수 없습니다",
+    "operatingTime": "운영 시간",
+    "operatingDays": "운영 일자",
+    "location": "위치",
+    "instagram": "인스타그램",
+    "department": "학과",
+    "boothLocation": "부스 위치",
+    "truckLocation": "트럭 위치"
+  },
+  "home": {
+    "boothInfo": "부스 정보",
+    "yardEvent": "마당사업",
+    "foodTruck": "푸드 트럭",
+    "foodLocations": "먹거리 위치",
+    "performance": "공연 정보",
+    "clubsEvents": "동아리 및 행사",
+    "pubGuide": "주점 안내",
+    "deptYard": "학과 부스 & 마당사업",
+    "noticeBanner": "활공제 기간 중 교내 차량 통제 안내"
+  },
+  "notice": {
+    "new": "NEW",
+    "important": "중요"
+  },
+  "timetable": {
+    "scheduled": "SCHEDULED",
+    "ongoing": "ONGOING",
+    "done": "DONE",
+    "performance": "공연",
+    "event": "이벤트",
+    "ceremony": "식"
+  },
+  "status": {
+    "ready": "Ready",
+    "scheduled": "Scheduled",
+    "ongoing": "Ongoing",
+    "done": "Done"
+  },
+  "infoGuide": {
+    "tabs": {
+      "location": "위치 안내",
+      "goods": "굿즈 안내",
+      "partner": "제휴사 안내"
+    },
+    "goods": {
+      "saleInfoTitle": "현장 판매 안내",
+      "saleLocation": "판매 장소",
+      "saleHours": "판매 시간",
+      "salePayment": "결제 방법",
+      "noticesTitle": "안내사항",
+      "preorder": "사전 예약 상품"
+    },
+    "location": {
+      "tapToZoom": "탭하여 확대",
+      "all": "전체",
+      "photoComingSoon": "사진 준비 중"
+    },
+    "partner": {
+      "count": "입점부스 {{count}}개",
+      "hours": "운영 시간",
+      "items": "품목",
+      "benefit": "특별 혜택"
+    }
+  }
+}

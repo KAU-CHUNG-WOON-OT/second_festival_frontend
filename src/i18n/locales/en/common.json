@@ -1,0 +1,152 @@
+﻿{
+  "nav": {
+    "home": "Home",
+    "myReservation": "My Reservation",
+    "notice": "Notice",
+    "timetable": "Timetable",
+    "performance": "Performance",
+    "foodtruck": "Food Truck",
+    "pub": "Pub Guide",
+    "yard": "Yard Events",
+    "makers": "Makers",
+    "maskedSinger": "Masked Singer",
+    "ticketReservation": "Wristband Reservation",
+    "infoGuide": "Location, Goods, Partners",
+    "category": {
+      "main": "Main",
+      "schedule": "Schedule & Performance",
+      "booth": "Booths & Food",
+      "info": "Info"
+    }
+  },
+  "maskedSinger": {
+    "title": "Masked Singer",
+    "subtitle": "Cast your vote for the best performer!",
+    "vote": "Vote",
+    "voting": "Voting...",
+    "voted": "Voted",
+    "voteError": "Failed to submit your vote. Please try again.",
+    "guideTitle": "Voting Guide",
+    "guidePeriod": "Voting period: festival hours (May 18 – 20)",
+    "guideOnePerUser": "One vote per person",
+    "guideNoChange": "Votes cannot be changed after submission",
+    "guideResult": "Final results will be revealed after the festival",
+    "confirmTitle": "Confirm Vote",
+    "confirmVote": "Vote for {{name}}? This cannot be undone.",
+    "voteSuccess": "Your vote has been recorded.",
+    "loading": "Loading singers...",
+    "loadError": "Failed to load singers.",
+    "empty": "No singers available for voting.",
+    "allEndedLine1": "All voting has closed,",
+    "allEndedLine2": "results are being tallied.",
+    "resultReadyLine": "Results have been finalized.",
+    "viewResult": "View Results",
+    "rankLabel": "#{{rank}}",
+    "backToVote": "◀ Back to voting page",
+    "resultEmpty": "Results are not yet revealed."
+  },
+  "header": {
+    "boothGuide": "Booth Info",
+    "pubGuide": "Pub Info",
+    "foodtruckGuide": "Food Truck Info"
+  },
+  "day": {
+    "festival": "RUNWAY",
+    "day1": "Day One",
+    "day2": "Day Two",
+    "day3": "Day Three"
+  },
+  "category": {
+    "all": "All",
+    "snacks": "Snacks",
+    "dessert": "Dessert",
+    "meal": "Meal",
+    "department": "Dept.",
+    "club": "Club",
+    "studentParticipation": "Student"
+  },
+  "search": {
+    "menuPlaceholder": "Search menu",
+    "pubPlaceholder": "Search pub or department",
+    "noResults": "No results found"
+  },
+  "footer": {
+    "organization": "KAU 52nd Student Council CHUNGWOON",
+    "copyright": "Copyright©2026. Kau_Students. All rights reserved."
+  },
+  "payment": {
+    "title": "Payment Info",
+    "copy": "Copy",
+    "copied": "Account number copied"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "confirm": "OK",
+    "backToList": "Go back",
+    "boothNotFound": "Booth not found",
+    "pubNotFound": "Pub not found",
+    "truckNotFound": "Food truck not found",
+    "operatingTime": "Hours",
+    "operatingDays": "Days",
+    "location": "Location",
+    "instagram": "Instagram",
+    "department": "Dept.",
+    "boothLocation": "Booth",
+    "truckLocation": "Truck Location"
+  },
+  "home": {
+    "boothInfo": "Booth Info",
+    "yardEvent": "Yard Event",
+    "foodTruck": "Food Truck",
+    "foodLocations": "Food Locations",
+    "performance": "Performance",
+    "clubsEvents": "Clubs & Events",
+    "pubGuide": "Pub Guide",
+    "deptYard": "Dept & Yard",
+    "noticeBanner": "Campus Traffic Control During Festival"
+  },
+  "notice": {
+    "new": "NEW",
+    "important": "IMPORTANT"
+  },
+  "timetable": {
+    "scheduled": "SCHEDULED",
+    "ongoing": "ONGOING",
+    "done": "DONE",
+    "performance": "Performance",
+    "event": "Event",
+    "ceremony": "Ceremony"
+  },
+  "status": {
+    "ready": "Ready",
+    "scheduled": "Scheduled",
+    "ongoing": "Ongoing",
+    "done": "Done"
+  },
+  "infoGuide": {
+    "tabs": {
+      "location": "Location",
+      "goods": "Goods",
+      "partner": "Partners"
+    },
+    "goods": {
+      "saleInfoTitle": "On-site Sales Info",
+      "saleLocation": "Location",
+      "saleHours": "Hours",
+      "salePayment": "Payment",
+      "noticesTitle": "Notices",
+      "preorder": "Pre-order Item"
+    },
+    "location": {
+      "tapToZoom": "Tap to zoom",
+      "all": "All",
+      "photoComingSoon": "Photo coming soon"
+    },
+    "partner": {
+      "count": "{{count}} Partners",
+      "hours": "Hours",
+      "items": "Items",
+      "benefit": "Special Benefit"
+    }
+  }
+}
