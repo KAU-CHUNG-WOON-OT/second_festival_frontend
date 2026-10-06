@@ -10,9 +10,6 @@ import { useTranslation } from 'react-i18next';
 import { markOnboardingSeenInCurrentTab } from '../lib/onboardingSession';
 import { track } from '@/lib/mixpanel';
 
-const STRIPE =
-  'bg-[linear-gradient(90deg,var(--color-rust)_0%,var(--color-rust)_33.3%,var(--color-mustard)_33.3%,var(--color-mustard)_66.6%,var(--color-sky-light)_66.6%,var(--color-sky-light)_100%)]';
-
 const OnboardingPage = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -68,7 +65,7 @@ const OnboardingPage = () => {
                   KOREA AEROSPACE UNIVERSITY
                 </p>
                 <h1 className="pt-1 font-condensed text-[64px] font-black leading-[61px]">활주로</h1>
-                <div className={`mt-3 h-[10px] w-full rounded-full ${STRIPE}`} />
+                <div className="mt-3 h-[10px] w-full rounded-full bg-retro-stripe" />
                 <p className="pt-3 font-display text-[20px] leading-7">가을에 재생 버튼을 누르다</p>
               </div>
               <div className="mt-3 flex items-center justify-between rounded-full border-2 border-ink bg-ink px-4 py-2">
@@ -104,7 +101,7 @@ const OnboardingPage = () => {
         </div>
       </div>
 
-      <div className={`h-2 w-full shrink-0 ${STRIPE}`} />
+      <div className="h-2 w-full shrink-0 bg-retro-stripe" />
       <footer className="flex shrink-0 flex-col items-center gap-4 bg-paper px-5 py-8 text-center">
         <p className="font-body-kr text-[14px] font-semibold leading-5">{t('footer.organization')}</p>
         <div className="flex gap-3">

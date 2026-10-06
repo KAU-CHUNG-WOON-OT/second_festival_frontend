@@ -44,7 +44,7 @@ const HomeHero = () => {
         <p className="pt-4 font-display text-[24px] leading-8 text-paper">가을에 재생 버튼을 누르다</p>
       </div>
 
-      <div className="absolute bottom-0 left-0 h-3 w-full bg-[linear-gradient(90deg,var(--color-rust)_0%,var(--color-rust)_33.3%,var(--color-mustard)_33.3%,var(--color-mustard)_66.6%,var(--color-sky-light)_66.6%,var(--color-sky-light)_100%)]" />
+      <div className="absolute bottom-0 left-0 h-3 w-full bg-retro-stripe" />
     </section>
   );
 };

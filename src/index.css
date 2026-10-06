@@ -20,6 +20,19 @@
   --color-maroon: #6b2d2a;
 }
 
+/* 레트로 3색 줄무늬 (rust · mustard · sky-light) */
+@utility bg-retro-stripe {
+  background-image: linear-gradient(
+    90deg,
+    var(--color-rust) 0%,
+    var(--color-rust) 33.3%,
+    var(--color-mustard) 33.3%,
+    var(--color-mustard) 66.6%,
+    var(--color-sky-light) 66.6%,
+    var(--color-sky-light) 100%
+  );
+}
+
 ::-webkit-scrollbar {
   display: none;
 }
