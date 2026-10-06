@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import RetroPageHeader from '../components/common/RetroPageHeader';
+import NowPlaying from '../components/timetable/NowPlaying';
 import TrackCard from '../components/timetable/TrackCard';
 import TimetableModal from '../components/timetable/TimetableModal';
 import { FESTIVAL_DATE_LABEL, isEventDone, timetableEvents } from '../data/timetableData';
-import type { TimetableEvent } from '../data/timetableData';
 import { track } from '@/lib/mixpanel';
 
 const TimetablePage = () => {
   const { t } = useTranslation();
-  const [selectedEvent, setSelectedEvent] = useState<TimetableEvent | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const selectedEvent = selectedIndex === null ? null : timetableEvents[selectedIndex];
 
   return (
     <div className="flex flex-col px-5 pb-[102px] pt-5 text-ink">
@@ -29,6 +30,10 @@ const TimetablePage = () => {
         <span className="font-typewriter text-[12px] leading-4 tracking-[1.2px] opacity-70">ONE DAY ONLY</span>
       </div>
 
+      <div className="pt-6">
+        <NowPlaying />
+      </div>
+
       <div className="flex flex-col gap-4 pt-6">
         {timetableEvents.map((event, index) => (
           <TrackCard
@@ -43,13 +48,18 @@ const TimetablePage = () => {
                 event_type: event.type,
                 event_date: event.date,
               });
-              setSelectedEvent(event);
+              setSelectedIndex(index);
             }}
           />
         ))}
       </div>
 
-      <TimetableModal event={selectedEvent} onClose={() => setSelectedEvent(null)} />
+      <TimetableModal
+        event={selectedEvent}
+        onClose={() => setSelectedIndex(null)}
+        trackNo={selectedIndex === null ? undefined : selectedIndex + 1}
+        done={selectedIndex !== null && isEventDone(selectedIndex)}
+      />
     </div>
   );
 };

@@ -34,15 +34,15 @@
   "search": {
     "menuPlaceholder": "Search menu",
     "pubPlaceholder": "Search pub or department",
-    "noResults": "No results found"
+    "noResults": "No results found",
+    "boothPlaceholder": "Search by booth or department"
   },
   "footer": {
     "organization": "KAU 52nd Student Council CHUNGWOON",
     "copyright": "Copyright©2026. Kau_Students. All rights reserved."
   },
   "payment": {
-    "title": "Payment Info",
-    "copy": "Copy",
+    "title": "QR Payment",
     "copied": "Account number copied"
   },
   "common": {

@@ -60,12 +60,12 @@ const FestivalMap = ({ images, onClick }: FestivalMapProps) => {
   };
 
   return (
-    <div className="bg-white/35 backdrop-blur-2xl rounded-[24px] p-4 shadow-[0_2px_20px_rgba(0,0,0,0.04)] mb-5 border border-white/40 group">
+    <div className="group rounded-[16px] border-2 border-ink bg-paper p-4 drop-shadow-[5px_5px_0px_var(--color-ink)]">
       <div className="relative">
         <div
           ref={scrollRef}
           onScroll={handleScroll}
-          className="flex overflow-x-auto snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden rounded-2xl"
+          className="flex snap-x snap-mandatory overflow-x-auto rounded-[8px] border-2 border-ink [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {images.map((img, index) => (
             <div
@@ -78,7 +78,7 @@ const FestivalMap = ({ images, onClick }: FestivalMapProps) => {
               <img
                 src={img.src}
                 alt={img.label}
-                className="w-full h-auto object-contain rounded-2xl pointer-events-none"
+                className="pointer-events-none h-auto w-full object-contain"
                 draggable={false}
               />
             </div>
@@ -89,7 +89,7 @@ const FestivalMap = ({ images, onClick }: FestivalMapProps) => {
         {currentIndex > 0 && (
           <button
             onClick={(e) => { e.stopPropagation(); goPrev(); }}
-            className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-10 rounded-xl bg-white/70 backdrop-blur-md shadow-sm flex items-center justify-center text-gray-600 active:scale-90 transition-all opacity-0 group-hover:opacity-100"
+            className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-10 rounded-xl border border-ink bg-paper flex items-center justify-center text-ink active:scale-90 transition-all opacity-0 group-hover:opacity-100"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
@@ -101,7 +101,7 @@ const FestivalMap = ({ images, onClick }: FestivalMapProps) => {
         {currentIndex < images.length - 1 && (
           <button
             onClick={(e) => { e.stopPropagation(); goNext(); }}
-            className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-10 rounded-xl bg-white/70 backdrop-blur-md shadow-sm flex items-center justify-center text-gray-600 active:scale-90 transition-all opacity-0 group-hover:opacity-100"
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-10 rounded-xl border border-ink bg-paper flex items-center justify-center text-ink active:scale-90 transition-all opacity-0 group-hover:opacity-100"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
@@ -118,7 +118,7 @@ const FestivalMap = ({ images, onClick }: FestivalMapProps) => {
               key={idx}
               onClick={() => scrollTo(idx)}
               className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                currentIndex === idx ? "w-6 bg-gray-600" : "w-1.5 bg-gray-300"
+                currentIndex === idx ? "w-6 bg-ink" : "w-1.5 bg-ink/30"
               }`}
             />
           ))}

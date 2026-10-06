@@ -17,6 +17,7 @@
   --color-rust: #c4491c;
   --color-olive: #6d6a2c;
   --color-sky-light: #8ec9ee;
+  --color-maroon: #6b2d2a;
 }
 
 ::-webkit-scrollbar {
@@ -40,26 +41,6 @@
   --bg-solid: #4f6cb6; 
 }
 
-@keyframes onboarding-fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(28px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes onboarding-bg-zoom {
-  from {
-    transform: scale(1);
-  }
-  to {
-    transform: scale(1.08);
-  }
-}
-
 @keyframes onboarding-brush-reveal {
   from {
     opacity: 0;
@@ -68,54 +49,6 @@
   to {
     opacity: 1;
     transform: translateX(0) scaleX(1);
-  }
-}
-
-@keyframes onboarding-soft-pulse {
-  0%,
-  100% {
-    opacity: 0.65;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-@keyframes onboarding-chevron-bounce {
-  0%,
-  100% {
-    transform: translateY(2px);
-    opacity: 0.75;
-  }
-  50% {
-    transform: translateY(-6px);
-    opacity: 1;
-  }
-}
-
-@keyframes onboarding-plane-takeoff {
-  0% {
-    transform: translateY(140px) scale(1);
-    opacity: 0;
-  }
-  18% {
-    transform: translateY(80px) scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(-820px) scale(0.65);
-    opacity: 0;
-  }
-}
-
-@keyframes onboarding-auth-rise {
-  from {
-    opacity: 0;
-    transform: translateY(48px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }
 
@@ -139,53 +72,10 @@
   }
 }
 
-.onboarding-bg-zoom {
-  animation: onboarding-bg-zoom 6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  will-change: transform;
-}
-
-.onboarding-fade-up {
-  opacity: 0;
-  animation: onboarding-fade-up 900ms cubic-bezier(0.16, 1, 0.3, 1) 200ms forwards;
-}
-
-.onboarding-fade-up-delay-1 {
-  opacity: 0;
-  animation: onboarding-fade-up 900ms cubic-bezier(0.16, 1, 0.3, 1) 450ms forwards;
-}
-
-.onboarding-fade-up-delay-2 {
-  opacity: 0;
-  animation: onboarding-fade-up 900ms cubic-bezier(0.16, 1, 0.3, 1) 700ms forwards;
-}
-
-.onboarding-fade-up-delay-3 {
-  opacity: 0;
-  animation: onboarding-fade-up 900ms cubic-bezier(0.16, 1, 0.3, 1) 950ms forwards;
-}
-
 .onboarding-brush-reveal {
   opacity: 0;
   transform-origin: center;
   animation: onboarding-brush-reveal 760ms cubic-bezier(0.22, 1, 0.36, 1) 280ms forwards;
-}
-
-.onboarding-soft-pulse {
-  animation: onboarding-soft-pulse 2.4s ease-in-out infinite;
-}
-
-.onboarding-chevron-bounce {
-  animation: onboarding-chevron-bounce 2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-}
-
-.onboarding-plane-takeoff {
-  animation: onboarding-plane-takeoff 600ms cubic-bezier(0.55, 0, 0.78, 0.2) forwards;
-  will-change: transform, opacity;
-  transform-origin: center center;
-}
-
-.onboarding-auth-rise {
-  animation: onboarding-auth-rise 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .onboarding-modal-in {
@@ -199,20 +89,20 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .onboarding-bg-zoom,
-  .onboarding-fade-up,
-  .onboarding-fade-up-delay-1,
-  .onboarding-fade-up-delay-2,
-  .onboarding-fade-up-delay-3,
   .onboarding-brush-reveal,
-  .onboarding-soft-pulse,
-  .onboarding-chevron-bounce,
-  .onboarding-plane-takeoff,
-  .onboarding-auth-rise,
   .onboarding-modal-in,
   .onboarding-backdrop-in {
     animation-duration: 1ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 1ms !important;
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
   }
 }

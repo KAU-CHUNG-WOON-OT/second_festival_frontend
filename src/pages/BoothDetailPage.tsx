@@ -1,13 +1,13 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../contexts/LanguageContext';
+import RetroPageHeader from '../components/common/RetroPageHeader';
 import Poster from '../components/common/Poster';
 import InfoCard from '../components/common/InfoCard';
 import BoothIntroCard from '../components/yard/BoothIntroCard';
 import MenuList from '../components/common/MenuList';
 import PaymentCard from '../components/common/PaymentCard';
-import Footer from '../layout/Footer';
 import { dummyBooths } from '../data/boothData';
 import { track } from '@/lib/mixpanel';
 
@@ -17,13 +17,8 @@ const BoothDetailPage = () => {
   const { t } = useTranslation();
   const { language } = useLanguage();
   const isEng = language === 'ENG';
-  const scrollRef = useRef<HTMLDivElement>(null);
 
   const booth = dummyBooths.find((b) => b.id === Number(id));
-
-  useEffect(() => {
-    scrollRef.current?.scrollTo(0, 0);
-  }, [id]);
 
   useEffect(() => {
     if (id) track('booth_detail_viewed', { booth_id: Number(id) });
@@ -31,9 +26,9 @@ const BoothDetailPage = () => {
 
   if (!booth) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-white/60">
-        <p className="text-lg font-semibold">{t('common.boothNotFound')}</p>
-        <button onClick={() => navigate(-1)} className="mt-4 text-sm underline">
+      <div className="flex h-full flex-col items-center justify-center text-ink/60">
+        <p className="font-display text-lg">{t('common.boothNotFound')}</p>
+        <button onClick={() => navigate(-1)} className="mt-4 font-body-kr text-sm underline">
           {t('common.backToList')}
         </button>
       </div>
@@ -41,42 +36,23 @@ const BoothDetailPage = () => {
   }
 
   const infoRows = [
-    { label: isEng ? 'Dept.'     : '학과',      value: isEng ? booth.name_en : booth.name },
-    { label: isEng ? 'Hours'     : '운영 시간',  value: booth.operatingTime },
-    { label: isEng ? 'Booth'     : '부스 위치',  value: booth.booth },
+    { label: isEng ? 'Type' : '구분', value: booth.category },
+    { label: isEng ? 'Hours' : '운영 시간', value: booth.operatingTime },
+    { label: isEng ? 'Booth' : '부스 위치', value: booth.booth },
     { label: isEng ? 'Instagram' : '인스타그램', value: booth.insta },
   ];
 
   return (
-    <div
-      ref={scrollRef}
-      className="flex-1 overflow-y-auto"
-      style={{
-        maskImage: 'linear-gradient(to bottom, transparent 0%, black 24px)',
-        WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 24px)',
-      }}
-    >
-      
-      <div className="mt-6"></div>
+    <div className="flex flex-col gap-6 px-5 pb-16 pt-5 text-ink">
+      <RetroPageHeader title={isEng ? booth.name_en : booth.name} />
+
       {booth.poster && booth.poster.length > 0 && (
-        <div className="px-5 mb-4">
-          <Poster images={booth.poster} name={isEng ? booth.name_en : booth.name} />
-        </div>
+        <Poster images={booth.poster} name={isEng ? booth.name_en : booth.name} zoomTitle="부스 포스터" />
       )}
-      <div className="px-5 mb-4">
-        <InfoCard rows={infoRows} />
-      </div>
-      <div className="px-5 mb-4">
-        <BoothIntroCard introduction={booth.introduction} introduction_en={booth.introduction_en} />
-      </div>
-      <div className="px-5 mb-4">
-        <MenuList menu={booth.menu} showLikes={true} likePrefix="menu" />
-      </div>
-      <div className="px-5 mb-4">
-        {/* ✅ qr_img를 PaymentCard로 전달 */}
-        <PaymentCard account={booth.account} qrCode={booth.qr_img} />
-      </div>
-      <Footer />
+      <InfoCard rows={infoRows} />
+      <BoothIntroCard introduction={booth.introduction} introduction_en={booth.introduction_en} />
+      <MenuList menu={booth.menu} showLikes={true} likePrefix="menu" title="판매 · 참여 항목" />
+      <PaymentCard account={booth.account} qrCode={booth.qr_img} />
     </div>
   );
 };

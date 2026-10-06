@@ -1,5 +1,5 @@
 import { useLanguage } from '../../contexts/LanguageContext';
-import type { TimetableEvent } from '../../data/timetableData';
+import { TYPE_ICON, formatTrackNo, type TimetableEvent } from '../../data/timetableData';
 
 interface TrackCardProps {
   event: TimetableEvent;
@@ -7,11 +7,6 @@ interface TrackCardProps {
   done: boolean;
   onClick: () => void;
 }
-
-const TYPE_ICON: Record<TimetableEvent['type'], string> = {
-  EVENT: '✈',
-  CLUB: '♪',
-};
 
 const TrackCard = ({ event, trackNo, done, onClick }: TrackCardProps) => {
   const { language } = useLanguage();
@@ -32,7 +27,7 @@ const TrackCard = ({ event, trackNo, done, onClick }: TrackCardProps) => {
         <div className="flex min-w-0 flex-1 flex-col">
           <span className="font-typewriter text-[12px] leading-4 opacity-60">TRACK</span>
           <span className="font-typewriter text-[14px] font-bold leading-5 text-tape-blue">
-            A-{String(trackNo).padStart(2, '0')}
+            {formatTrackNo(trackNo)}
           </span>
         </div>
         <span

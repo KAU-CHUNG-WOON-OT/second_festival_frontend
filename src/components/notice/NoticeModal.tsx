@@ -3,7 +3,8 @@ import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "../../contexts/LanguageContext";
 import type { NoticeData } from "../../data/noticeData";
-import calenderIcon from "../../assets/calender.svg";
+import calendarIcon from "../../assets/notice_calendar.svg";
+import closeIcon from "../../assets/close_light.svg";
 import { track } from "@/lib/mixpanel";
 
 interface NoticeModalProps {
@@ -76,69 +77,62 @@ const NoticeModal = ({ notice, onClose }: NoticeModalProps) => {
       `}</style>
 
       <div
-        className={`fixed inset-0 z-[9999] flex items-end justify-center ${closing ? "notice-overlay-out" : "notice-overlay-in"}`}
-        style={{ background: "rgba(0,0,0,0.35)" }}
+        className={`fixed inset-0 z-[9999] flex items-end justify-center bg-ink/40 ${closing ? "notice-overlay-out" : "notice-overlay-in"}`}
         onClick={handleClose}
       >
         <div
           ref={sheetRef}
-          className={`w-[90%] max-w-[400px] rounded-t-3xl overflow-hidden ${closing ? "notice-slide-down" : "notice-slide-up"}`}
-          style={{ background: "#F0F2F5", boxShadow: "0 -4px 24px rgba(0,0,0,0.12)" }}
+          className={`relative w-full max-w-[430px] rounded-t-[32px] border-2 border-ink bg-paper px-6 pb-5 pt-6 text-ink drop-shadow-[0px_-6px_0px_var(--color-mustard)] ${closing ? "notice-slide-down" : "notice-slide-up"}`}
           onClick={(e) => e.stopPropagation()}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          <div className="flex justify-center pt-3 pb-1">
-            <div className="w-8 h-1 rounded-full bg-gray-300" />
+          <button
+            type="button"
+            onClick={handleClose}
+            aria-label={isEng ? "Close" : "닫기"}
+            className="absolute right-6 top-5 flex size-11 items-center justify-center rounded-full border border-ink bg-ink"
+          >
+            <img src={closeIcon} alt="" width={12} height={12} />
+          </button>
+
+          <p className="font-body-kr text-[60px] leading-[60px]">⚠️</p>
+          <div className="flex gap-2 pt-4">
+            {notice.isNew && (
+              <span className="rounded-full border border-ink bg-rust px-3 py-[2px] font-typewriter text-[12px] font-bold leading-4 text-paper">
+                {t('notice.new')}
+              </span>
+            )}
+            {notice.isImportant && (
+              <span className="rounded-full border border-ink bg-mustard px-3 py-[2px] font-body-kr text-[12px] font-bold leading-4">
+                {t('notice.important')}
+              </span>
+            )}
           </div>
 
-          <div className="px-6 pt-3 pb-10">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <div className="w-10 h-10 rounded-xl bg-[#FF6B35]/10 flex items-center justify-center text-xl">⚠️</div>
-                <div className="flex gap-1.5">
-                  {notice.isNew && (
-                    <span className="rounded-lg bg-gradient-to-r from-[#ff2056] to-[#f6339a] px-2.5 py-1 text-[10px] font-bold text-white">
-                      {t('notice.new')}
-                    </span>
-                  )}
-                  {notice.isImportant && (
-                    <span className="rounded-lg bg-[#FF6B35]/15 px-2.5 py-1 text-[10px] font-bold text-[#FF6B35]">
-                      {t('notice.important')}
-                    </span>
-                  )}
-                </div>
-              </div>
-              <button onClick={handleClose} className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center active:scale-90 transition-all">
-                <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+          <h2 className="pt-3 font-display text-[20px] leading-[27.5px]">{title}</h2>
+          <p className="max-h-[40vh] overflow-y-auto whitespace-pre-line pt-3 font-body-kr text-[15px] leading-7 opacity-80">
+            {content}
+          </p>
+
+          <div className="mt-5 flex items-center gap-4 rounded-[16px] border border-dashed border-ink/50 bg-cream p-3">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-[12px] border border-ink bg-paper">
+              <img src={calendarIcon} alt="" width={17} height={18} />
+            </span>
+            <div>
+              <p className="font-body-kr text-[12px] leading-4 opacity-60">{isEng ? "Posted" : "게시일"}</p>
+              <p className="font-typewriter text-[18px] font-bold leading-7">{notice.date}</p>
             </div>
-
-            <h2 className="text-[18px] font-extrabold text-[#1a2a5e] leading-snug mb-3">{title}</h2>
-            <p className="text-[13px] text-gray-500 leading-relaxed mb-5 whitespace-pre-line">{content}</p>
-            <div className="border-t border-gray-200 mb-4" />
-
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-9 h-9 rounded-xl bg-gray-200 flex items-center justify-center flex-shrink-0">
-                <img src={calenderIcon} alt="날짜" className="w-5 h-5 object-contain brightness-0 opacity-50" />
-              </div>
-              <div>
-                <p className="text-[9px] text-gray-400 font-semibold">{isEng ? "Posted" : "게시일"}</p>
-                <p className="text-[14px] font-bold text-[#1a2a5e]">{notice.date}</p>
-              </div>
-            </div>
-
-            <button
-              onClick={handleClose}
-              className="w-full py-3.5 rounded-2xl text-[14px] font-bold text-white active:scale-[0.98] transition-all"
-              style={{ background: "#2B3A5C" }}
-            >
-              {isEng ? "Close" : "닫기"}
-            </button>
           </div>
+
+          <button
+            type="button"
+            onClick={handleClose}
+            className="mt-5 h-14 w-full rounded-full border-2 border-ink bg-rust font-display text-[18px] leading-7 text-paper drop-shadow-[4px_4px_0px_var(--color-ink)]"
+          >
+            {isEng ? "Close" : "닫기"}
+          </button>
         </div>
       </div>
     </>,

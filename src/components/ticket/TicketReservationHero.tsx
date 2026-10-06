@@ -1,4 +1,4 @@
-import { FiCheck } from 'react-icons/fi';
+import checkIcon from '@/assets/ticket_check_olive.svg';
 
 interface TicketReservationHeroProps {
   title: string;
@@ -30,7 +30,7 @@ const TicketReservationHero = ({
     maxReservation > 0 ? Math.min((currentReservation / maxReservation) * 100, 100) : 0;
   // hard-block: 클릭 자체가 막히는 상태 (매진 / 이미 예약)
   const isHardDisabled = isClosed || isSoldOut || alreadyReserved;
-  // visual-only: 회색 + 라벨 변경하되 클릭은 부모가 판단 (예: 비로그인 → Kakao, 오픈전 → 무시)
+  // visual-only: 흐리게 + 라벨 변경하되 클릭은 부모가 판단 (예: 비로그인 → Kakao, 오픈전 → 무시)
   const isVisuallyDisabled = isHardDisabled || reserveDisabled;
   const showSoldOutOverlay = isClosed || isSoldOut;
   const buttonLabel = alreadyReserved
@@ -81,12 +81,12 @@ const TicketReservationHero = ({
 
         {showSoldOutOverlay && (
           <>
-            <div className="pointer-events-none absolute inset-0 z-20 bg-cream/70 backdrop-blur-[3px]" />
+            <div className="pointer-events-none absolute inset-0 z-20 bg-cream/85 backdrop-blur-[2px]" />
             <div className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center">
-              <div className="flex size-[42px] items-center justify-center rounded-full border-2 border-ink bg-paper">
-                <FiCheck className="size-6 text-ink" />
+              <div className="flex size-16 items-center justify-center rounded-full border-2 border-ink bg-paper drop-shadow-[4px_4px_0px_var(--color-ink)]">
+                <img src={checkIcon} alt="" width={36} height={36} />
               </div>
-              <p className="mt-3 text-center font-display text-[18px] leading-6">예약이 마감되었습니다.</p>
+              <p className="pt-4 text-center font-display text-[20px] leading-7">예약이 마감되었습니다.</p>
             </div>
           </>
         )}

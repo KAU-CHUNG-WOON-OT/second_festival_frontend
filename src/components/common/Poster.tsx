@@ -1,9 +1,12 @@
-import { useRef, useState } from "react";
-import logoImg from "../../assets/logo.svg";
+import { useRef, useState } from 'react';
+import logoImg from '../../assets/cheongun_logo.svg';
+import RetroDialog from './RetroDialog';
 
 export interface PosterProps {
   images: string[];
   name: string;
+  // 확대 모달 제목 (예: '부스 포스터')
+  zoomTitle?: string;
 }
 
 interface PosterImageProps {
@@ -13,11 +16,12 @@ interface PosterImageProps {
 
 const PosterImage = ({ src, alt }: PosterImageProps) => {
   const [loaded, setLoaded] = useState(false);
+  const [failed, setFailed] = useState(false);
   const [aspectRatio, setAspectRatio] = useState<number | null>(null);
 
   return (
     <div
-      className="relative w-full overflow-hidden rounded-2xl"
+      className="relative w-full overflow-hidden bg-ink"
       style={{
         aspectRatio: aspectRatio ?? 3 / 4,
         transition: 'aspect-ratio 0.3s ease',
@@ -33,50 +37,39 @@ const PosterImage = ({ src, alt }: PosterImageProps) => {
           }
           setLoaded(true);
         }}
-        onError={() => setLoaded(true)}
-        className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-300 ${
+        onError={() => setFailed(true)}
+        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
           loaded ? 'opacity-100' : 'opacity-0'
         }`}
       />
-      {!loaded && (
+      {(!loaded || failed) && (
         <div
-          className="absolute inset-0 animate-pulse"
-          style={{
-            background:
-              'linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.35) 100%)',
-            border: '1px solid rgba(255,255,255,0.45)',
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
-          }}
+          className={`absolute inset-0 flex items-center justify-center bg-paper ${failed ? '' : 'animate-pulse'}`}
         >
-          <div className="flex h-full w-full items-center justify-center">
-            <img src={logoImg} alt="" className="w-16 h-16 opacity-25" />
-          </div>
+          <img src={logoImg} alt="" width={68} height={48} className="opacity-25" />
         </div>
       )}
     </div>
   );
 };
 
-const Poster = ({ images, name }: PosterProps) => {
+const FRAME_CLASS =
+  'w-full overflow-clip rounded-[16px] border-2 border-ink shadow-[6px_6px_0px_0px_var(--color-ink)]';
+
+const Poster = ({ images, name, zoomTitle = '포스터' }: PosterProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [zoomSrc, setZoomSrc] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // 빈 배열 — 로고 placeholder
   if (!images || images.length === 0) {
     return (
-      <div className="w-full h-48 rounded-2xl bg-white/20 flex items-center justify-center">
-        <img src={logoImg} alt="기본 로고" className="w-20 h-20 opacity-20" />
+      <div className={`${FRAME_CLASS} flex h-48 items-center justify-center bg-paper`}>
+        <img src={logoImg} alt="기본 로고" width={68} height={48} className="opacity-25" />
       </div>
     );
   }
 
-  // 한 장 — 슬라이더 없이 단일 이미지
-  if (images.length === 1) {
-    return <PosterImage src={images[0]} alt={`${name} 포스터`} />;
-  }
-
-  // 여러 장 — 슬라이더
   const handleScroll = () => {
     if (!scrollRef.current) return;
     const { scrollLeft, clientWidth } = scrollRef.current;
@@ -85,31 +78,50 @@ const Poster = ({ images, name }: PosterProps) => {
   };
 
   return (
-    <div className="relative">
-      <div
-        ref={scrollRef}
-        onScroll={handleScroll}
-        className="flex overflow-x-auto snap-x snap-mandatory rounded-2xl"
-      >
-        {images.map((src, idx) => (
-          <div key={idx} className="flex-shrink-0 w-full snap-start">
-            <PosterImage src={src} alt={`${name} 포스터 ${idx + 1}`} />
+    <>
+      <div className={`${FRAME_CLASS} relative`}>
+        <div
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="flex snap-x snap-mandatory overflow-x-auto"
+        >
+          {images.map((src, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => setZoomSrc(src)}
+              aria-label={`${zoomTitle} 크게 보기`}
+              className="w-full flex-shrink-0 snap-start"
+            >
+              <PosterImage
+                src={src}
+                alt={`${name} 포스터${images.length > 1 ? ` ${idx + 1}` : ''}`}
+              />
+            </button>
+          ))}
+        </div>
+
+        {/* 인디케이터 점 */}
+        {images.length > 1 && (
+          <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5 rounded-full border border-ink bg-paper px-2 py-1">
+            {images.map((_, idx) => (
+              <div
+                key={idx}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  idx === currentIndex ? 'w-5 bg-ink' : 'w-1.5 bg-ink/30'
+                }`}
+              />
+            ))}
           </div>
-        ))}
+        )}
       </div>
 
-      {/* 인디케이터 점 */}
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 px-2 py-1 rounded-full bg-black/30 backdrop-blur-sm">
-        {images.map((_, idx) => (
-          <div
-            key={idx}
-            className={`h-1.5 rounded-full transition-all duration-300 ${
-              idx === currentIndex ? 'w-5 bg-white' : 'w-1.5 bg-white/50'
-            }`}
-          />
-        ))}
-      </div>
-    </div>
+      {zoomSrc && (
+        <RetroDialog title={zoomTitle} onClose={() => setZoomSrc(null)}>
+          <img src={zoomSrc} alt={`${name} 포스터`} className="w-full rounded-[8px]" />
+        </RetroDialog>
+      )}
+    </>
   );
 };
 

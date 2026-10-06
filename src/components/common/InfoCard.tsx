@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 interface InfoRow {
   label: string;
   value: string;
@@ -5,21 +7,34 @@ interface InfoRow {
 
 interface InfoCardProps {
   rows: InfoRow[];
+  // 푸드트럭처럼 제목·액션이 있는 강조 카드
+  title?: string;
+  titleAction?: ReactNode;
+  highlight?: boolean;
 }
 
-const InfoCard = ({ rows }: InfoCardProps) => {
+const InfoCard = ({ rows, title, titleAction, highlight = false }: InfoCardProps) => {
   return (
-    <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-5 border border-white/40">
-      {rows.map((row, idx) => (
-        <div
-          key={row.label}
-          className={`flex items-start py-2 ${idx < rows.length - 1 ? "border-b border-gray-200/40" : ""}`}
-        >
-          <span className="text-[12px] font-semibold text-[#8a94a6] w-20 flex-shrink-0">{row.label}:</span>
-          <span className="text-[13px] font-medium text-[#2B3A5C] whitespace-pre-line">{row.value}</span>
+    <section
+      className={`rounded-[16px] border-2 border-ink p-5 text-ink drop-shadow-[5px_5px_0px_var(--color-ink)] ${
+        highlight ? "bg-mustard" : "bg-paper"
+      }`}
+    >
+      {title && (
+        <div className="flex items-start justify-between gap-3 pb-4">
+          <h2 className="font-display text-[30px] leading-[37.5px]">{title}</h2>
+          {titleAction}
         </div>
-      ))}
-    </div>
+      )}
+      <dl className="flex flex-col gap-[6px] font-body-kr text-[16px] leading-6">
+        {rows.map((row) => (
+          <div key={row.label} className="flex items-start gap-4">
+            <dt className={`shrink-0 font-bold ${title ? "w-20" : "w-24"}`}>{row.label}</dt>
+            <dd className="whitespace-pre-line">{row.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
   );
 };
 

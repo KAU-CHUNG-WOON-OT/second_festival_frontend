@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
+import RetroDialog from "./RetroDialog";
 
 interface PaymentCardProps {
   account: string;
@@ -11,6 +12,9 @@ const PaymentCard = ({ account, qrCode }: PaymentCardProps) => {
   const { t } = useTranslation();
   const [showToast, setShowToast] = useState(false);
   const [hiding, setHiding] = useState(false);
+  const [isQrZoomOpen, setIsQrZoomOpen] = useState(false);
+  const [qrFailed, setQrFailed] = useState(false);
+  const hasQr = !!qrCode && qrCode.trim() !== '' && !qrFailed;
 
   const handleCopy = async () => {
     try {
@@ -38,35 +42,44 @@ const PaymentCard = ({ account, qrCode }: PaymentCardProps) => {
         .toast-out { animation: slideDown 0.2s ease-in forwards; }
       `}</style>
 
-      <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-5 border border-white/40">
-        <h3 className="text-[14px] font-bold text-[#2B3A5C] mb-4">{t('payment.title')}</h3>
+      <section className="rounded-[16px] border-2 border-ink bg-paper p-5 text-ink drop-shadow-[5px_5px_0px_var(--color-ink)]">
+        <h2 className="font-typewriter text-[12px] font-bold leading-4 tracking-[1.2px]">{t('payment.title')}</h2>
 
-        {/* ✅ qrCode가 있을 때만 표시 */}
-        {qrCode && qrCode.trim() !== '' && (
-          <div className="flex justify-center mb-5">
-            <img src={qrCode} alt="QR코드" className="w-40 h-40 rounded-xl" />
-          </div>
+        {hasQr && (
+          <button
+            type="button"
+            onClick={() => setIsQrZoomOpen(true)}
+            aria-label="QR 크게 보기"
+            className="mx-auto mt-2 block"
+          >
+            <img src={qrCode} alt="QR코드" className="size-48" onError={() => setQrFailed(true)} />
+          </button>
         )}
 
-        <div className="flex items-center gap-2">
-          <p className="text-[13px] text-[#4a5568] flex-1 break-all">{account}</p>
-          <button
-            onClick={handleCopy}
-            className="flex-shrink-0 px-4 py-2 rounded-xl text-[12px] font-semibold bg-[#2B3A5C] text-white active:scale-95 transition-all duration-200"
-          >
-            {t('payment.copy')}
-          </button>
-        </div>
-      </div>
+        <button
+          type="button"
+          onClick={handleCopy}
+          aria-label="계좌번호 복사"
+          className="block w-full break-all pt-2 text-center font-body-kr text-[16px] font-bold leading-6"
+        >
+          {account}
+        </button>
+      </section>
+
+      {isQrZoomOpen && (
+        <RetroDialog title={t('payment.title')} onClose={() => setIsQrZoomOpen(false)}>
+          <img src={qrCode} alt="QR코드" className="w-full rounded-[8px] bg-white" />
+        </RetroDialog>
+      )}
 
       {showToast && createPortal(
         <div
           className={`fixed bottom-24 left-1/2 z-[9999] ${hiding ? "toast-out" : "toast-in"}`}
           style={{ transform: "translateX(-50%)" }}
         >
-          <div className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-gray-800/90 backdrop-blur-sm shadow-lg">
-            <span className="text-green-400 text-[16px]">✓</span>
-            <p className="text-[13px] font-semibold text-white whitespace-nowrap">{t('payment.copied')}</p>
+          <div className="flex items-center gap-2 px-4 py-3 rounded-2xl border-2 border-ink bg-ink">
+            <span className="text-[16px] text-mustard">✓</span>
+            <p className="whitespace-nowrap font-body-kr text-[13px] font-semibold text-paper">{t('payment.copied')}</p>
           </div>
         </div>,
         document.body

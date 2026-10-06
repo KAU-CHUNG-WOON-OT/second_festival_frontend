@@ -1,8 +1,8 @@
 import { useCallback, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import RetroPageHeader from '@/components/common/RetroPageHeader';
 import TicketInfoListCard from '@/components/ticket/TicketInfoListCard';
+import TicketPageHeader from '@/components/ticket/TicketPageHeader';
 import TicketReservationHero from '@/components/ticket/TicketReservationHero';
 import TicketWaitingCompleteCard from '@/components/ticket/TicketWaitingCompleteCard';
 import { fetchTicketCounter, fetchTicketExists, requestTicketReservation } from '@/lib/api/ticket';
@@ -14,9 +14,8 @@ import { setTicketIssuePending } from '@/lib/ticketIssueSession';
 import { useServerClock } from '@/hooks/useServerClock';
 import type { StudentType } from '@/lib/userInfoStorage';
 import { track } from '@/lib/mixpanel';
-import { FESTIVAL_DATE_LABEL } from '@/data/timetableData';
+import { TICKET_INFO_ITEMS, TICKET_MAX_RESERVATION } from '@/data/ticketData';
 
-const TICKET_MAX_RESERVATION = 900;
 const TICKET_RESERVATION_CLOSED = true;
 const TICKET_OPEN_AT_MS_BY_TYPE: Record<StudentType, number> = {
   UNDERGRADUATE: Date.parse('2026-05-20T10:00:00+09:00'),
@@ -39,14 +38,6 @@ const formatCountdown = (ms: number): string => {
   const pad = (n: number) => String(n).padStart(2, '0');
   return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 };
-
-const TICKET_INFO_ITEMS: readonly string[] = [
-  '항대존은 특별 공연 및 이벤트 구역입니다',
-  '예약 시간: 05월 20일 10:00 ~ 15:00',
-  '휴학생의 경우 12:00부터 예약 가능합니다',
-  '1인 1회만 예약 가능합니다',
-  '총학생회 청운 부스에서 팔찌를 수령 후 항대존 입장이 가능합니다',
-];
 
 type TicketFlowStep = 'reservation' | 'waiting';
 
@@ -173,25 +164,7 @@ const TicketReservationPage = () => {
 
   return (
     <section className="flex flex-col px-5 pb-16 pt-5 text-ink">
-      <RetroPageHeader />
-
-      <div className="pt-8">
-        <span className="inline-flex h-[38px] items-center rounded-full border border-ink bg-mustard px-4 font-display text-[18px] leading-7">
-          활주로 · {FESTIVAL_DATE_LABEL}
-        </span>
-      </div>
-
-      <div className="flex items-end gap-3 pt-2">
-        <h1 className="font-display text-[60px] leading-[60px]">팔찌 안내</h1>
-        <button
-          type="button"
-          onClick={() => queryClient.invalidateQueries({ queryKey: ['ticket'] })}
-          aria-label="새로고침"
-          className="mb-2 flex size-11 items-center justify-center rounded-full border border-ink bg-paper font-typewriter text-[20px] leading-7 drop-shadow-[3px_3px_0px_var(--color-ink)]"
-        >
-          ↻
-        </button>
-      </div>
+      <TicketPageHeader onRefresh={() => queryClient.invalidateQueries({ queryKey: ['ticket'] })} />
 
       <div className="pt-8">
         {currentStep === 'waiting' ? (
@@ -200,25 +173,23 @@ const TicketReservationPage = () => {
             onConfirm={() => navigate('/myticket')}
           />
         ) : (
-          <>
-            <TicketReservationHero
-              title="항대존 입장 팔찌"
-              subtitle={`선착순 ${TICKET_MAX_RESERVATION}명 한정`}
-              currentReservation={currentReservation}
-              maxReservation={TICKET_MAX_RESERVATION}
-              ctaLabel={reserveMutation.isPending ? '예약 처리 중...' : '지금 예약하기'}
-              alreadyReserved={alreadyReserved}
-              reserveDisabled={TICKET_RESERVATION_CLOSED || reserveDisabledForUi}
-              reserveDisabledLabel={reserveDisabledLabel}
-              isClosed={TICKET_RESERVATION_CLOSED}
-              onReserve={handleReserve}
-            />
-
-            <div className="pt-8">
-              <TicketInfoListCard title="항대존 안내" items={TICKET_INFO_ITEMS} />
-            </div>
-          </>
+          <TicketReservationHero
+            title="항대존 입장 팔찌"
+            subtitle={`선착순 ${TICKET_MAX_RESERVATION}명 한정`}
+            currentReservation={currentReservation}
+            maxReservation={TICKET_MAX_RESERVATION}
+            ctaLabel={reserveMutation.isPending ? '예약 처리 중...' : '지금 예약하기'}
+            alreadyReserved={alreadyReserved}
+            reserveDisabled={TICKET_RESERVATION_CLOSED || reserveDisabledForUi}
+            reserveDisabledLabel={reserveDisabledLabel}
+            isClosed={TICKET_RESERVATION_CLOSED}
+            onReserve={handleReserve}
+          />
         )}
+      </div>
+
+      <div className="pt-8">
+        <TicketInfoListCard title="항대존 안내" items={TICKET_INFO_ITEMS} />
       </div>
     </section>
   );
