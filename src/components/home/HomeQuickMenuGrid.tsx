@@ -4,29 +4,33 @@ export interface HomeQuickMenuItem {
   title: string;
   sub: string;
   path: string;
+  // 카드 배경·글자색 (Tailwind 클래스)
+  colorClass: string;
 }
 
 interface HomeQuickMenuGridProps {
   items: HomeQuickMenuItem[];
 }
 
+const LETTERS = ["A", "B", "C", "D"];
+
 const HomeQuickMenuGrid = ({ items }: HomeQuickMenuGridProps) => {
   return (
-    <div className="grid grid-cols-2 gap-3 mb-4">
-      {items.map((item) => (
+    <div className="grid grid-cols-2 gap-4">
+      {items.map((item, index) => (
         <Link
-          key={item.title}
+          key={item.path}
           to={item.path}
-          className="flex flex-col items-center justify-center gap-2 rounded-2xl py-3 px-4 text-center active:scale-[0.97] transition-all duration-200"
-          style={{
-            background: "rgba(255,255,255,0.35)",
-            backdropFilter: "blur(12px)",
-            border: "1px solid rgba(255,255,255,0.45)",
-            boxShadow: "0 2px 12px rgba(0,0,0,0.05)",
-          }}
+          className={`flex min-h-36 flex-col justify-between rounded-[8px] border border-ink p-4 drop-shadow-[4px_4px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px] ${item.colorClass}`}
         >
-          <span className="text-[15px] font-bold text-[#1a2a5e]">{item.title}</span>
-          <span className="text-[12px] font-medium text-[#1a2a5e]">{item.sub}</span>
+          <div className="flex items-center justify-between font-typewriter text-[12px] leading-4">
+            <span className="rounded-[4px] border border-current px-[6px]">{LETTERS[index]}</span>
+            <span className="opacity-70">▶</span>
+          </div>
+          <div>
+            <p className="font-display text-[24px] leading-[30px]">{item.title}</p>
+            <p className="pt-1 font-body-kr text-[14px] leading-5 opacity-80">{item.sub}</p>
+          </div>
         </Link>
       ))}
     </div>

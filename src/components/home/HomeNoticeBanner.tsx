@@ -10,43 +10,29 @@ interface HomeNoticeBannerProps {
 const HomeNoticeBanner = ({ to, title, dateText }: HomeNoticeBannerProps) => {
   const { t } = useTranslation();
 
+  // 같은 문구 두 벌을 이어 붙여 끊김 없이 흐르게 함
+  const item = (
+    <span className="flex shrink-0 items-center gap-2 pr-16">
+      <span className="font-body-kr text-[16px] font-bold leading-6">📢 {title}</span>
+      <span className="font-typewriter text-[12px] leading-4 opacity-60">{dateText}</span>
+    </span>
+  );
+
   return (
     <Link
       to={to}
-      className="flex items-center gap-3 rounded-2xl px-4 py-3.5 active:scale-[0.98] transition-all duration-200"
-      style={{
-        background: "rgba(255,255,255,0.45)",
-        backdropFilter: "blur(12px)",
-        border: "1px solid rgba(255,255,255,0.45)",
-        boxShadow: "0 2px 12px rgba(0,0,0,0.05)",
-      }}
+      className="flex items-center gap-3 border-y border-ink bg-paper px-4 py-3 text-ink"
       aria-label="공지사항으로 이동"
     >
-      {/* 왼쪽 포인트 바 */}
-      <div
-        className="w-1 self-stretch rounded-full flex-shrink-0"
-        style={{ background: "linear-gradient(180deg, #ff8099, #ffaac0)" }}
-      />
-
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2 mb-1">
-          <span
-            className="rounded-md px-2 py-0.5 text-[10px] font-bold leading-none"
-            style={{
-              background: "rgba(255,160,185,0.25)",
-              color: "#e05070",
-            }}
-          >
-            {t('notice.new')}
-          </span>
-          <span className="text-[11px] text-[#8a94a6]">{dateText}</span>
+      <span className="shrink-0 rounded-[4px] bg-rust px-2 py-[2px] font-typewriter text-[12px] font-bold leading-4 text-paper">
+        {t("notice.new")}
+      </span>
+      <div className="min-w-0 flex-1 overflow-hidden whitespace-nowrap">
+        <div className="flex w-max animate-[marquee_14s_linear_infinite]">
+          {item}
+          {item}
         </div>
-        <p className="truncate text-[13px] font-bold text-[#1d293d]">{title}</p>
       </div>
-
-      <svg className="w-4 h-4 text-[#8a94a6] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-      </svg>
     </Link>
   );
 };
