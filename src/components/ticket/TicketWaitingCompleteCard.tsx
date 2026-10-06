@@ -1,56 +1,33 @@
-import { FiCheck, FiClock } from 'react-icons/fi';
+import TicketStatusCard from './TicketStatusCard';
 
 interface TicketWaitingCompleteCardProps {
   estimatedWaitText: string;
   onConfirm?: () => void;
 }
 
-const TicketWaitingCompleteCard = ({
-  estimatedWaitText,
-  onConfirm,
-}: TicketWaitingCompleteCardProps) => {
+const TicketWaitingCompleteCard = ({ estimatedWaitText, onConfirm }: TicketWaitingCompleteCardProps) => {
   return (
-    <section className="w-full max-w-[361px] rounded-[24px] bg-white px-[24px] pt-[24px] pb-[20px] shadow-[0_25px_50px_rgba(0,0,0,0.25)]">
-      <div className="flex flex-col items-center">
-        <div className="flex size-[64px] items-center justify-center rounded-full bg-[linear-gradient(135deg,#5ea0ee_0%,#4a8dd9_100%)]">
-          <FiCheck className="size-[32px] text-white" />
-        </div>
-
-        <h2 className="mt-[16px] text-[24px] font-bold leading-[36px] tracking-[0.0703px] text-[#0a0a0a]">
-          웨이팅 등록 완료!
-        </h2>
-        <p className="mt-[8px] text-center text-[16px] leading-[24px] tracking-[-0.3125px] text-[#4a5565]">
-          예상 대기 시간 이후 결과 확인이 가능합니다.
-        </p>
-
-        <div className="mt-[12px] rounded-[10px] bg-amber-100 px-[14px] py-[10px]">
-          <p className="text-[13px] font-semibold leading-[20px] text-amber-800">
-            ⚠️ 웨이팅 등록 = 팔찌 예약 완료가 아닙니다
-          </p>
-          <p className="mt-[2px] text-[12px] leading-[18px] text-amber-700">
-            대기 처리 후 '내 예약' 화면에서 최종 확인해주세요.
-          </p>
-        </div>
-      </div>
-
-      <div className="mt-[24px] rounded-[16px] bg-[#eff6ff] px-[16px] pt-[16px] pb-[14px] text-center">
-        <p className="flex items-center justify-center gap-[8px] text-[14px] leading-[21px] tracking-[-0.1504px] text-[#5ea0ee]">
-          <FiClock className="size-[18px]" />
-          예상 대기 시간
-        </p>
-        <p className="mt-[4px] text-[24px] font-bold leading-[36px] tracking-[0.0703px] text-[#5ea0ee]">
-          {estimatedWaitText}
+    <TicketStatusCard
+      variant="success"
+      title="웨이팅 등록 완료!"
+      description="대기번호를 확인해주세요"
+      actionLabel="확인"
+      onAction={onConfirm}
+    >
+      {/* 예약 직후 응답에는 대기번호가 없어 '내 예약'에서 확인하도록 안내 */}
+      <div className="rounded-[16px] border-2 border-ink bg-rust p-6 text-paper">
+        <p className="font-typewriter text-[12px] leading-4 tracking-[3.6px]">▣ 대기번호</p>
+        <p className="pt-2 font-body-kr text-[15px] font-bold leading-6">
+          대기 처리 후 &apos;내 예약&apos; 화면에서
+          <br />
+          대기번호를 확인할 수 있어요
         </p>
       </div>
-
-      <button
-        type="button"
-        onClick={onConfirm}
-        className="mt-[24px] h-[52px] w-full rounded-[16px] bg-[linear-gradient(90deg,#5ea0ee_0%,#4a8dd9_100%)] text-[16px] font-bold leading-[24px] tracking-[-0.3125px] text-white"
-      >
-        확인
-      </button>
-    </section>
+      <div className="rounded-[16px] border border-dashed border-ink bg-cream p-4">
+        <p className="font-typewriter text-[12px] leading-4 tracking-[1.2px]">◷ 예상 대기 시간</p>
+        <p className="font-display text-[30px] leading-9 text-rust">{estimatedWaitText}</p>
+      </div>
+    </TicketStatusCard>
   );
 };
 
