@@ -1,51 +1,23 @@
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type KeyboardEvent,
-  type PointerEvent,
-} from 'react';
-import { FiChevronUp } from 'react-icons/fi';
-import { RiKakaoTalkFill } from 'react-icons/ri';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import festivalLogo from '@/assets/festival_logo.svg';
-import onboardingBackground from '@/assets/onboarding_bg.png';
-import onboardingPlane from '@/assets/airplain.png';
+import heroImage from '@/assets/home_hero.png';
+import cheongunLogo from '@/assets/cheongun_logo.svg';
+import reelIcon from '@/assets/cassette_reel.svg';
+import kakaoIcon from '@/assets/kakao_icon.svg';
+import youtubeIcon from '@/assets/footer_youtube.svg';
+import instagramIcon from '@/assets/footer_instagram.svg';
+import { useTranslation } from 'react-i18next';
 import { markOnboardingSeenInCurrentTab } from '../lib/onboardingSession';
 import { track } from '@/lib/mixpanel';
 
-type OnboardingStage = 'intro' | 'auth';
-const PLANE_TAKEOFF_DURATION_MS = 600;
-const PLANE_TAKEOFF_REDUCED_MOTION_MS = 200;
+const STRIPE =
+  'bg-[linear-gradient(90deg,var(--color-rust)_0%,var(--color-rust)_33.3%,var(--color-mustard)_33.3%,var(--color-mustard)_66.6%,var(--color-sky-light)_66.6%,var(--color-sky-light)_100%)]';
 
 const OnboardingPage = () => {
   const navigate = useNavigate();
-  const pointerStartRef = useRef<{ x: number; y: number } | null>(null);
-  const [stage, setStage] = useState<OnboardingStage>('intro');
-  const [isPlaneTakingOff, setIsPlaneTakingOff] = useState(false);
+  const { t } = useTranslation();
   const [isGuestNoticeOpen, setIsGuestNoticeOpen] = useState(false);
   const [guestNoticeStep, setGuestNoticeStep] = useState<1 | 2>(1);
-  const isAuthStage = stage === 'auth';
-
-  const moveToAuthStage = useCallback(() => {
-    if (stage !== 'intro' || isPlaneTakingOff) {
-      return;
-    }
-
-    const prefersReducedMotion =
-      typeof window !== 'undefined' &&
-      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    const duration = prefersReducedMotion
-      ? PLANE_TAKEOFF_REDUCED_MOTION_MS
-      : PLANE_TAKEOFF_DURATION_MS;
-
-    setIsPlaneTakingOff(true);
-    window.setTimeout(() => {
-      setStage('auth');
-      setIsPlaneTakingOff(false);
-    }, duration);
-  }, [isPlaneTakingOff, stage]);
 
   const completeOnboarding = useCallback(() => {
     track('onboarding_guest_login_clicked');
@@ -65,47 +37,6 @@ const OnboardingPage = () => {
     window.location.href = `${trimmed}/oauth2/authorization/kakao`;
   }, []);
 
-  const handlePointerDown = (event: PointerEvent<HTMLElement>) => {
-    if (stage !== 'intro') {
-      return;
-    }
-
-    pointerStartRef.current = { x: event.clientX, y: event.clientY };
-  };
-
-  const handlePointerUp = (event: PointerEvent<HTMLElement>) => {
-    if (stage !== 'intro') {
-      return;
-    }
-
-    if (!pointerStartRef.current) {
-      return;
-    }
-
-    const deltaX = Math.abs(event.clientX - pointerStartRef.current.x);
-    const deltaY = pointerStartRef.current.y - event.clientY;
-    pointerStartRef.current = null;
-
-    if (deltaY >= 28 && deltaX <= 70) {
-      moveToAuthStage();
-    }
-  };
-
-  const handlePointerCancel = () => {
-    pointerStartRef.current = null;
-  };
-
-  const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
-    if (stage !== 'intro') {
-      return;
-    }
-
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      moveToAuthStage();
-    }
-  };
-
   useEffect(() => {
     if (!isGuestNoticeOpen) return;
 
@@ -116,151 +47,129 @@ const OnboardingPage = () => {
     return () => window.removeEventListener('keydown', handler);
   }, [isGuestNoticeOpen]);
 
-  return (
-    <section
-      className="relative h-[100dvh] overflow-hidden overscroll-none touch-none"
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-      onPointerCancel={handlePointerCancel}
-      onKeyDown={handleKeyDown}
-      aria-label={stage === 'intro' ? '온보딩 화면' : '로그인 화면'}
-    >
-      <img
-        src={onboardingBackground}
-        alt=""
-        className={`absolute inset-0 h-full w-full object-cover ${stage === 'intro' ? 'onboarding-bg-zoom' : ''}`}
-      />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(128,183,221,0.32)_24%,rgba(255,121,70,0.92)_100%)]" />
+  const reel = <img src={reelIcon} alt="" width={44} height={44} className="shrink-0 rotate-[7.27deg]" />;
 
-      <div
-        className={`absolute bottom-[0px] left-1/2 ${
-          isPlaneTakingOff ? 'onboarding-plane-takeoff' : 'opacity-0'
-        }`}
-        style={{ translate: '-50% 0', bottom: 'max(0px, env(safe-area-inset-bottom))' }}
-        aria-hidden
-      >
-        <div className="h-[84px] w-[138px] overflow-hidden">
-          <img
-            src={onboardingPlane}
-            alt=""
-            className="h-full w-full scale-[1.18] object-cover object-center drop-shadow-[0_12px_18px_rgba(38,65,102,0.25)]"
-          />
+  return (
+    <section className="relative flex h-[100dvh] flex-col overflow-hidden bg-ink text-ink" aria-label="로그인 화면">
+      <div className="relative flex flex-1 flex-col overflow-clip">
+        <img src={heroImage} alt="" className="absolute inset-0 size-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-b from-ink/50 via-ink/0 to-ink/80" />
+
+        <div className="relative flex items-center justify-between px-5 pt-5">
+          <span className="font-typewriter text-[12px] leading-4 tracking-[3.6px] text-paper">SIDE A</span>
+          <img src={cheongunLogo} alt="청운" width={51} height={36} />
+        </div>
+
+        <div className="relative flex flex-1 items-center justify-center px-5">
+          <div className="w-full max-w-[363px] -rotate-1">
+            <div className="rounded-[26px] border-2 border-ink bg-rust p-3 drop-shadow-[8px_8px_0px_var(--color-ink)]">
+              <div className="rounded-[12px] border-2 border-ink bg-cream p-4">
+                <p className="font-typewriter text-[11px] font-bold leading-[16.5px] tracking-[3.3px] text-rust">
+                  KOREA AEROSPACE UNIVERSITY
+                </p>
+                <h1 className="pt-1 font-condensed text-[64px] font-black leading-[61px]">활주로</h1>
+                <div className={`mt-3 h-[10px] w-full rounded-full ${STRIPE}`} />
+                <p className="pt-3 font-display text-[20px] leading-7">가을에 재생 버튼을 누르다</p>
+              </div>
+              <div className="mt-3 flex items-center justify-between rounded-full border-2 border-ink bg-ink px-4 py-2">
+                {reel}
+                {reel}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3 pt-8">
+              <button
+                type="button"
+                onClick={() => {
+                  setGuestNoticeStep(1);
+                  setIsGuestNoticeOpen(true);
+                }}
+                className="flex items-center justify-center gap-3 rounded-[16px] border-2 border-ink bg-[#fee500] px-6 py-[14px] font-body-kr text-[16px] font-bold leading-6 drop-shadow-[4px_4px_0px_var(--color-ink)]"
+              >
+                <img src={kakaoIcon} alt="" width={20} height={19} />
+                카카오톡 로그인
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setGuestNoticeStep(2);
+                  setIsGuestNoticeOpen(true);
+                }}
+                className="rounded-[16px] border-2 border-ink bg-[#2750b9] px-6 py-[14px] font-body-kr text-[16px] font-bold leading-6 text-paper drop-shadow-[4px_4px_0px_var(--color-ink)]"
+              >
+                비회원으로 접속하기
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <p
-        className={`absolute left-1/2 top-[151px] -translate-x-1/2 text-center text-[11px] font-semibold leading-4 tracking-[0.09em] text-white/95 whitespace-nowrap drop-shadow-[0_1px_3px_rgba(0,0,0,0.25)] transition-opacity duration-300 ${
-          isPlaneTakingOff ? 'opacity-0' : stage === 'intro' ? 'onboarding-fade-up' : ''
-        }`}
-      >
-        KOREA AEROSPACE UNIVERSITY
-      </p>
+      <div className={`h-2 w-full shrink-0 ${STRIPE}`} />
+      <footer className="flex shrink-0 flex-col items-center gap-4 bg-paper px-5 py-8 text-center">
+        <p className="font-body-kr text-[14px] font-semibold leading-5">{t('footer.organization')}</p>
+        <div className="flex gap-3">
+          <a
+            href="https://www.youtube.com/@kau_students"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="유튜브"
+            className="flex size-11 items-center justify-center rounded-[12px] border border-ink bg-cream"
+          >
+            <img src={youtubeIcon} alt="" width={18} height={13} />
+          </a>
+          <a
+            href="https://www.instagram.com/kau_students?igsh=MXRpNmF0MzA3MHZudA=="
+            target="_blank"
+            rel="noreferrer"
+            aria-label="인스타그램"
+            className="flex size-11 items-center justify-center rounded-[12px] border border-ink bg-cream"
+          >
+            <img src={instagramIcon} alt="" width={18} height={18} />
+          </a>
+        </div>
+        <p className="font-typewriter text-[12px] leading-4 opacity-60">{t('footer.copyright')}</p>
+      </footer>
 
-      <p
-        className={`absolute left-1/2 top-[260px] -translate-x-1/2 text-center text-[36px] font-medium leading-[1.05] tracking-[-0.035em] text-white whitespace-nowrap drop-shadow-[0_2px_12px_rgba(0,0,0,0.18)] transition-opacity duration-300 ${
-          isPlaneTakingOff ? 'opacity-0' : stage === 'intro' ? 'onboarding-fade-up-delay-1' : ''
-        }`}
-      >
-        2026 FESTIVAL
-      </p>
-
-      <img
-        src={festivalLogo}
-        alt="RUNWAY"
-        className={`absolute left-1/2 top-[306px] h-[55px] w-[349px] -translate-x-1/2 drop-shadow-[0_18px_32px_rgba(0,0,0,0.16)] transition-opacity duration-300 ${
-          isPlaneTakingOff ? 'opacity-0' : stage === 'intro' ? 'onboarding-fade-up-delay-2' : ''
-        }`}
-      />
-
-      <button
-        type="button"
-        onClick={moveToAuthStage}
-        aria-label="시작하기"
-        className={`absolute left-1/2 flex -translate-x-1/2 flex-col items-center gap-[4px] transition-opacity duration-300 ${
-          stage === 'intro' && !isPlaneTakingOff ? 'opacity-100' : 'pointer-events-none opacity-0'
-        }`}
-        style={{ bottom: 'calc(env(safe-area-inset-bottom) + 40px)' }}
-      >
-        <FiChevronUp className="size-[22px] text-white onboarding-chevron-bounce" aria-hidden />
-        <span className="text-[12px] font-medium tracking-wide text-white onboarding-soft-pulse">
-          위로 스와이프하거나 탭하여 시작
-        </span>
-      </button>
-
-      <div
-        className={`absolute left-1/2 top-[514px] flex w-[332px] -translate-x-1/2 flex-col gap-[19px] transition-all duration-500 items-center ${
-          stage === 'auth'
-            ? 'translate-y-0 opacity-100 onboarding-auth-rise'
-            : 'pointer-events-none translate-y-[56px] opacity-0'
-        }`}
-      >
-        <button
-          type="button"
-          onClick={() => {
-            setGuestNoticeStep(1);
-            setIsGuestNoticeOpen(true);
-          }}
-          className="flex h-[52px] w-50 items-center justify-center gap-[8px] rounded-[12px] bg-[#fae300] text-[16px] font-bold text-[#111111] shadow-[0_8px_20px_rgba(0,0,0,0.12)] transition-transform active:scale-[0.98]"
-        >
-          <RiKakaoTalkFill className="size-[18px]" />
-          카카오톡 로그인
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            setGuestNoticeStep(2);
-            setIsGuestNoticeOpen(true);
-          }}
-          className="h-[52px] w-50 rounded-[12px] bg-[#2750b9] text-[16px] font-bold text-white shadow-[0_8px_20px_rgba(0,0,0,0.12)] transition-transform active:scale-[0.98]"
-        >
-          비회원으로 접속하기
-        </button>
-      </div>
-
-      {isAuthStage && isGuestNoticeOpen && (
+      {isGuestNoticeOpen && (
         <div
-          className="absolute inset-0 z-40 flex items-center justify-center bg-black/45 px-[16px] backdrop-blur-sm onboarding-backdrop-in"
+          className="absolute inset-0 z-40 flex items-center justify-center bg-ink/50 px-4 onboarding-backdrop-in"
           role="presentation"
           onClick={() => setIsGuestNoticeOpen(false)}
         >
           <div
-            className="relative w-full max-w-[340px] rounded-[20px] bg-white px-[20px] pb-[18px] pt-[22px] shadow-[0_24px_60px_rgba(15,23,42,0.28)] onboarding-modal-in"
+            className="relative w-full max-w-[340px] rounded-[20px] border-2 border-ink bg-paper px-5 pb-5 pt-6 drop-shadow-[6px_6px_0px_var(--color-ink)] onboarding-modal-in"
             role="dialog"
             aria-modal="true"
             aria-labelledby="guest-notice-title"
             onClick={(event) => event.stopPropagation()}
           >
-            <p
-              id="guest-notice-title"
-              className="text-center text-[28px] font-bold leading-none text-[#111111]"
-            >
+            <p id="guest-notice-title" className="text-center font-display text-[28px] leading-none">
               주의
             </p>
 
             {guestNoticeStep === 1 ? (
               <>
-                <p className="mt-[14px] text-center text-[15px] font-medium leading-[1.45] text-[#374151]">
+                <p className="mt-4 text-center font-body-kr text-[15px] leading-[1.45]">
                   한국항공대학교 재학생들을 위한 서비스입니다.
                   <br />
                   졸업생 및 외부인은 비회원으로 접속해주세요.
                 </p>
 
-                <div className="mt-[20px] flex items-center justify-between gap-[10px]">
+                <div className="mt-5 flex items-center justify-between gap-[10px]">
                   <button
                     type="button"
                     onClick={() => setGuestNoticeStep(2)}
-                    className="h-[46px] flex-1 rounded-[14px] bg-[#eef2f7] text-[15px] font-semibold leading-none text-[#374151] transition-colors active:scale-[0.98] hover:bg-[#e2e8f0]"
+                    className="h-[46px] flex-1 rounded-[14px] border-2 border-ink bg-cream font-body-kr text-[15px] font-semibold"
                   >
                     비회원으로 계속
                   </button>
-
                   <button
                     type="button"
                     onClick={() => {
                       setIsGuestNoticeOpen(false);
                       handleKakaoLogin();
                     }}
-                    className="h-[46px] flex-1 rounded-[14px] bg-[#fae300] text-[15px] font-semibold leading-none text-[#111111] transition-all active:scale-[0.98]"
+                    className="h-[46px] flex-1 rounded-[14px] border-2 border-ink bg-[#fee500] font-body-kr text-[15px] font-semibold"
                   >
                     카카오로 가입
                   </button>
@@ -268,17 +177,16 @@ const OnboardingPage = () => {
               </>
             ) : (
               <>
-                <p className="mt-[14px] text-center text-[15px] font-medium leading-[1.45] text-[#374151]">
+                <p className="mt-4 text-center font-body-kr text-[15px] leading-[1.45]">
                   비회원으로 접속하면
                   <br />
-                  <span className="font-bold">팔찌예약</span>,{' '}
-                  <span className="font-bold">행사투표</span>는 사용할 수 없어요.
+                  <span className="font-bold">팔찌예약</span>은 사용할 수 없어요.
                 </p>
 
                 <button
                   type="button"
                   onClick={completeOnboarding}
-                  className="mt-[20px] h-[46px] w-full rounded-[14px] bg-[#eef2f7] text-[15px] font-semibold leading-none text-[#374151] transition-colors active:scale-[0.98] hover:bg-[#e2e8f0]"
+                  className="mt-5 h-[46px] w-full rounded-[14px] border-2 border-ink bg-ink font-body-kr text-[15px] font-semibold text-paper"
                 >
                   접속하기
                 </button>
@@ -287,7 +195,6 @@ const OnboardingPage = () => {
           </div>
         </div>
       )}
-
     </section>
   );
 };
