@@ -16,8 +16,6 @@ const PAGE_NAMES: Record<string, string> = {
   '/ticket': 'Ticket Reservation',
   '/myticket': 'My Ticket',
   '/info': 'Info Input',
-  '/masked-singer': 'Masked Singer',
-  '/masked-singer/result': 'Masked Singer Result',
   '/info-guide': 'Info Guide',
 };
 

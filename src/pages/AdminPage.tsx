@@ -1,15 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { updateVoteStatus, type VoteStatus } from '@/lib/api/vote';
 import { updateClubStatus, type ClubStatusUpdate } from '@/lib/api/club';
 import { fetchMyProfile } from '@/lib/api/user';
-
-const VOTE_STATUS_OPTIONS: { value: VoteStatus; label: string; description: string }[] = [
-  { value: 'YET', label: 'YET', description: '투표 시작 전' },
-  { value: 'INPROGRESS', label: 'INPROGRESS', description: '투표 진행 중' },
-  { value: 'ENDED', label: 'ENDED', description: '투표 종료' },
-  { value: 'RESULT', label: 'RESULT', description: '결과 공개' },
-];
 
 const CLUBS = [
   { clubId: 1, clubName: '활주로' },
@@ -41,25 +33,10 @@ const AdminPage = () => {
     queryFn: fetchMyProfile,
   });
 
-  // 투표 상태
-  const [selectedVote, setSelectedVote] = useState<VoteStatus | null>(null);
-  const [voteSuccessMsg, setVoteSuccessMsg] = useState<string | null>(null);
-
   // 클럽 상태
   const [selectedClubId, setSelectedClubId] = useState<number | null>(null);
   const [selectedClubStatus, setSelectedClubStatus] = useState<ClubStatusUpdate | null>(null);
   const [clubSuccessMsg, setClubSuccessMsg] = useState<string | null>(null);
-
-  const voteMutation = useMutation({
-    mutationFn: updateVoteStatus,
-    onSuccess: () => {
-      setVoteSuccessMsg(`투표 상태가 "${selectedVote}"로 변경되었습니다.`);
-    },
-    onError: (error: Error) => {
-      setVoteSuccessMsg(null);
-      window.alert(`변경 실패: ${error.message}`);
-    },
-  });
 
   const clubMutation = useMutation({
     mutationFn: ({ clubId, clubStatus }: { clubId: number; clubStatus: ClubStatusUpdate }) =>
@@ -73,12 +50,6 @@ const AdminPage = () => {
       window.alert(`변경 실패: ${error.message}`);
     },
   });
-
-  const handleVoteConfirm = () => {
-    if (!selectedVote) return;
-    setVoteSuccessMsg(null);
-    voteMutation.mutate(selectedVote);
-  };
 
   const handleClubConfirm = () => {
     if (!selectedClubId || !selectedClubStatus) return;
@@ -108,61 +79,6 @@ const AdminPage = () => {
   return (
     <div className="flex min-h-screen flex-col items-center px-4 py-12">
       <div className="w-full max-w-[400px] flex flex-col gap-6">
-
-        {/* 투표 상태 변경 */}
-        <section className="rounded-[20px] bg-white px-6 py-6 shadow-sm">
-          <h2 className="mb-1 text-[20px] font-bold text-[#1e2235]">투표 상태 변경</h2>
-          <p className="mb-5 text-[13px] text-gray-500">모든 가수의 투표 상태를 일괄 변경합니다.</p>
-
-          <div className="mb-4 flex flex-col gap-3">
-            {VOTE_STATUS_OPTIONS.map((option) => {
-              const isSelected = selectedVote === option.value;
-              return (
-                <button
-                  key={option.value}
-                  onClick={() => setSelectedVote(option.value)}
-                  className={`flex items-center justify-between rounded-[14px] border-2 px-5 py-4 text-left transition-colors ${
-                    isSelected
-                      ? 'border-[#4362d0] bg-[#4362d0]/5'
-                      : 'border-gray-200 bg-white hover:border-gray-300'
-                  }`}
-                >
-                  <div>
-                    <p className={`text-[15px] font-bold ${isSelected ? 'text-[#4362d0]' : 'text-[#1e2235]'}`}>
-                      {option.label}
-                    </p>
-                    <p className="text-[12px] text-gray-500">{option.description}</p>
-                  </div>
-                  <div
-                    className={`size-[20px] rounded-full border-2 ${
-                      isSelected ? 'border-[#4362d0] bg-[#4362d0]' : 'border-gray-300'
-                    } flex items-center justify-center`}
-                  >
-                    {isSelected && <div className="size-[8px] rounded-full bg-white" />}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-
-          <button
-            onClick={handleVoteConfirm}
-            disabled={!selectedVote || voteMutation.isPending}
-            className={`w-full rounded-[14px] py-[14px] text-[15px] font-bold text-white transition-opacity ${
-              selectedVote && !voteMutation.isPending
-                ? 'bg-[#4362d0] active:opacity-80'
-                : 'cursor-not-allowed bg-gray-300'
-            }`}
-          >
-            {voteMutation.isPending ? '변경 중...' : '확인'}
-          </button>
-
-          {voteSuccessMsg && (
-            <div className="mt-3 rounded-[12px] bg-green-50 px-4 py-3 text-[13px] font-medium text-green-700">
-              ✓ {voteSuccessMsg}
-            </div>
-          )}
-        </section>
 
         {/* 공연 상태 변경 */}
         <section className="rounded-[20px] bg-white px-6 py-6 shadow-sm">

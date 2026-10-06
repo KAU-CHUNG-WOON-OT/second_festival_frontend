@@ -9,7 +9,6 @@
     "pub": "Pub Guide",
     "yard": "Yard Events",
     "makers": "Makers",
-    "maskedSinger": "Masked Singer",
     "ticketReservation": "Wristband Reservation",
     "infoGuide": "Location, Goods, Partners",
     "category": {
@@ -18,32 +17,6 @@
       "booth": "Booths & Food",
       "info": "Info"
     }
-  },
-  "maskedSinger": {
-    "title": "Masked Singer",
-    "subtitle": "Cast your vote for the best performer!",
-    "vote": "Vote",
-    "voting": "Voting...",
-    "voted": "Voted",
-    "voteError": "Failed to submit your vote. Please try again.",
-    "guideTitle": "Voting Guide",
-    "guidePeriod": "Voting period: festival hours (May 18 – 20)",
-    "guideOnePerUser": "One vote per person",
-    "guideNoChange": "Votes cannot be changed after submission",
-    "guideResult": "Final results will be revealed after the festival",
-    "confirmTitle": "Confirm Vote",
-    "confirmVote": "Vote for {{name}}? This cannot be undone.",
-    "voteSuccess": "Your vote has been recorded.",
-    "loading": "Loading singers...",
-    "loadError": "Failed to load singers.",
-    "empty": "No singers available for voting.",
-    "allEndedLine1": "All voting has closed,",
-    "allEndedLine2": "results are being tallied.",
-    "resultReadyLine": "Results have been finalized.",
-    "viewResult": "View Results",
-    "rankLabel": "#{{rank}}",
-    "backToVote": "◀ Back to voting page",
-    "resultEmpty": "Results are not yet revealed."
   },
   "header": {
     "boothGuide": "Booth Info",

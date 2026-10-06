@@ -68,8 +68,6 @@ Mixpanel의 Simplified ID Merge 기능이 로그인 이전의 익명 이벤트�
 | `/ticket` | Ticket Reservation |
 | `/myticket` | My Ticket |
 | `/info` | Info Input |
-| `/masked-singer` | Masked Singer |
-| `/masked-singer/result` | Masked Singer Result |
 | `/info-guide` | Info Guide |
 
 ---
@@ -199,47 +197,6 @@ OAuth 리다이렉트가 완료될 때 (카카오 로그인 완료 시) 발송�
 | `result` | string | `success` 또는 `fail` |
 | `status` | number \| undefined | 실패 시 HTTP 상태 코드 |
 | `code` | string \| undefined | 실패 시 서버 에러 코드 |
-
----
-
-### `masked_singer_vote_clicked`
-
-복면가왕 투표 버튼을 클릭해 확인 모달이 열렸을 때 발송됩니다.
-
-**파일:** `src/pages/MaskedSingerPage.tsx`
-
-| 속성 | 타입 | 설명 |
-|------|------|------|
-| `singer_id` | number | 클릭한 가수의 ID |
-| `singer_name` | string | 클릭한 가수의 이름 |
-
----
-
-### `masked_singer_voted`
-
-복면가왕 투표를 성공적으로 제출했을 때 발송됩니다.
-
-**파일:** `src/pages/MaskedSingerPage.tsx`
-
-| 속성 | 타입 | 설명 |
-|------|------|------|
-| `singer_id` | number | 투표한 가수의 ID |
-| `singer_name` | string | 투표한 가수의 이름 |
-
----
-
-### `masked_singer_vote_failed`
-
-복면가왕 투표 제출이 실패했을 때 발송됩니다.
-
-**파일:** `src/pages/MaskedSingerPage.tsx`
-
-| 속성 | 타입 | 설명 |
-|------|------|------|
-| `singer_id` | number | 투표하려 한 가수의 ID |
-| `status` | number \| undefined | HTTP 상태 코드 |
-| `code` | string \| undefined | 서버 에러 코드 |
-| `message` | string | 에러 메시지 |
 
 ---
 

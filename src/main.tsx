@@ -28,8 +28,6 @@ import TicketReservationPage from './pages/TicketReservationPage';
 import MyTicketPage from './pages/MyTicketPage';
 import InfoInputPage from './pages/InfoInputPage';
 import OAuthRedirectPage from './pages/OAuthRedirectPage';
-import MaskedSingerPage from './pages/MaskedSingerPage';
-import MaskedSingerResultPage from './pages/MaskedSingerResultPage';
 import InfoGuidePage from './pages/InfoGuidePage';
 import AdminPage from './pages/AdminPage';
 
@@ -57,8 +55,6 @@ createRoot(document.getElementById('root')!).render(
               <Route path="/ticket" element={<TicketReservationPage />} />
               <Route path="/myticket" element={<MyTicketPage />} />
               <Route path="/info" element={<InfoInputPage />} />
-              <Route path="/masked-singer" element={<MaskedSingerPage />} />
-              <Route path="/masked-singer/result" element={<MaskedSingerResultPage />} />
               <Route path="/oauth/callback/:dest" element={<OAuthRedirectPage />} />
               <Route path="/info-guide" element={<InfoGuidePage />} />
               <Route path="/admin" element={<AdminPage />} />

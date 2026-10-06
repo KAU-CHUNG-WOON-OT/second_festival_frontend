@@ -9,7 +9,6 @@
     "pub": "주점 안내",
     "yard": "마당사업",
     "makers": "만든이",
-    "maskedSinger": "복면가항",
     "ticketReservation": "팔찌 예약",
     "infoGuide": "위치 안내, 굿즈, 제휴사",
     "category": {
@@ -18,32 +17,6 @@
       "booth": "부스 및 음식 (위치정보)",
       "info": "안내"
     }
-  },
-  "maskedSinger": {
-    "title": "복면가항",
-    "subtitle": "가장 우수한 참가자에게 한 표를 행사해주세요!",
-    "vote": "투표하기",
-    "voting": "투표 중...",
-    "voted": "투표완료",
-    "voteError": "투표에 실패했습니다. 잠시 후 다시 시도해주세요.",
-    "guideTitle": "투표 안내",
-    "guidePeriod": "투표 기간: 행사 시간 내 (5월 18일 - 20일)",
-    "guideOnePerUser": "1인 1표만 가능합니다",
-    "guideNoChange": "투표 후 변경이 불가능합니다",
-    "guideResult": "최종 결과는 행사 종료 후 공개됩니다",
-    "confirmTitle": "투표 확인",
-    "confirmVote": "{{name}} 후보에게 투표하시겠습니까? 변경할 수 없습니다.",
-    "voteSuccess": "투표가 완료되었습니다.",
-    "loading": "가수 목록을 불러오는 중...",
-    "loadError": "가수 목록을 불러오지 못했습니다.",
-    "empty": "투표 가능한 가수가 없습니다.",
-    "allEndedLine1": "전체 투표가 마감되었으며,",
-    "allEndedLine2": "결과 집계 중입니다.",
-    "resultReadyLine": "집계가 완료되었습니다.",
-    "viewResult": "결과보기",
-    "rankLabel": "{{rank}}위",
-    "backToVote": "◀ 투표 페이지로 돌아가기",
-    "resultEmpty": "아직 결과가 공개되지 않았습니다."
   },
   "header": {
     "boothGuide": "부스 안내",

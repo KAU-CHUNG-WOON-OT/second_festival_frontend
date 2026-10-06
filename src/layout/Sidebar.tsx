@@ -49,7 +49,6 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       items: [
         { label: t('nav.timetable'), path: '/timetable' },
         { label: t('nav.performance'), path: '/performance' },
-        { label: t('nav.maskedSinger'), path: '/masked-singer' },
         { label: t('nav.ticketReservation'), path: '/ticket' },
       ],
     },

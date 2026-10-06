@@ -24,8 +24,6 @@ const Layout = ({ children }: LayoutProps) => {
     '/makers',
     '/ticket',
     '/myticket',
-    '/masked-singer',
-    '/masked-singer/result',
   ];
   const shouldShowFooter = showFooterPaths.includes(location.pathname);
 
