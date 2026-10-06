@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
+import RetroFooter from './RetroFooter';
 import SkyDots from '../components/common/SkyDots';
 import { useTimeOfDay } from '../hooks/useTimeOfDay';
 import { usePageTracking } from '../hooks/usePageTracking';
@@ -17,6 +18,8 @@ const Layout = ({ children }: LayoutProps) => {
   const timeOfDay = useTimeOfDay();
   usePageTracking();
   const isOnboardingPath = location.pathname === '/onboarding';
+  // 새 디자인이 적용된 페이지: 자체 헤더·배경을 쓰므로 공통 헤더/하늘 배경을 숨김
+  const isRedesignedPath = ['/timetable', '/notice', '/ticket', '/makers'].includes(location.pathname);
 
   const showFooterPaths = [
     '/home',
@@ -36,23 +39,23 @@ const Layout = ({ children }: LayoutProps) => {
     <div
       data-theme={timeOfDay}
       className="relative flex h-dvh w-full justify-center overflow-hidden"
-      style={{ background: 'var(--bg-gradient)' }}
+      style={{ background: isRedesignedPath ? 'var(--color-cream)' : 'var(--bg-gradient)' }}
     >
       <div className="relative flex h-full w-full max-w-[430px] flex-col overflow-clip bg-transparent">
-        {!isOnboardingPath && <Header onOpenSidebar={() => setIsSidebarOpen(true)} />}
+        {!isOnboardingPath && !isRedesignedPath && <Header onOpenSidebar={() => setIsSidebarOpen(true)} />}
         <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
         <div className="relative z-10 flex flex-1 flex-col overflow-hidden">
           <div className="flex-1 flex flex-col overflow-hidden">
             <div
               className={`relative flex min-h-full flex-col ${isOnboardingPath ? 'overflow-hidden' : 'overflow-y-auto'}`}
-              style={isOnboardingPath ? undefined : scrollMask}
+              style={isOnboardingPath || isRedesignedPath ? undefined : scrollMask}
             >
-              {!isOnboardingPath && <SkyDots />}
+              {!isOnboardingPath && !isRedesignedPath && <SkyDots />}
               <div className="relative z-10 flex-1">{children}</div>
               {shouldShowFooter && (
                 <div className="relative z-10">
-                  <Footer />
+                  {isRedesignedPath ? <RetroFooter /> : <Footer />}
                 </div>
               )}
             </div>
