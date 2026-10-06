@@ -34,15 +34,15 @@
   "search": {
     "menuPlaceholder": "메뉴를 검색해주세요",
     "pubPlaceholder": "주점명 혹은 학과를 입력해주세요",
-    "noResults": "검색 결과가 없습니다"
+    "noResults": "검색 결과가 없습니다",
+    "boothPlaceholder": "부스명 혹은 학과를 입력해주세요"
   },
   "footer": {
     "organization": "한국항공대학교 제52대 총학생회 청운",
     "copyright": "Copyright©2026. Kau_Students. All rights reserved."
   },
   "payment": {
-    "title": "결제 정보",
-    "copy": "복사",
+    "title": "QR 입금",
     "copied": "계좌번호가 복사되었습니다"
   },
   "common": {
@@ -62,7 +62,7 @@
   },
   "home": {
     "boothInfo": "부스 정보",
-    "yardEvent": "마당사업",
+    "yardEvent": "교내 학과 · 동아리 부스",
     "foodTruck": "푸드 트럭",
     "foodLocations": "먹거리 위치",
     "performance": "공연 정보",
