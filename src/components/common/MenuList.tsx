@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { RiKakaoTalkFill } from 'react-icons/ri';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { useLikes } from '../../hooks/useLikes';
 import { apiFetch } from '@/lib/apiClient';
 import { isAuthenticated } from '@/lib/authStorage';
 import { track } from '@/lib/mixpanel';
+import LoginRequiredPopup from './LoginRequiredPopup';
+import logoImg from '../../assets/cheongun_logo.svg';
 
 export interface MenuItem {
   id: number;
@@ -31,9 +32,17 @@ interface MenuListProps {
   likePrefix?: 'bar' | 'menu' | string;
   /** 외부에서 좋아요 초기 데이터를 주입하면 메뉴별 GET을 건너뜁니다. */
   initialLikesData?: Record<number, InitialMenuLike>;
+  // 카드 제목 (예: '판매 · 참여 항목'). 없으면 '— MENU —'
+  title?: string;
 }
 
-const MenuList = ({ menu, showLikes = true, likePrefix = 'menu', initialLikesData }: MenuListProps) => {
+const MenuList = ({
+  menu,
+  showLikes = true,
+  likePrefix = 'menu',
+  initialLikesData,
+  title,
+}: MenuListProps) => {
   const { language } = useLanguage();
   const { isLiked, toggle } = useLikes(likePrefix);
 
@@ -160,75 +169,57 @@ const MenuList = ({ menu, showLikes = true, likePrefix = 'menu', initialLikesDat
         .heart-pop { animation: heartPop 0.4s ease; }
       `}</style>
 
-      <div className="flex flex-col gap-2.5">
-        {menu.map((item) => (
-          <div
-            key={item.id}
-            className="bg-white/60 backdrop-blur-sm rounded-2xl px-5 py-4 border border-white/40 flex items-center gap-4"
-          >
-            <div className="w-14 h-14 flex-shrink-0">
-              {item.image && (
-                <div className="w-full h-full rounded-xl bg-white/50 overflow-hidden flex items-center justify-center">
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                </div>
-              )}
-            </div>
-
-            <span className="text-[13px] font-semibold text-[#2B3A5C] flex-1">
-              {language === 'ENG' && item.name_en ? item.name_en : item.name}
-            </span>
-
-            <div className="flex items-center gap-3">
-              <span className="text-[13px] font-bold text-[#4A7FD2]">{item.price}</span>
+      <section className="rounded-[16px] border-2 border-ink bg-paper p-5 text-ink drop-shadow-[5px_5px_0px_var(--color-ink)]">
+        {title ? (
+          <h2 className="font-display text-[20px] leading-7">{title}</h2>
+        ) : (
+          <h2 className="font-typewriter text-[12px] leading-4 tracking-[3.6px]">— MENU —</h2>
+        )}
+        <ul className="pt-2">
+          {menu.map((item) => (
+            <li
+              key={item.id}
+              className="flex items-center gap-3 border-b border-dashed border-ink/40 py-4 last:border-b-0"
+            >
+              <img
+                src={item.image || logoImg}
+                alt=""
+                onError={(e) => {
+                  e.currentTarget.src = logoImg;
+                }}
+                className="size-8 shrink-0 rounded-[4px] object-contain"
+              />
+              <span className="min-w-0 flex-1 font-display text-[18px] leading-7">
+                {language === 'ENG' && item.name_en ? item.name_en : item.name}
+              </span>
+              <span className="shrink-0 font-typewriter text-[18px] font-bold leading-7">
+                {item.price}
+              </span>
               {showLikes && (
-                <button onClick={(e) => handleLike(e, item.id)} className="flex items-center gap-1">
-                  <svg
-                    className={`w-4.5 h-4.5 ${animatingIds.has(item.id) ? 'heart-pop' : ''}`}
-                    fill={isLiked(item.id) ? 'currentColor' : 'none'}
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    style={{ color: '#f87171' }}
+                <button
+                  type="button"
+                  onClick={(e) => handleLike(e, item.id)}
+                  aria-label="좋아요"
+                  className="flex shrink-0 items-center gap-1 font-typewriter text-[12px] font-bold"
+                >
+                  <span
+                    className={`text-rust ${animatingIds.has(item.id) ? 'heart-pop inline-block' : ''}`}
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
-                  <span className="text-[11px] font-medium text-[#8a94a6]">
-                    {likeCounts[item.id]}
+                    {isLiked(item.id) ? '♥' : '♡'}
                   </span>
+                  {likeCounts[item.id]}
                 </button>
               )}
-            </div>
-          </div>
-        ))}
-      </div>
+            </li>
+          ))}
+        </ul>
+      </section>
 
       {isLoginPopupOpen && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center pb-8 bg-black/20 backdrop-blur-[2px]">
-          <div className="relative w-[280px]">
-            <div className="absolute inset-x-0 bottom-[-8px] h-[18px] rounded-b-[18px] bg-[#8aa4d4]/60" />
-            <div className="relative rounded-[20px] bg-white/95 backdrop-blur-md px-5 pb-4 pt-5 shadow-[0_8px_32px_rgba(0,0,0,0.12)]">
-              <p className="text-center text-[13px] font-bold text-[#2B3A5C] mb-3">
-                로그인이 필요한 서비스예요
-              </p>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsLoginPopupOpen(false)}
-                  className="h-[38px] flex-1 rounded-[12px] bg-[#f1f3f6] text-[13px] font-bold text-[#8a94a6] active:scale-[0.98] transition-transform"
-                >
-                  취소
-                </button>
-                <button
-                  type="button"
-                  onClick={handleKakaoLogin}
-                  className="flex h-[38px] flex-1 items-center justify-center gap-1.5 rounded-[12px] bg-[#fae300] text-[13px] font-bold text-[#111111] shadow-[0_4px_12px_rgba(0,0,0,0.08)] active:scale-[0.98] transition-transform"
-                >
-                  <RiKakaoTalkFill className="size-[16px]" />
-                  카카오 로그인
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <LoginRequiredPopup
+          onCancel={() => setIsLoginPopupOpen(false)}
+          onLogin={handleKakaoLogin}
+        />
       )}
     </>
   );

@@ -65,17 +65,17 @@ const MapModal = ({ isOpen, onClose, imageSrc }: MapModalProps) => {
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-ink/70 backdrop-blur-[8px] p-4 animate-in fade-in duration-200"
       onClick={onClose}
     >
       {/* 닫기 버튼 */}
-      <button 
-        className="absolute top-6 right-6 text-white/80 z-[10000] p-2"
+      <button
+        type="button"
+        aria-label="닫기"
+        className="absolute right-6 top-6 z-[10000] flex size-9 items-center justify-center rounded-full border border-ink bg-paper font-body-kr text-[16px] text-ink"
         onClick={onClose}
       >
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-        </svg>
+        ✕
       </button>
 
       <div
@@ -97,7 +97,7 @@ const MapModal = ({ isOpen, onClose, imageSrc }: MapModalProps) => {
             ref={imageRef}
             src={imageSrc}
             alt="지도 상세"
-            className={`max-w-full max-h-full object-contain transition-transform ${isDragging ? '' : 'duration-300'} ease-out will-change-transform shadow-2xl rounded-lg`}
+            className={`max-w-full max-h-full object-contain transition-transform ${isDragging ? '' : 'duration-300'} ease-out will-change-transform rounded-[8px] border-2 border-ink`}
             style={{
               transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
               cursor: scale > 1 ? (isDragging ? "grabbing" : "grab") : "zoom-in",
@@ -108,7 +108,7 @@ const MapModal = ({ isOpen, onClose, imageSrc }: MapModalProps) => {
       </div>
 
       {/* 안내 텍스트 */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/60 text-sm font-medium pointer-events-none">
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 pointer-events-none font-typewriter text-[12px] text-paper/70">
         {scale > 1 ? "더블 탭하여 축소" : "더블 탭하여 확대"}
       </div>
     </div>,

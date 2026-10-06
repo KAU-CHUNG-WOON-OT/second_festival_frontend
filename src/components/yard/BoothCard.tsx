@@ -1,5 +1,6 @@
 import { useLanguage } from '../../contexts/LanguageContext';
 import type { BoothData } from '../../data/boothData';
+import logoImg from '../../assets/cheongun_logo.svg';
 
 interface BoothCardProps {
   booth: BoothData;
@@ -11,27 +12,26 @@ const BoothCard = ({ booth, onClick }: BoothCardProps) => {
   const isEng = language === 'ENG';
 
   return (
-    <div
+    <button
+      type="button"
       onClick={onClick}
-      className="rounded-2xl p-2.5 transition-all duration-200 cursor-pointer active:scale-[0.96] flex flex-col items-center justify-center text-center aspect-square"
-      style={{
-        background: "rgba(255,255,255,0.55)",
-        backdropFilter: "blur(12px)",
-        border: "1px solid rgba(180,190,210,0.5)",
-        boxShadow: "0 1px 8px rgba(0,0,0,0.04)",
-      }}
+      className="flex min-h-[159px] w-full flex-col items-center gap-2 rounded-[16px] border-2 border-ink bg-paper px-3 py-6 text-center text-ink drop-shadow-[4px_4px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px]"
     >
-      <div className="mb-2 flex items-center justify-center overflow-hidden w-20 h-20 rounded-xl">
-        {booth.logo_img && (
-          <img src={booth.logo_img} alt={`${booth.name} 로고`} className="w-full h-full object-cover" />
-        )}
-      </div>
-      
-      <h3 className="font-semibold text-[#2B3A5C] text-[12px] leading-tight break-keep mb-0.5">
+      <img
+        src={booth.logo_img || logoImg}
+        alt={`${booth.name} 로고`}
+        onError={(e) => {
+          e.currentTarget.src = logoImg;
+        }}
+        className="h-12 w-[68px] object-contain"
+      />
+      <h3 className="break-keep font-display text-[18px] leading-[22.5px]">
         {isEng ? booth.name_en : booth.name}
       </h3>
-      <p className="text-[10px] font-medium text-[#9ca3af] whitespace-pre-line">{booth.booth}</p>
-    </div>
+      <p className="whitespace-pre-line font-body-kr text-[14px] leading-5 opacity-70">
+        {booth.category} · {booth.booth}
+      </p>
+    </button>
   );
 };
 

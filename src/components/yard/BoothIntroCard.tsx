@@ -13,14 +13,10 @@ const BoothIntroCard = ({ introduction, introduction_en }: BoothIntroCardProps) 
   if (!content) return null;
 
   return (
-    <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-5 border border-white/40">
-      <h3 className="text-[14px] font-bold text-[#2B3A5C] mb-3">
-        {isEng ? "Introduction" : "부스 소개"}
-      </h3>
-      <p className="text-[13px] text-[#3a4558] leading-relaxed whitespace-pre-line">
-        {content}
-      </p>
-    </div>
+    <section className="rounded-[16px] border-2 border-ink bg-paper p-5 text-ink drop-shadow-[5px_5px_0px_var(--color-ink)]">
+      <h2 className="font-display text-[20px] leading-7">{isEng ? "Introduction" : "부스 소개"}</h2>
+      <p className="whitespace-pre-line pt-2 font-body-kr text-[16px] leading-6">{content}</p>
+    </section>
   );
 };
 
