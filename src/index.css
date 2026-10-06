@@ -4,6 +4,19 @@
 @theme {
   --font-sans:
     'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-display: 'Black Han Sans', sans-serif;
+  --font-typewriter: 'Courier Prime', monospace;
+  --font-condensed: 'Big Shoulders Display', sans-serif;
+  --font-body-kr: 'Noto Sans KR', sans-serif;
+
+  --color-ink: #2a1810;
+  --color-paper: #fbf3df;
+  --color-cream: #f4e7cc;
+  --color-mustard: #e3a62b;
+  --color-tape-blue: #3f8fc9;
+  --color-rust: #c4491c;
+  --color-olive: #6d6a2c;
+  --color-sky-light: #8ec9ee;
 }
 
 ::-webkit-scrollbar {
