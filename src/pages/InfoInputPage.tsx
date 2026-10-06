@@ -1,12 +1,14 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { FiInstagram, FiYoutube } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
+import RetroPageHeader from '../components/common/RetroPageHeader';
 import { markOnboardingSeenInCurrentTab } from '../lib/onboardingSession';
 import { saveUserInfo, type StudentType } from '../lib/userInfoStorage';
 import { ApiError, apiFetch } from '../lib/apiClient';
 import { identify, setPeople, track } from '@/lib/mixpanel';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const INPUT_BASE =
+  'h-14 w-full rounded-full border-2 bg-cream px-5 font-body-kr text-[18px] outline-none placeholder:text-ink/40';
 
 const InfoInputPage = () => {
   const navigate = useNavigate();
@@ -95,31 +97,37 @@ const InfoInputPage = () => {
     return () => window.removeEventListener('keydown', handler);
   }, [isConfirmModalOpen, isSubmitting]);
 
+  const inputClass = (hasError = false) =>
+    `${INPUT_BASE} ${hasError ? 'border-rust' : 'border-ink'}`;
+
+  // 시안이 없어 온보딩·팔찌 화면의 입력 스타일로 맞춤
   return (
-    <section className="relative -mt-[86px] flex h-full min-h-[874px] w-full flex-col overflow-hidden">
-      <div className="relative h-[697px] w-full shrink-0 overflow-hidden">
-        <span className="absolute left-[35px] top-[130px] rounded-[18px] border border-white/45 px-[20px] py-[6px] text-[19px] font-medium leading-none text-white backdrop-blur-[2px]">
-          활공제
+    <section className="flex flex-col px-5 pb-16 pt-5 text-ink">
+      <RetroPageHeader />
+
+      <div className="pt-8">
+        <span className="inline-flex h-[38px] items-center rounded-full border border-ink bg-mustard px-4 font-display text-[18px] leading-7">
+          활주로
         </span>
+      </div>
+      <h1 className="pt-2 font-display text-[60px] leading-[60px]">정보입력</h1>
+      <p className="pt-2 font-typewriter text-[12px] leading-4 tracking-[3.6px]">PASSENGER INFO</p>
 
-        <h1 className="absolute left-[40px] top-[172px] text-[68px] font-light leading-[0.95] tracking-[-0.02em] text-white">
-          정보입력
-        </h1>
-
-        <form
-          onSubmit={handleFormSubmit}
-          noValidate
-          className="absolute left-1/2 top-[250px] w-[321px] -translate-x-1/2"
-        >
-          <input
-            type="text"
-            autoComplete="name"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            placeholder="실명"
-            aria-label="실명"
-            className="h-[52px] w-full rounded-[20px] bg-white px-[20px] text-[20px] font-light text-[#111111] outline-none placeholder:text-[20px] placeholder:font-light placeholder:text-[#d9d9d9] focus:ring-2 focus:ring-[#5ea0ee]/35"
-          />
+      <form
+        onSubmit={handleFormSubmit}
+        noValidate
+        className="mt-6 flex flex-col gap-[14px] rounded-[24px] border-2 border-ink bg-paper p-6 shadow-[6px_6px_0px_0px_var(--color-ink)]"
+      >
+        <input
+          type="text"
+          autoComplete="name"
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+          placeholder="실명"
+          aria-label="실명"
+          className={inputClass()}
+        />
+        <div>
           <input
             type="text"
             inputMode="numeric"
@@ -134,30 +142,24 @@ const InfoInputPage = () => {
             aria-label="학번"
             aria-invalid={showStudentIdError}
             aria-describedby={showStudentIdError ? 'student-id-error' : undefined}
-            className={`mt-[14px] h-[52px] w-full rounded-[20px] bg-white px-[20px] text-[20px] font-light text-[#111111] outline-none placeholder:text-[20px] placeholder:font-light placeholder:text-[#d9d9d9] focus:ring-2 ${
-              showStudentIdError
-                ? 'ring-2 ring-[#dc2626]/60 focus:ring-[#dc2626]/60'
-                : 'focus:ring-[#5ea0ee]/35'
-            }`}
+            className={inputClass(showStudentIdError)}
           />
           {showStudentIdError && (
-            <p
-              id="student-id-error"
-              role="alert"
-              className="mt-[6px] pl-[20px] text-[13px] font-medium text-[#fee2e2] drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]"
-            >
+            <p id="student-id-error" role="alert" className="pl-5 pt-[6px] font-body-kr text-[13px] font-bold text-rust">
               학번 형식에 맞지 않습니다
             </p>
           )}
-          <input
-            type="text"
-            autoComplete="organization"
-            value={department}
-            onChange={(event) => setDepartment(event.target.value)}
-            placeholder="학과"
-            aria-label="학과"
-            className="mt-[14px] h-[52px] w-full rounded-[20px] bg-white px-[20px] text-[20px] font-light text-[#111111] outline-none placeholder:text-[20px] placeholder:font-light placeholder:text-[#d9d9d9] focus:ring-2 focus:ring-[#5ea0ee]/35"
-          />
+        </div>
+        <input
+          type="text"
+          autoComplete="organization"
+          value={department}
+          onChange={(event) => setDepartment(event.target.value)}
+          placeholder="학과"
+          aria-label="학과"
+          className={inputClass()}
+        />
+        <div>
           <input
             type="email"
             inputMode="email"
@@ -169,131 +171,87 @@ const InfoInputPage = () => {
             aria-label="이메일"
             aria-invalid={showEmailError}
             aria-describedby={showEmailError ? 'email-error' : undefined}
-            className={`mt-[14px] h-[52px] w-full rounded-[20px] bg-white px-[20px] text-[20px] font-light text-[#111111] outline-none placeholder:text-[20px] placeholder:font-light placeholder:text-[#d9d9d9] focus:ring-2 ${
-              showEmailError
-                ? 'ring-2 ring-[#dc2626]/60 focus:ring-[#dc2626]/60'
-                : 'focus:ring-[#5ea0ee]/35'
-            }`}
+            className={inputClass(showEmailError)}
           />
           {showEmailError && (
-            <p
-              id="email-error"
-              role="alert"
-              className="mt-[6px] pl-[20px] text-[13px] font-medium text-[#fee2e2] drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]"
-            >
+            <p id="email-error" role="alert" className="pl-5 pt-[6px] font-body-kr text-[13px] font-bold text-rust">
               올바른 이메일 형식이 아닙니다 (예: name@kau.kr)
             </p>
           )}
-          <div
-            className="mt-[14px] grid h-[52px] grid-cols-3 gap-[4px] rounded-[20px] bg-white p-[4px]"
-            role="radiogroup"
-            aria-label="학적"
-          >
-            {(
-              [
-                { value: 'UNDERGRADUATE', label: '재학생' },
-                { value: 'ON_LEAVE', label: '휴학생' },
-                { value: 'GRADUATE', label: '대학원생' },
-              ] as const
-            ).map((option) => {
-              const selected = studentType === option.value;
-              return (
-                <button
-                  key={option.value}
-                  type="button"
-                  role="radio"
-                  aria-checked={selected}
-                  onClick={() => setStudentType(option.value)}
-                  className={`rounded-[16px] text-[16px] font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-[#5ea0ee]/35 ${
-                    selected ? 'bg-[#5ea0ee] text-white' : 'text-[#9ca3af]'
-                  }`}
-                >
-                  {option.label}
-                </button>
-              );
-            })}
-          </div>
-          {errorMessage && (
-            <p
-              role="alert"
-              className="mt-[14px] rounded-[16px] bg-white/90 px-[16px] py-[10px] text-center text-[14px] font-medium text-[#dc2626]"
-            >
-              {errorMessage}
-            </p>
-          )}
-          <button
-            type="submit"
-            disabled={!isValid || isSubmitting}
-            className="mt-[20px] h-[52px] w-full rounded-[20px] bg-[#5ea0ee] text-[20px] font-medium text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {isSubmitting ? '저장 중...' : '입력 완료'}
-          </button>
-        </form>
-      </div>
-
-      <footer className="relative z-10 mt-auto flex h-[177px] w-full shrink-0 flex-col items-center border-t border-[#e2e8f0] bg-white px-[16px] pt-[33px]">
-        <p className="text-center text-[14px] font-semibold leading-[20px] tracking-[-0.1504px] text-[#314158]">
-          한국항공대학교 제52대 총학생회 청운
-        </p>
-
-        <div className="mt-[16px] flex items-center gap-[12px]">
-          <a
-            href="https://www.youtube.com/@kau_students"
-            target="_blank"
-            rel="noreferrer"
-            aria-label="유튜브"
-            className="inline-flex size-[44px] items-center justify-center rounded-[14px] bg-[linear-gradient(135deg,#f1f5f9_0%,#e2e8f0_100%)] text-[#314158] shadow-[0_10px_15px_rgba(226,232,240,0.5),0_4px_6px_rgba(226,232,240,0.5)]"
-          >
-            <FiYoutube size={20} />
-          </a>
-          <a
-            href="https://www.instagram.com/kau_students?igsh=MXRpNmF0MzA3MHZudA=="
-            target="_blank"
-            rel="noreferrer"
-            aria-label="인스타그램"
-            className="inline-flex size-[44px] items-center justify-center rounded-[14px] bg-[linear-gradient(135deg,#f1f5f9_0%,#e2e8f0_100%)] text-[#314158] shadow-[0_10px_15px_rgba(226,232,240,0.5),0_4px_6px_rgba(226,232,240,0.5)]"
-          >
-            <FiInstagram size={20} />
-          </a>
         </div>
-
-        <p className="mt-[16px] text-center text-[12px] font-medium leading-[16px] text-[#62748e]">
-          Copyright©2024. Kau_Students. All rights reserved.
-        </p>
-      </footer>
+        <div
+          className="grid h-14 grid-cols-3 gap-1 rounded-full border-2 border-ink bg-cream p-1"
+          role="radiogroup"
+          aria-label="학적"
+        >
+          {(
+            [
+              { value: 'UNDERGRADUATE', label: '재학생' },
+              { value: 'ON_LEAVE', label: '휴학생' },
+              { value: 'GRADUATE', label: '대학원생' },
+            ] as const
+          ).map((option) => {
+            const selected = studentType === option.value;
+            return (
+              <button
+                key={option.value}
+                type="button"
+                role="radio"
+                aria-checked={selected}
+                onClick={() => setStudentType(option.value)}
+                className={`rounded-full font-display text-[16px] ${selected ? 'bg-ink text-paper' : 'text-ink/50'}`}
+              >
+                {option.label}
+              </button>
+            );
+          })}
+        </div>
+        {errorMessage && (
+          <p
+            role="alert"
+            className="rounded-[16px] border-2 border-rust bg-cream px-4 py-[10px] text-center font-body-kr text-[14px] font-bold text-rust"
+          >
+            {errorMessage}
+          </p>
+        )}
+        <button
+          type="submit"
+          disabled={!isValid || isSubmitting}
+          className="mt-2 h-16 w-full rounded-[16px] border-2 border-ink bg-rust font-display text-[20px] leading-7 text-paper drop-shadow-[4px_4px_0px_var(--color-ink)] disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {isSubmitting ? '저장 중...' : '입력 완료'}
+        </button>
+      </form>
 
       {isConfirmModalOpen && (
         <div
-          className="fixed inset-0 z-40 flex items-center justify-center bg-black/45 px-[16px] backdrop-blur-sm onboarding-backdrop-in"
+          className="fixed inset-0 z-40 flex items-center justify-center bg-ink/50 px-4 onboarding-backdrop-in"
           role="presentation"
           onClick={() => {
             if (!isSubmitting) setIsConfirmModalOpen(false);
           }}
         >
           <div
-            className="relative w-full max-w-[340px] rounded-[20px] bg-white px-[20px] pb-[18px] pt-[22px] shadow-[0_24px_60px_rgba(15,23,42,0.28)] onboarding-modal-in"
+            className="relative w-full max-w-[340px] rounded-[20px] border-2 border-ink bg-paper px-5 pb-5 pt-6 text-ink drop-shadow-[6px_6px_0px_var(--color-ink)] onboarding-modal-in"
             role="dialog"
             aria-modal="true"
             aria-labelledby="info-confirm-title"
             onClick={(event) => event.stopPropagation()}
           >
-            <p
-              id="info-confirm-title"
-              className="text-center text-[28px] font-bold leading-none text-[#111111]"
-            >
+            <p id="info-confirm-title" className="text-center font-display text-[28px] leading-none">
               주의
             </p>
-            <p className="mt-[14px] break-keep text-center text-[15px] font-medium leading-[1.55] text-[#374151]">
+            <p className="mt-4 break-keep text-center font-body-kr text-[15px] leading-[1.55]">
               웹사이트 회원가입 시 본인의 실제 정보와 다른 정보를 기입한다면, 티켓 수령 불가를
               포함한 불이익이 있을 수 있습니다.
             </p>
 
-            <div className="mt-[20px] flex items-center justify-between gap-[10px]">
+            <div className="mt-5 flex items-center justify-between gap-[10px]">
               <button
                 type="button"
                 onClick={() => setIsConfirmModalOpen(false)}
                 disabled={isSubmitting}
-                className="h-[46px] flex-1 rounded-[14px] bg-[#eef2f7] text-[15px] font-semibold leading-none text-[#374151] transition-colors active:scale-[0.98] hover:bg-[#e2e8f0] disabled:cursor-not-allowed disabled:opacity-60"
+                className="h-[46px] flex-1 rounded-[14px] border-2 border-ink bg-cream font-body-kr text-[15px] font-semibold disabled:cursor-not-allowed disabled:opacity-60"
               >
                 취소
               </button>
@@ -301,7 +259,7 @@ const InfoInputPage = () => {
                 type="button"
                 onClick={submitProfile}
                 disabled={isSubmitting}
-                className="h-[46px] flex-1 rounded-[14px] bg-[#5ea0ee] text-[15px] font-semibold leading-none text-white transition-transform active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+                className="h-[46px] flex-1 rounded-[14px] border-2 border-ink bg-ink font-body-kr text-[15px] font-semibold text-paper disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isSubmitting ? '저장 중...' : '확인'}
               </button>
