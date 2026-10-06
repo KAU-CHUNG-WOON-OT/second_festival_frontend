@@ -12,6 +12,7 @@ const TYPE_CONFIG: Record<string, { label: string; label_en: string; color: stri
   EVENT:       { label: "이벤트", label_en: "Event",       color: "#4A7FD2", bg: "rgba(74,127,210,0.1)",  emoji: "🎯" },
   PERFORMANCE: { label: "공연",   label_en: "Performance", color: "#E06B3A", bg: "rgba(224,107,58,0.1)",  emoji: "🎵" },
   CEREMONY:    { label: "행사",   label_en: "Ceremony",    color: "#7C5CBF", bg: "rgba(124,92,191,0.1)",  emoji: "🎊" },
+  CLUB:        { label: "동아리", label_en: "Club",        color: "#3f8fc9", bg: "rgba(63,143,201,0.1)",  emoji: "🎸" },
 };
 
 const TimetableModal = ({ event, onClose }: TimetableModalProps) => {
