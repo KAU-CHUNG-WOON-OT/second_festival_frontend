@@ -14,10 +14,17 @@ export interface TimetableEvent {
     songs?: string[];
 }
 
-export const DATE_TABS_EN = ["May 18", "May 19", "May 20"];
-
 export const FESTIVAL_DATE = "2026-10-28";
 export const FESTIVAL_DATE_LABEL = "10.28 WED";
+
+export const TYPE_ICON: Record<string, string> = {
+    EVENT: "✈",
+    CLUB: "♪",
+    PERFORMANCE: "♪",
+    BREAKTIME: "◷",
+};
+
+export const formatTrackNo = (trackNo: number) => `A-${String(trackNo).padStart(2, "0")}`;
 
 // TODO: 피그마 시안의 예시 데이터. 실제 일정이 나오면 교체
 export const timetableEvents: TimetableEvent[] = [
