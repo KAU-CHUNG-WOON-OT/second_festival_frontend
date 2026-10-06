@@ -1,90 +1,52 @@
 import { useState } from "react";
-import DayHeader from "../components/common/DayHeader";
+import { useTranslation } from "react-i18next";
+import RetroPageHeader from "../components/common/RetroPageHeader";
 import NoticeItem from "../components/notice/NoticeItem";
 import NoticeModal from "../components/notice/NoticeModal";
 import { dummyNotices } from "../data/noticeData";
 import type { NoticeData } from "../data/noticeData";
+import { FESTIVAL_DATE_LABEL } from "../data/timetableData";
 
 const NoticePage = () => {
+  const { t } = useTranslation();
   const [selectedNotice, setSelectedNotice] = useState<NoticeData | null>(null);
 
-  const sortByDateDesc = (a: NoticeData, b: NoticeData) => b.date.localeCompare(a.date);
-
-  const importantNotices = dummyNotices
-    .filter((n) => n.isImportant)
-    .sort(sortByDateDesc);
-  const newNotices = dummyNotices
-    .filter((n) => !n.isImportant && n.isNew)
-    .sort(sortByDateDesc);
-  const oldNotices = dummyNotices
-    .filter((n) => !n.isImportant && !n.isNew)
-    .sort(sortByDateDesc);
+  const sortedNotices = [...dummyNotices].sort((a, b) => b.date.localeCompare(a.date));
+  const newNotices = sortedNotices.filter((n) => n.isNew);
 
   return (
-    <div className="flex flex-1 flex-col pb-5 overflow-y-auto">
-      <div className="px-6">
-        <DayHeader
-          selectedDay={-1}
-          onSelectDay={() => {}}
-          showDayTabs={false}
-          title="공지사항"
-        />
-      </div>
+    <div className="flex flex-col px-5 pb-16 pt-5 text-ink">
+      <RetroPageHeader title={t("nav.notice")} />
 
-      <div className="flex flex-col gap-2.5 px-6">
-        {importantNotices.length > 0 && (
-          <>
-            <div className="flex items-center gap-3 mb-1">
-              <p className="text-[12px] font-bold text-[#ffd8c3] whitespace-nowrap">중요</p>
-              <div className="flex-1 h-px bg-white/20" />
-            </div>
-            {importantNotices.map((notice) => (
-              <NoticeItem
-                key={notice.id}
-                notice={notice}
-                onClick={() => setSelectedNotice(notice)}
-              />
-            ))}
-          </>
-        )}
+      <p className="pt-8 font-typewriter text-[12px] leading-4 tracking-[3.6px] text-rust">
+        활주로 · {FESTIVAL_DATE_LABEL}
+      </p>
+      <h2 className="font-display text-[48px] leading-[60px]">{t("nav.notice")}</h2>
 
-        {newNotices.length > 0 && (
-          <>
-            <div className="flex items-center gap-3 mt-3 mb-1">
-              <p className="text-[12px] font-bold text-white/60 whitespace-nowrap">New</p>
-              <div className="flex-1 h-px bg-white/20" />
-            </div>
+      {newNotices.length > 0 && (
+        <>
+          <p className="pt-6 font-condensed text-[24px] font-light leading-8 tracking-[0.6px]">New</p>
+          <div className="flex flex-col gap-4 pt-2">
             {newNotices.map((notice) => (
               <NoticeItem
                 key={notice.id}
                 notice={notice}
+                compact
                 onClick={() => setSelectedNotice(notice)}
               />
             ))}
-          </>
-        )}
+          </div>
+          <div className="mt-6 border-t-2 border-ink" />
+        </>
+      )}
 
-        {oldNotices.length > 0 && (
-          <>
-            <div className="flex items-center gap-3 mt-3 mb-1">
-              <p className="text-[12px] font-bold text-white/60 whitespace-nowrap">전체</p>
-              <div className="flex-1 h-px bg-white/20" />
-            </div>
-            {oldNotices.map((notice) => (
-              <NoticeItem
-                key={notice.id}
-                notice={notice}
-                onClick={() => setSelectedNotice(notice)}
-              />
-            ))}
-          </>
-        )}
+      <div className="flex flex-col gap-4 pt-6">
+        {sortedNotices.map((notice) => (
+          <NoticeItem key={notice.id} notice={notice} onClick={() => setSelectedNotice(notice)} />
+        ))}
       </div>
 
-      <NoticeModal
-        notice={selectedNotice}
-        onClose={() => setSelectedNotice(null)}
-      />
+      <NoticeModal notice={selectedNotice} onClose={() => setSelectedNotice(null)} />
     </div>
   );
 };
