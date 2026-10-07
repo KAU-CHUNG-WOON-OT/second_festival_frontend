@@ -15,6 +15,7 @@ const REDESIGNED_PATHS = [
   /^\/timetable$/,
   /^\/performance$/,
   /^\/notice$/,
+  /^\/game(\/[a-z]+)?$/,
   /^\/makers$/,
   /^\/info$/,
   /^\/yard(\/\d+)?$/,

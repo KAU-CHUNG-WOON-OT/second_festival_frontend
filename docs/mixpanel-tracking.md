@@ -65,6 +65,8 @@ Mixpanel의 Simplified ID Merge 기능이 로그인 이전의 익명 이벤트�
 | `/pub` | Pub List |
 | `/pub/:id` | Pub Detail |
 | `/makers` | Makers |
+| `/game` | Game |
+| `/game/:gameId` | Game Play |
 | `/info` | Info Input |
 | `/info-guide` | Info Guide |
 

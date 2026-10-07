@@ -26,6 +26,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     { label: t('nav.yard'), path: '/yard' },
     { label: t('nav.foodtruck'), path: '/foodtruck' },
     { label: t('nav.performance'), path: '/performance' },
+    { label: t('nav.game'), path: '/game' },
     { label: t('nav.makers'), path: '/makers' },
   ];
 

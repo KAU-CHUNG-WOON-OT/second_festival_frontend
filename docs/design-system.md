@@ -89,7 +89,7 @@ import RetroPageTitle from '../components/common/RetroPageTitle';
 | 모티프 | 코드 | 쓰인 곳 |
 |---|---|---|
 | 3색 줄무늬 | `<div className="h-2 w-full bg-retro-stripe" />` (`index.css`의 `@utility`) | 푸터, 홈 히어로, 온보딩, 타임테이블 모달 |
-| 티켓 펀치 구멍 | 카드 양옆 `absolute -left-[10px] size-5 rounded-full border border-ink bg-cream` | TrackCard |
+| 티켓 펀치 구멍 | 카드 양옆 `absolute -left-[10px] size-5 rounded-full border border-ink bg-cream` | TrackCard, 홈 게임 카드 |
 | 절취선 | `border-t border-dashed border-ink/50` | 카드 상·하단 구분 |
 | 카세트 릴 | `assets/cassette_reel.svg`, `assets/home_reel.svg` | 온보딩, 라인업, 공연 중 카드 |
 | LP 레코드 | `TimetableModal` 상단 | 공연 상세 |
