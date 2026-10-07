@@ -15,7 +15,7 @@ description: 2026 활주로 축제 프론트의 레트로(카세트·티켓) 디
 4. **페이지 뼈대**: `px-5 pb-16 pt-5 text-ink` 컨테이너 → `<RetroPageHeader />` → `<RetroPageTitle title=… />`. 직접 알약·60px 제목을 다시 만들지 않는다.
 5. **새 경로는 `src/layout/Layout.tsx`의 `REDESIGNED_PATHS`에 추가** (푸터 없는 시안이면 `NO_FOOTER_PATHS`도).
 6. **줄무늬는 `bg-retro-stripe`**. 그라디언트를 복사하지 않는다.
-7. **공통 컴포넌트 우선**: `RetroDialog`, `InfoCard`, `MenuList`, `PaymentCard`, `Poster`, `CategoryList`, `SearchBar`, `TicketStatusCard`, `LoginRequiredPopup`. 새로 만들기 전에 `src/components/common`부터 확인.
+7. **공통 컴포넌트 우선**: `RetroDialog`, `InfoCard`, `MenuList`, `PaymentCard`, `Poster`, `CategoryList`, `SearchBar`, `LoginRequiredPopup`. 새로 만들기 전에 `src/components/common`부터 확인.
 
 ## 피그마 시안을 구현할 때
 

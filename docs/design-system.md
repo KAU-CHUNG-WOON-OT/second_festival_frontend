@@ -89,7 +89,7 @@ import RetroPageTitle from '../components/common/RetroPageTitle';
 | 모티프 | 코드 | 쓰인 곳 |
 |---|---|---|
 | 3색 줄무늬 | `<div className="h-2 w-full bg-retro-stripe" />` (`index.css`의 `@utility`) | 푸터, 홈 히어로, 온보딩, 타임테이블 모달 |
-| 티켓 펀치 구멍 | 카드 양옆 `absolute -left-[10px] size-5 rounded-full border border-ink bg-cream` | TrackCard, 팔찌 카드, 보딩패스 |
+| 티켓 펀치 구멍 | 카드 양옆 `absolute -left-[10px] size-5 rounded-full border border-ink bg-cream` | TrackCard, 홈 게임 카드 |
 | 절취선 | `border-t border-dashed border-ink/50` | 카드 상·하단 구분 |
 | 카세트 릴 | `assets/cassette_reel.svg`, `assets/home_reel.svg` | 온보딩, 라인업, 공연 중 카드 |
 | LP 레코드 | `TimetableModal` 상단 | 공연 상세 |
@@ -115,7 +115,6 @@ import RetroPageTitle from '../components/common/RetroPageTitle';
 | `PaymentCard` | `components/common` | 계좌 복사 + QR 확대 |
 | `Poster` | `components/common` | 포스터 이미지 + 확대, 로드 실패 시 로고 대체 |
 | `CategoryList`, `SearchBar` | `components/common` | 목록 필터 |
-| `TicketStatusCard` | `components/ticket` | 성공/에러/대기 상태 카드 (`variant`) |
 | `RetroFooter` | `layout` | Layout이 자동 렌더. 홈만 `large` |
 
 아래에서 올라오는 시트(공지 상세 `NoticeModal`, 공연 상세 `TimetableModal`)는 `rounded-t-[32px] border-2 border-ink` + 슬라이드업 애니메이션 + 아래로 끌어서 닫기 구조다. 새 시트가 필요하면 둘 중 하나를 참고한다.
@@ -126,7 +125,7 @@ import RetroPageTitle from '../components/common/RetroPageTitle';
 2. **토큰으로 변환**: 시안의 hex를 위 토큰으로 바꾼다. 매칭이 안 되는 색이 나오면 새 토큰을 만들기 전에 팀에 확인한다.
 3. **마스크 SVG는 무시**: 이 파일의 이미지 마스크는 전부 꽉 찬 사각형이라 의미가 없다. 이미지 자체만 쓴다.
 4. **로직은 유지, 렌더만 교체**: API 호출, mixpanel `track`, i18n(`t()`/`isEng`)은 그대로 두고 JSX·클래스만 바꾼다.
-5. **시안이 없는 화면**은 가장 비슷한 화면에서 파생한다. 예: 주점·푸드트럭 ← 부스, 공연 ← 타임테이블, 정보입력 ← 온보딩·팔찌.
+5. **시안이 없는 화면**은 가장 비슷한 화면에서 파생한다. 예: 주점·푸드트럭 ← 부스, 공연 ← 타임테이블, 정보입력 ← 온보딩.
 6. **이미지 실패 대비**: 서버 이미지는 `onError`에서 `cheongun_logo.svg`로 대체한다.
 7. **정리**: 바꾸면서 안 쓰게 된 컴포넌트·에셋·import는 같이 삭제한다.
 8. **검증**: 브라우저를 **402px 폭**으로 맞추고 피그마 스크린샷과 나란히 비교한다.

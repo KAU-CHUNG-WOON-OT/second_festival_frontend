@@ -13,8 +13,7 @@ const PAGE_NAMES: Record<string, string> = {
   '/yard': 'Yard List',
   '/pub': 'Pub List',
   '/makers': 'Makers',
-  '/ticket': 'Ticket Reservation',
-  '/myticket': 'My Ticket',
+  '/game': 'Game',
   '/info': 'Info Input',
   '/info-guide': 'Info Guide',
 };
@@ -31,7 +30,9 @@ export const usePageTracking = () => {
           ? 'Booth Detail'
           : location.pathname.startsWith('/pub/')
             ? 'Pub Detail'
-            : location.pathname);
+            : location.pathname.startsWith('/game/')
+              ? 'Game Play'
+              : location.pathname);
 
     track('page_viewed', { path: location.pathname, page_name: pageName });
   }, [location.pathname]);

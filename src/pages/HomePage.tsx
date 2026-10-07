@@ -3,7 +3,7 @@ import HomeHero from '../components/home/HomeHero';
 import HomeLineupCard from '../components/home/HomeLineupCard';
 import HomeNoticeBanner from '../components/home/HomeNoticeBanner';
 import HomeQuickMenuGrid, { type HomeQuickMenuItem } from '../components/home/HomeQuickMenuGrid';
-import HomeTicketSection from '../components/home/HomeTicketSection';
+import HomeGameSection from '../components/home/HomeGameSection';
 import { dummyNotices } from '../data/noticeData';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -43,7 +43,7 @@ const HomePage = () => {
 
       <section className="flex flex-col gap-8 px-5 pb-12">
         <HomeLineupCard />
-        <HomeTicketSection to="/ticket" />
+        <HomeGameSection to="/game" />
       </section>
     </div>
   );
