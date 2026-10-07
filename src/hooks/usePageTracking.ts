@@ -13,8 +13,6 @@ const PAGE_NAMES: Record<string, string> = {
   '/yard': 'Yard List',
   '/pub': 'Pub List',
   '/makers': 'Makers',
-  '/ticket': 'Ticket Reservation',
-  '/myticket': 'My Ticket',
   '/info': 'Info Input',
   '/info-guide': 'Info Guide',
 };

@@ -24,8 +24,6 @@ import PubPage from './pages/PubPage';
 import PubDetailPage from './pages/PubDetailPage';
 import MakersPage from './pages/MakersPage';
 import OnboardingPage from './pages/OnboardingPage';
-import TicketReservationPage from './pages/TicketReservationPage';
-import MyTicketPage from './pages/MyTicketPage';
 import InfoInputPage from './pages/InfoInputPage';
 import OAuthRedirectPage from './pages/OAuthRedirectPage';
 import InfoGuidePage from './pages/InfoGuidePage';
@@ -52,8 +50,6 @@ createRoot(document.getElementById('root')!).render(
               <Route path="/pub" element={<PubPage />} />
               <Route path="/pub/:id" element={<PubDetailPage />} />
               <Route path="/makers" element={<MakersPage />} />
-              <Route path="/ticket" element={<TicketReservationPage />} />
-              <Route path="/myticket" element={<MyTicketPage />} />
               <Route path="/info" element={<InfoInputPage />} />
               <Route path="/oauth/callback/:dest" element={<OAuthRedirectPage />} />
               <Route path="/info-guide" element={<InfoGuidePage />} />

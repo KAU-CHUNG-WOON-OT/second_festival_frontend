@@ -15,8 +15,6 @@ const REDESIGNED_PATHS = [
   /^\/timetable$/,
   /^\/performance$/,
   /^\/notice$/,
-  /^\/ticket$/,
-  /^\/myticket$/,
   /^\/makers$/,
   /^\/info$/,
   /^\/yard(\/\d+)?$/,
@@ -39,7 +37,7 @@ const Layout = ({ children }: LayoutProps) => {
   const isRedesignedPath = REDESIGNED_PATHS.some((pattern) => pattern.test(location.pathname));
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const showFooterPaths = ['/home', '/notice', '/makers', '/ticket', '/myticket'];
+  const showFooterPaths = ['/home', '/notice', '/makers'];
   const shouldShowFooter = isRedesignedPath
     ? !NO_FOOTER_PATHS.includes(location.pathname)
     : showFooterPaths.includes(location.pathname);

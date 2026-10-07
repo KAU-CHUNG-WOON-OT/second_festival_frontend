@@ -65,8 +65,6 @@ Mixpanel의 Simplified ID Merge 기능이 로그인 이전의 익명 이벤트�
 | `/pub` | Pub List |
 | `/pub/:id` | Pub Detail |
 | `/makers` | Makers |
-| `/ticket` | Ticket Reservation |
-| `/myticket` | My Ticket |
 | `/info` | Info Input |
 | `/info-guide` | Info Guide |
 
@@ -128,75 +126,6 @@ OAuth 리다이렉트가 완료될 때 (카카오 로그인 완료 시) 발송�
 | `student_type` | string | `UNDERGRADUATE` / `ON_LEAVE` / `GRADUATE` |
 
 참고: 이 시점에 `identify()` 및 `setPeople()`도 함께 호출됩니다.
-
----
-
-### `ticket_reserve_clicked`
-
-팔찌 예약 버튼을 클릭했을 때 발송됩니다. 로그인 여부, 오픈 시간 여부와 무관하게 클릭 시 발송됩니다.
-
-**파일:** `src/pages/TicketReservationPage.tsx`
-
-| 속성 | 타입 | 설명 |
-|------|------|------|
-| `student_type` | string | 유저의 학적 상태 |
-| `is_login` | boolean | 로그인 여부 |
-| `disabled_by_open_time` | boolean | 오픈 시간 이전 여부 |
-| `already_reserved` | boolean | 이미 예약 완료 여부 |
-| `current_reservation` | number | 현재 예약 수 |
-
----
-
-### `ticket_reserved`
-
-팔찌 예약 요청이 성공했을 때 발송됩니다.
-
-**파일:** `src/pages/TicketReservationPage.tsx`
-
-| 속성 | 타입 | 설명 |
-|------|------|------|
-| `student_type` | string | 예약한 유저의 학적 상태 |
-
----
-
-### `ticket_reserve_failed`
-
-팔찌 예약 요청이 실패했을 때 발송됩니다.
-
-**파일:** `src/pages/TicketReservationPage.tsx`
-
-| 속성 | 타입 | 설명 |
-|------|------|------|
-| `student_type` | string | 유저의 학적 상태 |
-| `status` | number \| undefined | HTTP 상태 코드 |
-| `code` | string \| undefined | 서버 에러 코드 |
-| `message` | string | 에러 메시지 |
-
----
-
-### `ticket_sold_out_seen`
-
-내 예약 페이지에서 티켓이 없는 유저에게 매진 메시지가 노출될 때 발송됩니다.
-
-**파일:** `src/pages/MyTicketPage.tsx`
-
-| 속성 | 타입 | 설명 |
-|------|------|------|
-| `current_count` | number \| null | 현재 예약 수 |
-
----
-
-### `myticket_redeem_attempted`
-
-내 예약 페이지에서 팔찌 수령 완료 코드를 제출했을 때 발송됩니다. 성공/실패 모두 발송됩니다.
-
-**파일:** `src/components/ticket/TicketBoardingPassCard.tsx`
-
-| 속성 | 타입 | 설명 |
-|------|------|------|
-| `result` | string | `success` 또는 `fail` |
-| `status` | number \| undefined | 실패 시 HTTP 상태 코드 |
-| `code` | string \| undefined | 실패 시 서버 에러 코드 |
 
 ---
 
