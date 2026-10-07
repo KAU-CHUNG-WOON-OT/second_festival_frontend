@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import RetroPageHeader from '../components/common/RetroPageHeader';
+import RetroPageTitle from '../components/common/RetroPageTitle';
 import RetroDialog from '../components/common/RetroDialog';
 import CategoryList from '../components/common/CategoryList';
 import SearchBar from '../components/common/SearchBar';
 import BoothGrid from '../components/yard/BoothGrid';
 import BoothMap from '../components/yard/BoothMap';
 import { CATEGORIES, dummyBooths } from '../data/boothData';
-import { FESTIVAL_DATE_LABEL } from '../data/timetableData';
 
 const YardPage = () => {
   const navigate = useNavigate();
@@ -40,12 +40,7 @@ const YardPage = () => {
     <div className="flex flex-col px-5 pb-16 pt-5 text-ink">
       <RetroPageHeader />
 
-      <div className="pt-8">
-        <span className="inline-flex h-[38px] items-center rounded-full border border-ink bg-mustard px-4 font-display text-[18px] leading-7">
-          활주로 · {FESTIVAL_DATE_LABEL}
-        </span>
-      </div>
-      <h1 className="pt-2 font-display text-[60px] leading-[60px]">{t('nav.yard')}</h1>
+      <RetroPageTitle title={t('nav.yard')} showDate />
 
       <button
         type="button"

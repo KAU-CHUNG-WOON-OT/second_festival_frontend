@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import RetroPageHeader from '../components/common/RetroPageHeader';
+import RetroPageTitle from '../components/common/RetroPageTitle';
 import FestivalMap from '../components/common/FestivalMap';
 import SearchBar from '../components/common/SearchBar';
 import MapModal from '../components/common/MapModal';
@@ -9,7 +10,6 @@ import PubGrid from '../components/pub/PubGrid';
 import day1Pub from '../assets/day1_pub.jpg';
 import day1Pub2 from '../assets/day1_pub2.jpg';
 import { dummyPubs } from '../data/pubData';
-import { FESTIVAL_DATE_LABEL } from '../data/timetableData';
 
 // TODO: 새 축제 주점 배치도로 교체 (현재 지난 축제 1일차 이미지)
 const PUB_MAP_IMAGES = [
@@ -45,12 +45,7 @@ const PubPage = () => {
     <div className="flex flex-col px-5 pb-16 pt-5 text-ink">
       <RetroPageHeader />
 
-      <div className="pt-8">
-        <span className="inline-flex h-[38px] items-center rounded-full border border-ink bg-mustard px-4 font-display text-[18px] leading-7">
-          활주로 · {FESTIVAL_DATE_LABEL}
-        </span>
-      </div>
-      <h1 className="pt-2 font-display text-[60px] leading-[60px]">{t('nav.pub')}</h1>
+      <RetroPageTitle title={t('nav.pub')} showDate />
 
       <div className="pt-6">
         <FestivalMap images={PUB_MAP_IMAGES} onClick={setMapImageSrc} />

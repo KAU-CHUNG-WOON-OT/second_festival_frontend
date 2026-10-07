@@ -2,9 +2,6 @@ import { useTranslation } from 'react-i18next';
 import youtubeIcon from '../assets/footer_youtube.svg';
 import instagramIcon from '../assets/footer_instagram.svg';
 
-const STRIPE =
-  'bg-[linear-gradient(90deg,var(--color-rust)_0%,var(--color-rust)_33.3%,var(--color-mustard)_33.3%,var(--color-mustard)_66.6%,var(--color-sky-light)_66.6%,var(--color-sky-light)_100%)]';
-
 interface RetroFooterProps {
   // 홈 화면용: 줄무늬가 푸터 안쪽에 들어가고 여백·글자가 더 큼
   large?: boolean;
@@ -16,11 +13,11 @@ const RetroFooter = ({ large = false }: RetroFooterProps) => {
 
   return (
     <footer className="w-full">
-      {!large && <div className={`h-[6px] w-full ${STRIPE}`} />}
+      {!large && <div className="h-[6px] w-full bg-retro-stripe" />}
       <div
         className={`flex flex-col items-center bg-ink px-5 text-center text-paper ${large ? 'py-10' : 'py-7'}`}
       >
-        {large && <div className={`mb-6 h-2 w-full max-w-[320px] rounded-full ${STRIPE}`} />}
+        {large && <div className="mb-6 h-2 w-full max-w-[320px] rounded-full bg-retro-stripe" />}
         <p
           className={`font-body-kr font-semibold ${large ? 'text-[16px] leading-6' : 'text-[14px] leading-5'}`}
         >

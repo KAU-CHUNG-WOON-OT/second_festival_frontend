@@ -11,9 +11,6 @@ interface TimetableModalProps {
   done?: boolean;
 }
 
-const STRIPE =
-  "bg-[linear-gradient(90deg,var(--color-rust)_0%,var(--color-rust)_33.3%,var(--color-mustard)_33.3%,var(--color-mustard)_66.6%,var(--color-sky-light)_66.6%,var(--color-sky-light)_100%)]";
-
 const TimetableModal = ({ event, onClose, trackNo, done = false }: TimetableModalProps) => {
   const { language } = useLanguage();
   const isEng = language === "ENG";
@@ -105,7 +102,7 @@ const TimetableModal = ({ event, onClose, trackNo, done = false }: TimetableModa
                 </div>
               </div>
               <div className="absolute left-0 top-0 h-[273px] w-[104px] rounded-l-[6px] border-2 border-ink bg-rust drop-shadow-[4px_0px_6px_rgba(0,0,0,0.35)]">
-                <div className={`absolute left-0 top-8 h-3 w-full ${STRIPE}`} />
+                <div className="absolute left-0 top-8 h-3 w-full bg-retro-stripe" />
                 <p className="absolute bottom-4 left-2 font-typewriter text-[10px] font-bold leading-[12.5px] text-paper">
                   KAU
                   <br />
@@ -120,7 +117,7 @@ const TimetableModal = ({ event, onClose, trackNo, done = false }: TimetableModa
             </p>
           </div>
 
-          <div className={`h-2 w-full ${STRIPE}`} />
+          <div className="h-2 w-full bg-retro-stripe" />
 
           <div className="p-6">
             <span
