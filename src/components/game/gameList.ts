@@ -1,9 +1,12 @@
-import type { ComponentType } from 'react';
+import { lazy, type ComponentType } from 'react';
 import BombGame from './BombGame';
 import ChosungGame from './ChosungGame';
 import FingerGame from './FingerGame';
 import LiarGame from './LiarGame';
 import StopGame from './StopGame';
+
+// 3D 게임은 three.js가 무거워서 들어갈 때 불러온다
+const CrocodileGame = lazy(() => import('./CrocodileGame'));
 
 export interface GameEntry {
   id: string;
@@ -68,5 +71,15 @@ export const GAMES: GameEntry[] = [
     caption: 'TRACK B-05 · CHOSUNG',
     colorClass: 'bg-tape-blue text-paper',
     Component: ChosungGame,
+  },
+  {
+    id: 'crocodile',
+    title: '악어 게임',
+    title_en: 'Crocodile Dentist',
+    sub: '이빨 누르다 물리면 벌칙',
+    sub_en: 'Press a tooth, hope it doesn’t bite',
+    caption: 'TRACK B-06 · CROCODILE',
+    colorClass: 'bg-olive text-paper',
+    Component: CrocodileGame,
   },
 ];
