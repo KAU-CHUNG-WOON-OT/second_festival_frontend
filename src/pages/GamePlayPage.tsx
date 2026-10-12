@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import RetroPageHeader from '../components/common/RetroPageHeader';
 import RetroPageTitle from '../components/common/RetroPageTitle';
@@ -17,7 +18,9 @@ const GamePlayPage = () => {
       <RetroPageHeader />
       <RetroPageTitle title={isEng ? game.title_en : game.title} caption={game.caption} />
       <div className="pt-6">
-        <game.Component />
+        <Suspense fallback={null}>
+          <game.Component />
+        </Suspense>
       </div>
     </div>
   );
