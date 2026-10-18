@@ -119,6 +119,17 @@ import RetroPageTitle from '../components/common/RetroPageTitle';
 
 아래에서 올라오는 시트(공지 상세 `NoticeModal`, 공연 상세 `TimetableModal`)는 `rounded-t-[32px] border-2 border-ink` + 슬라이드업 애니메이션 + 아래로 끌어서 닫기 구조다. 새 시트가 필요하면 둘 중 하나를 참고한다.
 
+### 3D 장난감 (게임 탭)
+
+악어 게임·통아저씨는 three.js(React Three Fiber)로 그린다. 공통 부품은 `components/game/toy3d.tsx`.
+
+| 요소 | 규칙 |
+|---|---|
+| `ToyStage` | `sky-light` 배경 큰 카드 안에 캔버스. 판 조명(`Lightformer`)으로 반사광을 만들어 외부 HDR을 받지 않는다 |
+| `Part` | 광택 플라스틱 재질 + `ink` 외곽선(뒷면 껍데기 방식). `color`는 색 토큰 이름만 받는다 |
+| `useDragSpin` | 가로로 끌어 돌리기(관성 포함). 탭과 구분하려면 클릭에서 `event.delta > DRAG_THRESHOLD_PX`를 거른다 |
+| 지연 로딩 | three.js가 무거우므로 `gameList.ts`에서 `lazy()`로 불러온다 |
+
 ## 7. 피그마 → 코드 작업 규칙
 
 1. **시안 확인**: `get_design_context`로 노드 코드와 스크린샷을 같이 받는다. 스크린샷이 목표 결과물이다.
