@@ -1,5 +1,6 @@
 import { useEffect, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
+import { FiX } from 'react-icons/fi';
 
 interface RetroDialogProps {
   title: string;
@@ -36,9 +37,9 @@ const RetroDialog = ({ title, onClose, children }: RetroDialogProps) => {
             type="button"
             onClick={onClose}
             aria-label="닫기"
-            className="flex size-9 items-center justify-center rounded-full border border-ink font-body-kr text-[16px] leading-6"
+            className="flex size-9 items-center justify-center rounded-full border border-ink"
           >
-            ✕
+            <FiX size={18} />
           </button>
         </div>
         <div className="min-h-0 overflow-y-auto">{children}</div>

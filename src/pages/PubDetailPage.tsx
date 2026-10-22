@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "../contexts/LanguageContext";
 import RetroPageHeader from "../components/common/RetroPageHeader";
+import EmptyState from "../components/common/EmptyState";
 import Poster from "../components/common/Poster";
 import InfoCard from "../components/common/InfoCard";
 import MenuList from "../components/common/MenuList";
@@ -26,11 +27,12 @@ const PubDetailPage = () => {
 
   if (!pub) {
     return (
-      <div className="flex h-full flex-col items-center justify-center text-ink/60">
-        <p className="font-display text-lg">{t('common.pubNotFound')}</p>
-        <button onClick={() => navigate(-1)} className="mt-4 font-body-kr text-sm underline">
-          {t('common.backToList')}
-        </button>
+      <div className="flex flex-col gap-6 px-5 pb-16 pt-5">
+        <RetroPageHeader />
+        <EmptyState
+          message={t('common.pubNotFound')}
+          action={{ label: t('common.backToList'), onClick: () => navigate('/pub') }}
+        />
       </div>
     );
   }
@@ -49,7 +51,7 @@ const PubDetailPage = () => {
         <Poster images={pub.poster} name={isEng ? pub.name_en : pub.name} zoomTitle="주점 포스터" />
       )}
       <InfoCard rows={infoRows} />
-      <MenuList menu={pub.menu} showLikes={true} likePrefix="menu" />
+      <MenuList menu={pub.menu} />
       <PaymentCard account={pub.account} qrCode={pub.qr_img} />
     </div>
   );

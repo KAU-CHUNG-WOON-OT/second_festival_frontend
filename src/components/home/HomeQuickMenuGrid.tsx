@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { FiPlay } from "react-icons/fi";
 
 export interface HomeQuickMenuItem {
   title: string;
@@ -25,7 +26,7 @@ const HomeQuickMenuGrid = ({ items }: HomeQuickMenuGridProps) => {
         >
           <div className="flex items-center justify-between font-typewriter text-[12px] leading-4">
             <span className="rounded-[4px] border border-current px-[6px]">{LETTERS[index]}</span>
-            <span className="opacity-70">▶</span>
+            <FiPlay size={12} fill="currentColor" aria-hidden className="opacity-70" />
           </div>
           <div>
             <p className="font-display text-[24px] leading-[30px]">{item.title}</p>

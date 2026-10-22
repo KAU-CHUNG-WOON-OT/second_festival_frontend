@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { createPortal } from "react-dom";
+import { FiX } from 'react-icons/fi';
 import { useLanguage } from "../../contexts/LanguageContext";
 import { TYPE_ICON, formatTrackNo, type TimetableEvent } from "../../data/timetableData";
 
@@ -85,9 +86,9 @@ const TimetableModal = ({ event, onClose, trackNo, done = false }: TimetableModa
               type="button"
               onClick={handleClose}
               aria-label={isEng ? "Close" : "닫기"}
-              className="absolute right-4 top-4 z-10 flex size-10 items-center justify-center rounded-full border border-ink bg-cream font-body-kr text-[16px]"
+              className="absolute right-4 top-4 z-10 flex size-10 items-center justify-center rounded-full border border-ink bg-cream"
             >
-              ✕
+              <FiX size={18} />
             </button>
             <div className="relative mx-auto h-[273px] w-[288px]">
               <div className="absolute left-[87px] top-0 size-[273px] rounded-full border border-cream/30 bg-ink drop-shadow-[0px_10px_15px_rgba(0,0,0,0.5)]">

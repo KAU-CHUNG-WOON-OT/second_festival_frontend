@@ -237,8 +237,8 @@ const InfoInputPage = () => {
               주의
             </p>
             <p className="mt-4 break-keep text-center font-body-kr text-[15px] leading-[1.55]">
-              웹사이트 회원가입 시 본인의 실제 정보와 다른 정보를 기입한다면, 티켓 수령 불가를
-              포함한 불이익이 있을 수 있습니다.
+              웹사이트 회원가입 시 본인의 실제 정보와 다른 정보를 기입한다면, 불이익이 있을 수
+              있습니다.
             </p>
 
             <div className="mt-5 flex items-center justify-between gap-[10px]">

@@ -13,7 +13,7 @@ const HomeGameSection = ({ to }: HomeGameSectionProps) => {
   return (
     <Link
       to={to}
-      className="relative flex w-full items-center gap-4 rounded-[16px] bg-rust p-5 text-paper drop-shadow-[6px_6px_0px_var(--color-ink)]"
+      className="relative flex w-full items-center gap-4 rounded-[16px] border-2 border-ink bg-rust p-5 text-paper drop-shadow-[6px_6px_0px_var(--color-ink)]"
     >
       <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-paper font-body-kr text-[24px] leading-8">
         🎲
@@ -27,8 +27,8 @@ const HomeGameSection = ({ to }: HomeGameSectionProps) => {
       <img src={arrowIcon} alt="" width={15} height={13} className="mx-[5px] shrink-0" />
 
       {/* 티켓 펀치 홈 */}
-      <span className="absolute -left-3 top-1/2 size-6 -translate-y-1/2 rounded-full bg-cream" />
-      <span className="absolute -right-3 top-1/2 size-6 -translate-y-1/2 rounded-full bg-cream" />
+      <span className="absolute -left-[11px] top-1/2 size-5 -translate-y-1/2 rounded-full border border-ink bg-cream" />
+      <span className="absolute -right-[11px] top-1/2 size-5 -translate-y-1/2 rounded-full border border-ink bg-cream" />
     </Link>
   );
 };

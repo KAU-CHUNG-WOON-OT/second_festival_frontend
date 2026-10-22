@@ -269,7 +269,7 @@ const PirateGame = () => {
 
   return (
     <div className="flex flex-col gap-6">
-      <p className="font-body-kr text-[14px] leading-5 opacity-70">
+      <p className="font-body-kr text-[14px] leading-5 text-paper/80">
         {isEng
           ? 'Spin the barrel with your finger and take turns sticking in a sword. Whoever makes the pirate pop out gets the penalty!'
           : '손가락으로 통을 돌려 가며 구멍에 칼을 하나씩 꽂아요. 통아저씨를 튀어나오게 한 사람이 벌칙!'}

@@ -9,12 +9,12 @@ import instagramIcon from '@/assets/footer_instagram.svg';
 import { useTranslation } from 'react-i18next';
 import { markOnboardingSeenInCurrentTab } from '../lib/onboardingSession';
 import { track } from '@/lib/mixpanel';
+import { getKakaoLoginUrl } from '@/lib/kakaoLogin';
 
 const OnboardingPage = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [isGuestNoticeOpen, setIsGuestNoticeOpen] = useState(false);
-  const [guestNoticeStep, setGuestNoticeStep] = useState<1 | 2>(1);
 
   const completeOnboarding = useCallback(() => {
     track('onboarding_guest_login_clicked');
@@ -23,15 +23,11 @@ const OnboardingPage = () => {
   }, [navigate]);
 
   const handleKakaoLogin = useCallback(() => {
-    const apiBase = import.meta.env.VITE_API_BASE_URL;
-    if (!apiBase) {
-      console.error('VITE_API_BASE_URL is not configured.');
-      return;
-    }
+    const loginUrl = getKakaoLoginUrl();
+    if (!loginUrl) return;
     track('onboarding_kakao_login_clicked');
     markOnboardingSeenInCurrentTab();
-    const trimmed = apiBase.endsWith('/') ? apiBase.slice(0, -1) : apiBase;
-    window.location.href = `${trimmed}/oauth2/authorization/kakao`;
+    window.location.href = loginUrl;
   }, []);
 
   useEffect(() => {
@@ -66,7 +62,6 @@ const OnboardingPage = () => {
                 </p>
                 <h1 className="pt-1 font-condensed text-[64px] font-black leading-[61px]">활주로</h1>
                 <div className="mt-3 h-[10px] w-full rounded-full bg-retro-stripe" />
-                <p className="pt-3 font-display text-[20px] leading-7">가을에 재생 버튼을 누르다</p>
               </div>
               <div className="mt-3 flex items-center justify-between rounded-full border-2 border-ink bg-ink px-4 py-2">
                 {reel}
@@ -77,10 +72,7 @@ const OnboardingPage = () => {
             <div className="flex flex-col gap-3 pt-8">
               <button
                 type="button"
-                onClick={() => {
-                  setGuestNoticeStep(1);
-                  setIsGuestNoticeOpen(true);
-                }}
+                onClick={() => setIsGuestNoticeOpen(true)}
                 className="flex items-center justify-center gap-3 rounded-[16px] border-2 border-ink bg-[#fee500] px-6 py-[14px] font-body-kr text-[16px] font-bold leading-6 drop-shadow-[4px_4px_0px_var(--color-ink)]"
               >
                 <img src={kakaoIcon} alt="" width={20} height={19} />
@@ -88,10 +80,7 @@ const OnboardingPage = () => {
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  setGuestNoticeStep(2);
-                  setIsGuestNoticeOpen(true);
-                }}
+                onClick={completeOnboarding}
                 className="rounded-[16px] border-2 border-ink bg-[#2750b9] px-6 py-[14px] font-body-kr text-[16px] font-bold leading-6 text-paper drop-shadow-[4px_4px_0px_var(--color-ink)]"
               >
                 비회원으로 접속하기
@@ -144,51 +133,31 @@ const OnboardingPage = () => {
               주의
             </p>
 
-            {guestNoticeStep === 1 ? (
-              <>
-                <p className="mt-4 text-center font-body-kr text-[15px] leading-[1.45]">
-                  한국항공대학교 재학생들을 위한 서비스입니다.
-                  <br />
-                  졸업생 및 외부인은 비회원으로 접속해주세요.
-                </p>
+            <p className="mt-4 text-center font-body-kr text-[15px] leading-[1.45]">
+              한국항공대학교 재학생들을 위한 서비스입니다.
+              <br />
+              졸업생 및 외부인은 비회원으로 접속해주세요.
+            </p>
 
-                <div className="mt-5 flex items-center justify-between gap-[10px]">
-                  <button
-                    type="button"
-                    onClick={() => setGuestNoticeStep(2)}
-                    className="h-[46px] flex-1 rounded-[14px] border-2 border-ink bg-cream font-body-kr text-[15px] font-semibold"
-                  >
-                    비회원으로 계속
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsGuestNoticeOpen(false);
-                      handleKakaoLogin();
-                    }}
-                    className="h-[46px] flex-1 rounded-[14px] border-2 border-ink bg-[#fee500] font-body-kr text-[15px] font-semibold"
-                  >
-                    카카오로 가입
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
-                <p className="mt-4 text-center font-body-kr text-[15px] leading-[1.45]">
-                  비회원으로 접속하면
-                  <br />
-                  <span className="font-bold">팔찌예약</span>은 사용할 수 없어요.
-                </p>
-
-                <button
-                  type="button"
-                  onClick={completeOnboarding}
-                  className="mt-5 h-[46px] w-full rounded-[14px] border-2 border-ink bg-ink font-body-kr text-[15px] font-semibold text-paper"
-                >
-                  접속하기
-                </button>
-              </>
-            )}
+            <div className="mt-5 flex items-center justify-between gap-[10px]">
+              <button
+                type="button"
+                onClick={completeOnboarding}
+                className="h-[46px] flex-1 rounded-[14px] border-2 border-ink bg-cream font-body-kr text-[15px] font-semibold"
+              >
+                비회원으로 계속
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsGuestNoticeOpen(false);
+                  handleKakaoLogin();
+                }}
+                className="h-[46px] flex-1 rounded-[14px] border-2 border-ink bg-[#fee500] font-body-kr text-[15px] font-semibold"
+              >
+                카카오로 가입
+              </button>
+            </div>
           </div>
         </div>
       )}

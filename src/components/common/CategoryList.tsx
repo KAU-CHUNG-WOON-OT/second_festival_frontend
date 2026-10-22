@@ -23,13 +23,16 @@ const CategoryList = ({ categories, selectedCategory, onSelect }: CategoryListPr
   };
 
   return (
-    <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    // 페이지 여백(px-5)까지 스크롤 영역을 넓혀 첫 칩이 가장자리에서 잘리지 않게 함
+    <div className="-mx-5 flex gap-2 overflow-x-auto px-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {categories.map((category) => (
         <button
           key={category}
+          type="button"
           onClick={() => onSelect(category)}
-          className={`shrink-0 whitespace-nowrap rounded-full border border-ink px-5 py-2 font-display text-[16px] leading-6 ${
-            selectedCategory === category ? 'bg-ink text-paper' : 'bg-paper text-ink'
+          aria-pressed={selectedCategory === category}
+          className={`h-9 shrink-0 whitespace-nowrap rounded-full px-4 font-body-kr text-[14px] font-semibold leading-5 transition-colors active:opacity-80 ${
+            selectedCategory === category ? 'bg-ink text-paper' : 'bg-paper text-ink/70'
           }`}
         >
           {getCategoryLabel(category)}

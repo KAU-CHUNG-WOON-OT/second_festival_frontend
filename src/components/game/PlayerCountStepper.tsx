@@ -1,3 +1,4 @@
+import { FiMinus, FiPlus } from 'react-icons/fi';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { GAME_CARD } from './gameStyles';
 
@@ -9,7 +10,7 @@ interface PlayerCountStepperProps {
 }
 
 const STEPPER_BUTTON =
-  'flex size-11 items-center justify-center rounded-full border border-ink bg-cream font-typewriter text-[20px] leading-7 drop-shadow-[3px_3px_0px_var(--color-ink)] disabled:opacity-40';
+  'flex size-11 items-center justify-center rounded-full border border-ink bg-cream drop-shadow-[3px_3px_0px_var(--color-ink)] disabled:opacity-40';
 
 const PlayerCountStepper = ({ value, min, max, onChange }: PlayerCountStepperProps) => {
   const { language } = useLanguage();
@@ -26,7 +27,7 @@ const PlayerCountStepper = ({ value, min, max, onChange }: PlayerCountStepperPro
           onClick={() => onChange(value - 1)}
           className={STEPPER_BUTTON}
         >
-          −
+          <FiMinus size={20} />
         </button>
         <p className="font-condensed text-[56px] font-bold leading-[60px]">
           {value}
@@ -39,7 +40,7 @@ const PlayerCountStepper = ({ value, min, max, onChange }: PlayerCountStepperPro
           onClick={() => onChange(value + 1)}
           className={STEPPER_BUTTON}
         >
-          +
+          <FiPlus size={20} />
         </button>
       </div>
     </section>

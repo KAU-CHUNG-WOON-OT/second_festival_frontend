@@ -28,7 +28,7 @@ export const dummyNotices: NoticeData[] = [
       '• The parking lot next to the Science Building will be available.\n' +
       '• Vehicles must follow the designated route only.\n' +
       '• Heavy traffic is expected on campus during the festival, so we recommend using public transportation if possible.',
-    date: '2026.05.15',
+    date: '2026.10.22',
     isNew: false,
     isImportant: false,
     category: '장소',
@@ -50,47 +50,11 @@ export const dummyNotices: NoticeData[] = [
       '• Please be considerate of others when using the smoking area.\n' +
       '• Please take extra care to prevent accidents after drinking.\n' +
       '• Thank you for helping us keep the festival safe and pleasant for everyone.',
-    date: '2026.05.15',
+    date: '2026.10.22',
     isNew: false,
     isImportant: false,
     category: '장소',
     category_en: 'Location',
-  },
-  {
-    id: 4,
-    title: '항대존 입장 팔찌 선착순 배부',
-    title_en: 'KAU-Zone Entry Wristbands - First Come, First Served',
-    content:
-      '[티켓팅 시간]' +
-      '• 재학생, 대학원생 10:00 ~ 15:00\n' +
-      '• 휴학생 12:00 ~ 15:00\n' +
-      '※ 12시 이전 티켓이 소진되었을 경우 휴학생 배부 없이 마감됩니다.\n' +
-      '※ 졸업생은 팔찌 수령 불가합니다.\n' +
-      '※ 웹사이트 회원가입 시 본인의 실제 정보와 다른 정보로 가입 시 티켓 수령 불가를 포함한 불이익이 있을 수 있습니다.' +
-      '[배부 시간]\n' +
-      '• 티켓팅 성공자 10:00 ~ 15:00\n' +
-      '• 미소진 팔찌 15:00 ~ 18:00\n' +
-      '※ 티켓팅 성공자는 15시 이후 수령이 불가합니다.\n' +
-      '※ 미소진 팔찌가 없을 시 미소진 팔찌 배부는 없습니다.\n' +
-      '(티켓 소진 여부는 당일 총학생회 인스타 스토리를 참고해주세요)',
-    content_en:
-      '[Ticketing Hours]\n' +
-      '• Enrolled Students & Graduate Students: 10:00 AM – 3:00 PM\n' +
-      '• Students on Leave: 12:00 PM – 3:00 PM\n' +
-      '※ If all tickets run out before 12:00 PM, ticketing will close without distribution for students on leave.\n' +
-      '※ Alumni are not eligible to receive wristbands.\n' +
-      '※ Please sign up with your real information. Using incorrect information may result in disadvantages, including being unable to receive the ticket.\n' +
-      '[Wristband Pick-up Hours]\n' +
-      '• Successful Ticket Holders: 10:00 AM – 3:00 PM\n' +
-      '• Remaining Wristbands: 3:00 PM – 6:00 PM\n' +
-      '※ Successful ticket holders cannot pick up their wristbands after 3:00 PM.\n' +
-      '※ If there are no remaining wristbands, there will be no additional distribution.\n' +
-      "※ Please check the Student Council's Instagram story on the day for ticket availability updates.",
-    date: '2026.05.15',
-    isNew: false,
-    isImportant: false,
-    category: '공연',
-    category_en: 'Performance',
   },
   {
     id: 5,
@@ -106,7 +70,7 @@ export const dummyNotices: NoticeData[] = [
       '• Pick-up inside the festival area or along walkways may be restricted.\n' +
       '• Please sort and dispose of any delivery waste in the designated bins.\n' +
       '• Thank you for helping us keep the festival running smoothly and the walkways safe.',
-    date: '2026.05.15',
+    date: '2026.10.22',
     isNew: false,
     isImportant: false,
     category: '장소',
@@ -136,7 +100,7 @@ export const dummyNotices: NoticeData[] = [
       '• Failure to comply with the student council sanctions may result in confiscation and exit.\n' +
       '※ If you find items that are prohibited from being carried or used, they will be confiscated and disposed of.\n' +
       '※ We ask for your cooperation for a pleasant and safe event.',
-    date: '2026.05.15',
+    date: '2026.10.22',
     isNew: false,
     isImportant: false,
     category: '장소',
@@ -166,7 +130,7 @@ export const dummyNotices: NoticeData[] = [
       '• Umbrellas are restricted inside the main field. Please use a raincoat for safety.\n' +
       '• Wet electronic devices may cause electric shock — please handle with care.\n' +
       '• The ground may be slippery due to rain — please watch your step.',
-    date: '2026.05.16',
+    date: '2026.10.22',
     isNew: true,
     isImportant: true,
     category: '공연',

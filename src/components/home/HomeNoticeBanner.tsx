@@ -21,14 +21,14 @@ const HomeNoticeBanner = ({ to, title, dateText }: HomeNoticeBannerProps) => {
   return (
     <Link
       to={to}
-      className="flex items-center gap-3 border-y border-ink bg-paper px-4 py-3 text-ink"
+      className="flex items-center gap-3 bg-paper px-4 py-3 text-ink"
       aria-label="공지사항으로 이동"
     >
       <span className="shrink-0 rounded-[4px] bg-rust px-2 py-[2px] font-typewriter text-[12px] font-bold leading-4 text-paper">
         {t("notice.new")}
       </span>
       <div className="min-w-0 flex-1 overflow-hidden whitespace-nowrap">
-        <div className="flex w-max animate-[marquee_14s_linear_infinite]">
+        <div className="flex w-max animate-[marquee_14s_linear_infinite] motion-reduce:animate-none">
           {item}
           {item}
         </div>

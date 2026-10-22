@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigationType } from 'react-router-dom';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
@@ -22,8 +22,6 @@ const REDESIGNED_PATHS = [
   /^\/pub(\/\d+)?$/,
   /^\/foodtruck(\/\d+)?$/,
 ];
-// 새 디자인 페이지 중 시안에 푸터가 없는 곳
-const NO_FOOTER_PATHS = ['/timetable'];
 
 interface LayoutProps {
   children: ReactNode;
@@ -32,6 +30,7 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
+  const navigationType = useNavigationType();
   const timeOfDay = useTimeOfDay();
   usePageTracking();
   const isOnboardingPath = location.pathname === '/onboarding';
@@ -39,14 +38,30 @@ const Layout = ({ children }: LayoutProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const showFooterPaths = ['/home', '/notice', '/makers'];
-  const shouldShowFooter = isRedesignedPath
-    ? !NO_FOOTER_PATHS.includes(location.pathname)
-    : showFooterPaths.includes(location.pathname);
+  const shouldShowFooter = isRedesignedPath || showFooterPaths.includes(location.pathname);
 
-  // 페이지가 바뀌면 스크롤을 맨 위로
+  // 기록 항목(location.key)별 스크롤 위치. 뒤로가기로 돌아오면 보던 자리로 복원
+  const scrollPositions = useRef<Record<string, number>>({});
+  const prevPathname = useRef(location.pathname);
+
   useEffect(() => {
-    scrollRef.current?.scrollTo(0, 0);
-  }, [location.pathname]);
+    const el = scrollRef.current;
+    if (!el) return;
+    const key = location.key;
+    const save = () => {
+      scrollPositions.current[key] = el.scrollTop;
+    };
+    el.addEventListener('scroll', save, { passive: true });
+    return () => el.removeEventListener('scroll', save);
+  }, [location.key]);
+
+  // 페이지가 바뀌면 맨 위로, 뒤로·앞으로 가기면 저장해 둔 위치로 (필터만 바뀐 경우는 그대로)
+  useEffect(() => {
+    if (prevPathname.current === location.pathname) return;
+    prevPathname.current = location.pathname;
+    const top = navigationType === 'POP' ? (scrollPositions.current[location.key] ?? 0) : 0;
+    scrollRef.current?.scrollTo(0, top);
+  }, [location.pathname, location.key, navigationType]);
 
   const scrollMask = {
     maskImage: 'linear-gradient(to bottom, transparent 0%, black 24px)',
@@ -58,9 +73,11 @@ const Layout = ({ children }: LayoutProps) => {
       <div
         data-theme={timeOfDay}
         className="relative flex h-dvh w-full justify-center overflow-hidden"
-        style={{ background: isRedesignedPath ? 'var(--color-cream)' : 'var(--bg-gradient)' }}
+        style={{ background: isRedesignedPath ? 'var(--gradient-retro-dusk)' : 'var(--bg-gradient)' }}
       >
         <div className="relative flex h-full w-full max-w-[430px] flex-col overflow-clip bg-transparent">
+          {/* 새 디자인 페이지: 노을 하늘과 별은 화면에 고정되고 콘텐츠만 그 위로 스크롤 */}
+          {isRedesignedPath && <SkyDots night />}
           {!isOnboardingPath && !isRedesignedPath && (
             <Header onOpenSidebar={() => setIsSidebarOpen(true)} />
           )}
@@ -78,7 +95,7 @@ const Layout = ({ children }: LayoutProps) => {
                 {shouldShowFooter && (
                   <div className="relative z-10">
                     {isRedesignedPath ? (
-                      <RetroFooter large={location.pathname === '/home'} />
+                      <RetroFooter />
                     ) : (
                       <Footer />
                     )}
