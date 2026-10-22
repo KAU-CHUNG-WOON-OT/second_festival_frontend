@@ -127,8 +127,12 @@ const HangmentleGame = () => {
       return;
     }
     if (result.kind === 'duplicate') {
-      // 이미 추측한 단어도 검색처럼 결과를 맨 위 강조 줄에 다시 보여 준다 (횟수는 그대로)
-      setMessage(null);
+      // 이미 추측한 단어라고 알려 주면서, 검색처럼 결과를 맨 위 강조 줄에 다시 보여 준다 (횟수는 그대로)
+      setMessage(
+        isEng
+          ? `You already tried "${result.guess.word}"`
+          : `'${result.guess.word}'은(는) 이미 추측했어요`,
+      );
       setInput('');
       setLastGuess({ ...result.guess });
       return;
@@ -224,7 +228,8 @@ const HangmentleGame = () => {
     if (!row || !band) return;
     const hiddenBy = band.getBoundingClientRect().bottom - row.getBoundingClientRect().top;
     if (hiddenBy > 0) {
-      row.closest('.overflow-y-auto')?.scrollBy({ top: -(hiddenBy + 8), behavior: 'smooth' });
+      // 머리줄 밑 페이드(20px)보다 아래로 내려 강조 줄이 온전히 보이게
+      row.closest('.overflow-y-auto')?.scrollBy({ top: -(hiddenBy + 24), behavior: 'smooth' });
     }
   }, [lastGuess]);
 
@@ -286,14 +291,19 @@ const HangmentleGame = () => {
               붙으면 화면 맨 위이므로 뒤 하늘과 같은 그라디언트·별을 깔아 경계가 보이지 않게 한다 */}
           <div
             ref={stickyRef}
-            className={`-mx-5 -mt-3 overflow-hidden px-5 pt-3 ${finished ? '' : 'sticky -top-px z-20'}`}
+            className={`-mx-5 -mt-3 px-5 pt-3 ${finished ? '' : 'sticky -top-px z-20'}`}
             style={
               isStuck && !finished
                 ? { background: 'var(--gradient-retro-dusk) top / 100% 100dvh no-repeat' }
                 : undefined
             }
           >
-            {isStuck && !finished && <SkyDots night />}
+            {isStuck && !finished && (
+              // 별은 고정 영역 안에서만 보이게 자른다 (영역 자체는 아래 페이드가 삐져나와야 해서 자르지 않음)
+              <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                <SkyDots night />
+              </div>
+            )}
             <div className="relative z-10 flex flex-col gap-4">
               <section className={GAME_CARD}>
                 <p className="font-typewriter text-[12px] leading-4 opacity-60">
@@ -370,8 +380,15 @@ const HangmentleGame = () => {
 
               {/* 추측 목록 카드의 윗부분. 아래 몸통과 맞붙어 카드 하나로 보인다 */}
               {!finished && showGuessList && (
-                <div className="mt-2 rounded-t-[16px] border-x-2 border-t-2 border-ink bg-paper px-5 pt-5 shadow-[5px_0_0_0_var(--color-ink)]">
-                  <div className="border-b border-ink/15 pb-2">{guessHeader}</div>
+                <div className="relative mt-2 rounded-t-[16px] border-x-2 border-t-2 border-ink bg-paper px-5 pt-5 shadow-[5px_0_0_0_var(--color-ink)]">
+                  <div className="pb-2">{guessHeader}</div>
+                  {/* 붙었을 때 머리줄 밑으로 들어가는 줄이 선에 잘리지 않고 서서히 사라지게 */}
+                  {isStuck && (
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-x-0 top-full h-5 bg-linear-to-b from-paper to-paper/0"
+                    />
+                  )}
                 </div>
               )}
             </div>
