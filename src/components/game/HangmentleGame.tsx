@@ -70,8 +70,6 @@ const HangmentleGame = () => {
   const stickyRef = useRef<HTMLDivElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const [isStuck, setIsStuck] = useState(false);
-  // 힌트·입력창 묶음의 높이. 목록 카드 머리줄이 그 바로 아래에 멈추도록 쓴다
-  const [bandHeight, setBandHeight] = useState(0);
 
   const vocabQuery = useQuery({
     queryKey: ['hangmentle', 'vocab'],
@@ -213,13 +211,18 @@ const HangmentleGame = () => {
       { threshold: [1] },
     );
     observer.observe(el);
-    const resizeObserver = new ResizeObserver(() => setBandHeight(el.offsetHeight));
-    resizeObserver.observe(el);
-    return () => {
-      observer.disconnect();
-      resizeObserver.disconnect();
-    };
+    return () => observer.disconnect();
   }, [round, finished]);
+
+  const guessHeader = (
+    <div className="flex items-center gap-3 font-typewriter text-[11px] leading-4 opacity-50">
+      <span className="w-6">#</span>
+      <span className="flex-1">{isEng ? 'WORD' : '단어'}</span>
+      <span>{isEng ? 'SCORE' : '유사도'}</span>
+      <span className="w-[84px] text-right">{isEng ? 'RANK' : '순위'}</span>
+    </div>
+  );
+  const showGuessList = progress.guesses.length > 0;
 
   return (
     <div ref={rootRef} className="flex flex-col gap-6">
@@ -265,15 +268,11 @@ const HangmentleGame = () => {
 
       {round && (
         <>
-          {/* 진행 중에는 스크롤해도 힌트·입력창이 화면 위에 붙어 있다.
-              붙으면 화면 맨 위이므로 뒤 하늘과 같은 그라디언트·별을 깔아, 아래 목록만 하늘 밑으로 사라지게 한다 */}
+          {/* 진행 중에는 스크롤해도 힌트·입력창·추측 목록 카드 윗부분(머리줄)이 화면 위에 붙어 있고 그 아래 목록만 움직인다.
+              붙으면 화면 맨 위이므로 뒤 하늘과 같은 그라디언트·별을 깔아 경계가 보이지 않게 한다 */}
           <div
             ref={stickyRef}
-            // 아래 여백(pb-6)이 목록 카드 윗변까지 덮어 틈이 생기지 않게 한다.
-            // 같은 크기의 음수 여백으로 레이아웃은 그대로 두고, 겹치는 여백이 아래 카드를 가리지 않게 클릭은 통과시킨다
-            className={`pointer-events-none -mx-5 -mb-6 -mt-3 overflow-hidden px-5 pb-6 pt-3 ${
-              finished ? '' : 'sticky -top-px z-20'
-            }`}
+            className={`-mx-5 -mt-3 overflow-hidden px-5 pt-3 ${finished ? '' : 'sticky -top-px z-20'}`}
             style={
               isStuck && !finished
                 ? { background: 'var(--gradient-retro-dusk) top / 100% 100dvh no-repeat' }
@@ -281,7 +280,7 @@ const HangmentleGame = () => {
             }
           >
             {isStuck && !finished && <SkyDots night />}
-            <div className="pointer-events-auto relative z-10 flex flex-col gap-4">
+            <div className="relative z-10 flex flex-col gap-4">
               <section className={GAME_CARD}>
                 <p className="font-typewriter text-[12px] leading-4 opacity-60">
                   {`PUZZLE ${String(puzzleNo).padStart(2, '0')} · ${
@@ -354,6 +353,13 @@ const HangmentleGame = () => {
                   )}
                 </form>
               )}
+
+              {/* 추측 목록 카드의 윗부분. 아래 몸통과 맞붙어 카드 하나로 보인다 */}
+              {!finished && showGuessList && (
+                <div className="mt-2 rounded-t-[16px] border-x-2 border-t-2 border-ink bg-paper px-5 pt-5 shadow-[5px_0_0_0_var(--color-ink)]">
+                  <div className="border-b border-ink/15 pb-2">{guessHeader}</div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -410,28 +416,17 @@ const HangmentleGame = () => {
             </section>
           )}
 
-          {progress.guesses.length > 0 && (
+          {/* 진행 중: 위 고정 영역의 카드 윗부분과 맞붙는 몸통 (gap-6만큼 끌어올림). 그림자는 카드 하나처럼 이어지게 */}
+          {!finished && showGuessList && (
+            <section className="-mt-6 rounded-b-[16px] border-x-2 border-b-2 border-ink bg-paper px-5 pb-5 pt-1 shadow-[5px_0_0_0_var(--color-ink),5px_5px_0_0_var(--color-ink)]">
+              {lastGuess && <ul className="pb-2">{renderGuessRow(lastGuess, true)}</ul>}
+              <ul>{sortGuesses(progress.guesses).map((guess) => renderGuessRow(guess))}</ul>
+            </section>
+          )}
+
+          {finished && showGuessList && (
             <section className={GAME_CARD}>
-              {/* 진행 중에는 카드 윗부분(테두리·머리줄)이 입력창 바로 아래에 멈추고 그 밑으로 목록만 움직인다.
-                  카드 테두리(2px)와 안쪽 여백(20px)만큼 넓혀 카드 윗부분을 그대로 다시 그린다 */}
-              <div
-                className={
-                  finished
-                    ? ''
-                    : 'sticky z-10 -mx-[22px] -mt-[22px] rounded-t-[16px] border-x-2 border-t-2 border-ink bg-paper px-5 pt-5'
-                }
-                style={finished ? undefined : { top: bandHeight - 1 }}
-              >
-                <div className="flex items-center gap-3 pb-2 font-typewriter text-[11px] leading-4 opacity-50">
-                  <span className="w-6">#</span>
-                  <span className="flex-1">{isEng ? 'WORD' : '단어'}</span>
-                  <span>{isEng ? 'SCORE' : '유사도'}</span>
-                  <span className="w-[84px] text-right">{isEng ? 'RANK' : '순위'}</span>
-                </div>
-              </div>
-              {lastGuess && !finished && (
-                <ul className="pb-2">{renderGuessRow(lastGuess, true)}</ul>
-              )}
+              <div className="pb-2">{guessHeader}</div>
               <ul>{sortGuesses(progress.guesses).map((guess) => renderGuessRow(guess))}</ul>
             </section>
           )}
