@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '@/contexts/LanguageContext';
 import CategoryList from '../common/CategoryList';
 import SkyDots from '../common/SkyDots';
+import { RETRO_HEADER_HEIGHT, skyBackground } from '../common/retroLayout';
 import { GAME_CARD, PRIMARY_BUTTON, SECONDARY_BUTTON } from './gameStyles';
 import {
   HANGMENTLE_PUZZLE_COUNT,
@@ -56,6 +57,10 @@ const fetchJson = async <T,>(url: string): Promise<T> => {
 const PUZZLE_LABELS = Array.from({ length: HANGMENTLE_PUZZLE_COUNT }, (_, i) => `문제 ${i + 1}`);
 // 정답을 맞힌 뒤 보여 주는 유사도 순위를 몇 개씩 늘릴지
 const RANKING_PAGE = 50;
+// 힌트·입력창은 화면 위에 고정된 상단바 바로 아래에 붙는다 (1px 겹쳐 붙는 순간을 감지)
+const BAND_TOP = RETRO_HEADER_HEIGHT - 1;
+// 목록이 끝나 갈 때도 이만큼은 늘 보이게 한다. 남은 목록이 이보다 짧아지면 힌트·입력창도 목록과 함께 위로 올라간다
+const LIST_MIN_VISIBLE = 360;
 
 const HangmentleGame = () => {
   const { language } = useLanguage();
@@ -70,7 +75,8 @@ const HangmentleGame = () => {
   const stickyRef = useRef<HTMLDivElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const lastRowRef = useRef<HTMLLIElement>(null);
-  const [isStuck, setIsStuck] = useState(false);
+  // 힌트·입력창 묶음이 목록 위에 겹쳐 있는지 (상단바 아래에 붙어 있거나, 목록 끝에서 목록과 함께 올라가는 중)
+  const [isOverList, setIsOverList] = useState(false);
 
   const vocabQuery = useQuery({
     queryKey: ['hangmentle', 'vocab'],
@@ -209,17 +215,30 @@ const HangmentleGame = () => {
   const finished = progress.status !== 'playing';
   const guessedWords = new Set(progress.guesses.map((guess) => guess.word));
 
-  // 힌트·입력창 묶음이 화면 위에 붙었는지. top을 -1px로 두어 붙는 순간 1px이 화면 밖으로 나가게 한다
+  // 스크롤할 때마다 힌트·입력창 묶음의 화면 위치를 CSS 변수(--band-top)로 넘겨, 뒤에 까는 하늘과 별을
+  // 어느 위치에서든 뒤 하늘과 맞춘다 (매 프레임 다시 그리지 않도록 상태는 겹침 여부만 둔다)
+  const hasListBody = !finished && progress.guesses.length > 0;
   useEffect(() => {
-    const el = stickyRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsStuck(entry.intersectionRatio < 1 && entry.boundingClientRect.top < 1),
-      { threshold: [1] },
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [round, finished]);
+    const band = stickyRef.current;
+    const container = band?.closest('.overflow-y-auto');
+    if (!band || !container) return;
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const top = band.getBoundingClientRect().top;
+      band.style.setProperty('--band-top', `${top}px`);
+      setIsOverList(container.scrollTop > 0 && top < BAND_TOP + 0.5);
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    onScroll();
+    container.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      container.removeEventListener('scroll', onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [round, finished, hasListBody]);
 
   // 방금 입력한 단어 줄이 상단 고정 영역 밑에 가려져 있으면 보이도록 스크롤한다
   useEffect(() => {
@@ -287,111 +306,135 @@ const HangmentleGame = () => {
 
       {round && (
         <>
-          {/* 진행 중에는 스크롤해도 힌트·입력창·추측 목록 카드 윗부분(머리줄)이 화면 위에 붙어 있고 그 아래 목록만 움직인다.
-              붙으면 화면 맨 위이므로 뒤 하늘과 같은 그라디언트·별을 깔아 경계가 보이지 않게 한다 */}
+          {/* 고정 범위: 힌트·입력창 묶음은 이 안에서만 붙어 있다. 목록 몸통의 음수 아래 여백으로 범위를 목록 끝보다
+              LIST_MIN_VISIBLE만큼 앞에서 끝내고, 같은 크기의 양수 여백으로 아래 배치는 그대로 둔다 */}
           <div
-            ref={stickyRef}
-            className={`-mx-5 -mt-3 px-5 pt-3 ${finished ? '' : 'sticky -top-px z-20'}`}
-            style={
-              isStuck && !finished
-                ? { background: 'var(--gradient-retro-dusk) top / 100% 100dvh no-repeat' }
-                : undefined
-            }
+            className="flex flex-col"
+            style={hasListBody ? { marginBottom: LIST_MIN_VISIBLE } : undefined}
           >
-            {isStuck && !finished && (
-              // 별은 고정 영역 안에서만 보이게 자른다 (영역 자체는 아래 페이드가 삐져나와야 해서 자르지 않음)
-              <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                <SkyDots night />
-              </div>
-            )}
-            <div className="relative z-10 flex flex-col gap-4">
-              <section className={GAME_CARD}>
-                <p className="font-typewriter text-[12px] leading-4 opacity-60">
-                  {`PUZZLE ${String(puzzleNo).padStart(2, '0')} · ${
-                    isEng
-                      ? `${progress.guesses.length} GUESSES`
-                      : `${progress.guesses.length}번 추측`
-                  }`}
-                </p>
-                <p className="pt-3 font-body-kr text-[14px] leading-6">
-                  {isEng ? (
-                    <>
-                      The closest word is <b>{showScore(round.hints.first)}</b> similar, the 10th{' '}
-                      <b>{showScore(round.hints.tenth)}</b>, and the 1000th{' '}
-                      <b>{showScore(round.hints.thousandth)}</b>.
-                    </>
-                  ) : (
-                    <>
-                      정답과 가장 가까운 단어의 유사도는 <b>{showScore(round.hints.first)}</b>,
-                      10번째는 <b>{showScore(round.hints.tenth)}</b>, 1000번째는{' '}
-                      <b>{showScore(round.hints.thousandth)}</b>예요.
-                    </>
-                  )}
-                </p>
-              </section>
-
-              {finished ? (
-                <section className="rounded-[16px] border-2 border-ink bg-rust p-5 text-center text-paper drop-shadow-[5px_5px_0px_var(--color-ink)]">
-                  <p className="font-typewriter text-[12px] leading-4 opacity-80">
-                    {isEng ? 'YOU GOT IT' : '정답'}
-                  </p>
-                  <p className="pt-2 font-display text-[40px] leading-[48px]">{round.answer}</p>
-                  <p className="pt-2 font-body-kr text-[14px] leading-5 opacity-90">
-                    {isEng
-                      ? `Solved in ${progress.guesses.length} guesses`
-                      : `${progress.guesses.length}번 만에 맞혔어요!`}
-                  </p>
-                </section>
-              ) : (
-                <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={input}
-                      onChange={(e) => {
-                        setInput(e.target.value);
-                        setMessage(null);
-                      }}
-                      enterKeyHint="send"
-                      autoComplete="off"
-                      autoCorrect="off"
-                      placeholder={isEng ? 'Type a Korean word' : '단어를 입력하세요'}
-                      aria-label={isEng ? 'Your guess' : '추측할 단어'}
-                      className="h-12 min-w-0 flex-1 rounded-full bg-paper px-5 font-body-kr text-[16px] text-ink outline-none placeholder:text-ink/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper"
-                    />
-                    <button
-                      type="submit"
-                      disabled={!input.trim()}
-                      className="h-12 shrink-0 rounded-full border-2 border-ink bg-rust px-5 font-display text-[16px] text-paper drop-shadow-[3px_3px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px] disabled:opacity-40"
-                    >
-                      {isEng ? 'Guess' : '추측'}
-                    </button>
+            {/* 진행 중에는 스크롤해도 힌트·입력창·추측 목록 카드 윗부분(머리줄)이 화면 위에 붙어 있고 그 아래 목록만 움직인다.
+              붙으면 뒤 하늘과 같은 그라디언트·별을 깔아 경계가 보이지 않게 한다 */}
+            <div
+              ref={stickyRef}
+              className={`-mx-5 -mt-3 px-5 pt-3 ${finished ? '' : 'sticky z-20'}`}
+              style={
+                finished
+                  ? undefined
+                  : {
+                      top: BAND_TOP,
+                      background: isOverList ? skyBackground('var(--band-top)') : undefined,
+                    }
+              }
+            >
+              {isOverList && !finished && (
+                // 별은 고정 영역 안에서만 보이게 자른다 (영역 자체는 아래 페이드가 삐져나와야 해서 자르지 않음).
+                // 뒤 하늘의 별과 같은 자리에 오도록 현재 화면 위치만큼 끌어올린다
+                <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                  <div className="absolute inset-x-0" style={{ top: 'calc(-1 * var(--band-top))' }}>
+                    <SkyDots night />
                   </div>
-                  {message && (
-                    <p
-                      role="alert"
-                      className="px-2 font-body-kr text-[13px] font-semibold text-paper"
-                    >
-                      {message}
-                    </p>
-                  )}
-                </form>
-              )}
-
-              {/* 추측 목록 카드의 윗부분. 아래 몸통과 맞붙어 카드 하나로 보인다 */}
-              {!finished && showGuessList && (
-                <div className="relative mt-2 rounded-t-[16px] border-x-2 border-t-2 border-ink bg-paper px-5 pt-5 shadow-[5px_0_0_0_var(--color-ink)]">
-                  <div className="pb-2">{guessHeader}</div>
-                  {/* 붙었을 때 머리줄 밑으로 들어가는 줄이 선에 잘리지 않고 서서히 사라지게 */}
-                  {isStuck && (
-                    <div
-                      aria-hidden
-                      className="pointer-events-none absolute inset-x-0 top-full h-5 bg-linear-to-b from-paper to-paper/0"
-                    />
-                  )}
                 </div>
               )}
+              <div className="relative z-10 flex flex-col gap-4">
+                <section className={GAME_CARD}>
+                  <p className="font-typewriter text-[12px] leading-4 opacity-60">
+                    {`PUZZLE ${String(puzzleNo).padStart(2, '0')} · ${
+                      isEng
+                        ? `${progress.guesses.length} GUESSES`
+                        : `${progress.guesses.length}번 추측`
+                    }`}
+                  </p>
+                  <p className="pt-3 font-body-kr text-[14px] leading-6">
+                    {isEng ? (
+                      <>
+                        The closest word is <b>{showScore(round.hints.first)}</b> similar, the 10th{' '}
+                        <b>{showScore(round.hints.tenth)}</b>, and the 1000th{' '}
+                        <b>{showScore(round.hints.thousandth)}</b>.
+                      </>
+                    ) : (
+                      <>
+                        정답과 가장 가까운 단어의 유사도는 <b>{showScore(round.hints.first)}</b>,
+                        10번째는 <b>{showScore(round.hints.tenth)}</b>, 1000번째는{' '}
+                        <b>{showScore(round.hints.thousandth)}</b>예요.
+                      </>
+                    )}
+                  </p>
+                </section>
+
+                {finished ? (
+                  <section className="rounded-[16px] border-2 border-ink bg-rust p-5 text-center text-paper drop-shadow-[5px_5px_0px_var(--color-ink)]">
+                    <p className="font-typewriter text-[12px] leading-4 opacity-80">
+                      {isEng ? 'YOU GOT IT' : '정답'}
+                    </p>
+                    <p className="pt-2 font-display text-[40px] leading-[48px]">{round.answer}</p>
+                    <p className="pt-2 font-body-kr text-[14px] leading-5 opacity-90">
+                      {isEng
+                        ? `Solved in ${progress.guesses.length} guesses`
+                        : `${progress.guesses.length}번 만에 맞혔어요!`}
+                    </p>
+                  </section>
+                ) : (
+                  <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={input}
+                        onChange={(e) => {
+                          setInput(e.target.value);
+                          setMessage(null);
+                        }}
+                        enterKeyHint="send"
+                        autoComplete="off"
+                        autoCorrect="off"
+                        placeholder={isEng ? 'Type a Korean word' : '단어를 입력하세요'}
+                        aria-label={isEng ? 'Your guess' : '추측할 단어'}
+                        className="h-12 min-w-0 flex-1 rounded-full bg-paper px-5 font-body-kr text-[16px] text-ink outline-none placeholder:text-ink/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper"
+                      />
+                      <button
+                        type="submit"
+                        disabled={!input.trim()}
+                        className="h-12 shrink-0 rounded-full border-2 border-ink bg-rust px-5 font-display text-[16px] text-paper drop-shadow-[3px_3px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px] disabled:opacity-40"
+                      >
+                        {isEng ? 'Guess' : '추측'}
+                      </button>
+                    </div>
+                    {message && (
+                      <p
+                        role="alert"
+                        className="px-2 font-body-kr text-[13px] font-semibold text-paper"
+                      >
+                        {message}
+                      </p>
+                    )}
+                  </form>
+                )}
+
+                {/* 추측 목록 카드의 윗부분. 아래 몸통과 맞붙어 카드 하나로 보인다 */}
+                {hasListBody && (
+                  <div className="relative mt-2 rounded-t-[16px] border-x-2 border-t-2 border-ink bg-paper px-5 pt-5 shadow-[5px_0_0_0_var(--color-ink)]">
+                    <div className="pb-2">{guessHeader}</div>
+                    {/* 붙었을 때 머리줄 밑으로 들어가는 줄이 선에 잘리지 않고 서서히 사라지게 */}
+                    {isOverList && (
+                      <div
+                        aria-hidden
+                        className="pointer-events-none absolute inset-x-0 top-full h-5 bg-linear-to-b from-paper to-paper/0"
+                      />
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
+
+            {/* 진행 중: 위 고정 영역의 카드 윗부분과 맞붙는 몸통. 그림자는 카드 하나처럼 이어지게 */}
+            {hasListBody && (
+              <section
+                className="rounded-b-[16px] border-x-2 border-b-2 border-ink bg-paper px-5 pb-5 pt-1 shadow-[5px_0_0_0_var(--color-ink),5px_5px_0_0_var(--color-ink)]"
+                style={{ marginBottom: -LIST_MIN_VISIBLE }}
+              >
+                {lastGuess && <ul className="pb-2">{renderGuessRow(lastGuess, true)}</ul>}
+                <ul>{sortGuesses(progress.guesses).map((guess) => renderGuessRow(guess))}</ul>
+              </section>
+            )}
           </div>
 
           {finished && (
@@ -444,14 +487,6 @@ const HangmentleGame = () => {
                   ? 'Highlighted words are ones you guessed.'
                   : '노란 줄은 내가 추측했던 단어예요.'}
               </p>
-            </section>
-          )}
-
-          {/* 진행 중: 위 고정 영역의 카드 윗부분과 맞붙는 몸통 (gap-6만큼 끌어올림). 그림자는 카드 하나처럼 이어지게 */}
-          {!finished && showGuessList && (
-            <section className="-mt-6 rounded-b-[16px] border-x-2 border-b-2 border-ink bg-paper px-5 pb-5 pt-1 shadow-[5px_0_0_0_var(--color-ink),5px_5px_0_0_var(--color-ink)]">
-              {lastGuess && <ul className="pb-2">{renderGuessRow(lastGuess, true)}</ul>}
-              <ul>{sortGuesses(progress.guesses).map((guess) => renderGuessRow(guess))}</ul>
             </section>
           )}
 
