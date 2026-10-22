@@ -2,8 +2,9 @@ import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '@/contexts/LanguageContext';
 import CategoryList from '../common/CategoryList';
-import SkyDots from '../common/SkyDots';
-import { RETRO_HEADER_HEIGHT, skyBackground } from '../common/retroLayout';
+import { BandStars } from '../common/StickyBar';
+import { STICKY_BAND_TOP, skyBackground } from '../common/retroLayout';
+import { useStickyOverlap } from '@/hooks/useStickyOverlap';
 import { GAME_CARD, PRIMARY_BUTTON, SECONDARY_BUTTON } from './gameStyles';
 import {
   HANGMENTLE_PUZZLE_COUNT,
@@ -57,8 +58,6 @@ const fetchJson = async <T,>(url: string): Promise<T> => {
 const PUZZLE_LABELS = Array.from({ length: HANGMENTLE_PUZZLE_COUNT }, (_, i) => `문제 ${i + 1}`);
 // 정답을 맞힌 뒤 보여 주는 유사도 순위를 몇 개씩 늘릴지
 const RANKING_PAGE = 50;
-// 힌트·입력창은 화면 위에 고정된 상단바 바로 아래에 붙는다 (1px 겹쳐 붙는 순간을 감지)
-const BAND_TOP = RETRO_HEADER_HEIGHT - 1;
 // 목록이 끝나 갈 때도 이만큼은 늘 보이게 한다. 남은 목록이 이보다 짧아지면 힌트·입력창도 목록과 함께 위로 올라간다
 const LIST_MIN_VISIBLE = 360;
 
@@ -75,8 +74,6 @@ const HangmentleGame = () => {
   const stickyRef = useRef<HTMLDivElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const lastRowRef = useRef<HTMLLIElement>(null);
-  // 힌트·입력창 묶음이 목록 위에 겹쳐 있는지 (상단바 아래에 붙어 있거나, 목록 끝에서 목록과 함께 올라가는 중)
-  const [isOverList, setIsOverList] = useState(false);
 
   const vocabQuery = useQuery({
     queryKey: ['hangmentle', 'vocab'],
@@ -215,30 +212,9 @@ const HangmentleGame = () => {
   const finished = progress.status !== 'playing';
   const guessedWords = new Set(progress.guesses.map((guess) => guess.word));
 
-  // 스크롤할 때마다 힌트·입력창 묶음의 화면 위치를 CSS 변수(--band-top)로 넘겨, 뒤에 까는 하늘과 별을
-  // 어느 위치에서든 뒤 하늘과 맞춘다 (매 프레임 다시 그리지 않도록 상태는 겹침 여부만 둔다)
+  // 힌트·입력창 묶음이 목록 위에 겹쳐 있는지 (상단바 아래에 붙어 있거나, 목록 끝에서 목록과 함께 올라가는 중)
   const hasListBody = !finished && progress.guesses.length > 0;
-  useEffect(() => {
-    const band = stickyRef.current;
-    const container = band?.closest('.overflow-y-auto');
-    if (!band || !container) return;
-    let frame = 0;
-    const update = () => {
-      frame = 0;
-      const top = band.getBoundingClientRect().top;
-      band.style.setProperty('--band-top', `${top}px`);
-      setIsOverList(container.scrollTop > 0 && top < BAND_TOP + 0.5);
-    };
-    const onScroll = () => {
-      if (!frame) frame = requestAnimationFrame(update);
-    };
-    onScroll();
-    container.addEventListener('scroll', onScroll, { passive: true });
-    return () => {
-      container.removeEventListener('scroll', onScroll);
-      if (frame) cancelAnimationFrame(frame);
-    };
-  }, [round, finished, hasListBody]);
+  const isOverList = useStickyOverlap(stickyRef, Boolean(round));
 
   // 방금 입력한 단어 줄이 상단 고정 영역 밑에 가려져 있으면 보이도록 스크롤한다
   useEffect(() => {
@@ -321,20 +297,12 @@ const HangmentleGame = () => {
                 finished
                   ? undefined
                   : {
-                      top: BAND_TOP,
+                      top: STICKY_BAND_TOP,
                       background: isOverList ? skyBackground('var(--band-top)') : undefined,
                     }
               }
             >
-              {isOverList && !finished && (
-                // 별은 고정 영역 안에서만 보이게 자른다 (영역 자체는 아래 페이드가 삐져나와야 해서 자르지 않음).
-                // 뒤 하늘의 별과 같은 자리에 오도록 현재 화면 위치만큼 끌어올린다
-                <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                  <div className="absolute inset-x-0" style={{ top: 'calc(-1 * var(--band-top))' }}>
-                    <SkyDots night />
-                  </div>
-                </div>
-              )}
+              {isOverList && !finished && <BandStars />}
               <div className="relative z-10 flex flex-col gap-4">
                 <section className={GAME_CARD}>
                   <p className="font-typewriter text-[12px] leading-4 opacity-60">

@@ -5,6 +5,7 @@ import RetroPageHeader from '../components/common/RetroPageHeader';
 import RetroPageTitle from '../components/common/RetroPageTitle';
 import FestivalMap from '../components/common/FestivalMap';
 import SearchBar from '../components/common/SearchBar';
+import StickyBar from '../components/common/StickyBar';
 import MapModal from '../components/common/MapModal';
 import PubGrid from '../components/pub/PubGrid';
 import day1Pub from '../assets/day1_pub.jpg';
@@ -46,9 +47,10 @@ const PubPage = () => {
       <div className="pt-6">
         <FestivalMap images={PUB_MAP_IMAGES} onClick={setMapImageSrc} />
       </div>
-      <div className="pt-6">
+      {/* 스크롤해도 검색창은 상단바 아래에 붙어 있다 */}
+      <StickyBar>
         <SearchBar value={filters.q} onChange={(q) => setFilter('q', q)} placeholder={t('search.pubPlaceholder')} />
-      </div>
+      </StickyBar>
       <div className="pt-5">
         <PubGrid pubs={filteredPubs} onPubClick={(pub) => navigate(`/pub/${pub.id}`)} onReset={resetFilters} />
       </div>
