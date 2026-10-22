@@ -46,7 +46,10 @@ describe('createHangmentleRound', () => {
   });
 
   it('가장 가까운 단어에 정답은 들어가지 않는다', () => {
-    expect(round.nearest(2)).toEqual(['공연', '음악']);
+    expect(round.nearest(2)).toEqual([
+      { word: '공연', similarity: 5000, rank: 1 },
+      { word: '음악', similarity: 4998, rank: 2 },
+    ]);
   });
 });
 
@@ -55,9 +58,10 @@ describe('도우미 함수', () => {
     expect(normalizeGuess(' 송골 매 ')).toBe('송골매');
   });
 
-  it('유사도를 소수 둘째 자리 점수로 바꾼다', () => {
-    expect(formatSimilarity(4169)).toBe('41.69');
-    expect(formatSimilarity(-120)).toBe('-1.20');
+  it('유사도를 소수 둘째 자리 퍼센트로 바꾼다', () => {
+    expect(formatSimilarity(10000)).toBe('100.00%');
+    expect(formatSimilarity(4169)).toBe('41.69%');
+    expect(formatSimilarity(-120)).toBe('-1.20%');
   });
 
   it('가까운 순, 같으면 먼저 추측한 순으로 정렬한다', () => {

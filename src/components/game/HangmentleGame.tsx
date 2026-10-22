@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '@/contexts/LanguageContext';
 import CategoryList from '../common/CategoryList';
@@ -50,6 +50,8 @@ const fetchJson = async <T,>(url: string): Promise<T> => {
 };
 
 const PUZZLE_LABELS = Array.from({ length: HANGMENTLE_PUZZLE_COUNT }, (_, i) => `문제 ${i + 1}`);
+// 정답을 맞힌 뒤 보여 주는 유사도 순위를 몇 개씩 늘릴지
+const RANKING_PAGE = 50;
 
 const HangmentleGame = () => {
   const { language } = useLanguage();
@@ -60,6 +62,9 @@ const HangmentleGame = () => {
   const [input, setInput] = useState('');
   const [message, setMessage] = useState<string | null>(null);
   const [lastGuess, setLastGuess] = useState<HangmentleGuess | null>(null);
+  const [rankingCount, setRankingCount] = useState(RANKING_PAGE);
+  const stickyRef = useRef<HTMLDivElement>(null);
+  const [isStuck, setIsStuck] = useState(false);
 
   const vocabQuery = useQuery({
     queryKey: ['hangmentle', 'vocab'],
@@ -73,7 +78,10 @@ const HangmentleGame = () => {
   });
 
   const round = useMemo(
-    () => (vocabQuery.data && puzzleQuery.data ? createHangmentleRound(vocabQuery.data, puzzleQuery.data.sims) : null),
+    () =>
+      vocabQuery.data && puzzleQuery.data
+        ? createHangmentleRound(vocabQuery.data, puzzleQuery.data.sims)
+        : null,
     [vocabQuery.data, puzzleQuery.data],
   );
 
@@ -87,6 +95,7 @@ const HangmentleGame = () => {
     setInput('');
     setMessage(null);
     setLastGuess(null);
+    setRankingCount(RANKING_PAGE);
   };
 
   const handleSubmit = (event: FormEvent) => {
@@ -95,11 +104,17 @@ const HangmentleGame = () => {
 
     const result = round.evaluate(input, progress.guesses);
     if (result.kind === 'unknown') {
-      setMessage(isEng ? `"${result.word}" is not in the word list` : `'${result.word}'은(는) 모르는 단어예요`);
+      setMessage(
+        isEng
+          ? `"${result.word}" is not in the word list`
+          : `'${result.word}'은(는) 모르는 단어예요`,
+      );
       return;
     }
     if (result.kind === 'duplicate') {
-      setMessage(isEng ? `You already tried "${result.word}"` : `'${result.word}'은(는) 이미 추측했어요`);
+      setMessage(
+        isEng ? `You already tried "${result.word}"` : `'${result.word}'은(는) 이미 추측했어요`,
+      );
       return;
     }
     setMessage(null);
@@ -115,11 +130,13 @@ const HangmentleGame = () => {
     setProgress(EMPTY_PROGRESS);
     setLastGuess(null);
     setMessage(null);
+    setRankingCount(RANKING_PAGE);
   };
 
   const rankLabel = (guess: HangmentleGuess) => {
     if (guess.rank === 0) return isEng ? 'Answer!' : '정답!';
-    if (guess.rank === null) return isEng ? `${HANGMENTLE_TOP_RANK}+` : `${HANGMENTLE_TOP_RANK}위 밖`;
+    if (guess.rank === null)
+      return isEng ? `${HANGMENTLE_TOP_RANK}+` : `${HANGMENTLE_TOP_RANK}위 밖`;
     return isEng ? `#${guess.rank}` : `${guess.rank}위`;
   };
 
@@ -130,9 +147,15 @@ const HangmentleGame = () => {
         highlight ? '-mx-2 rounded-[8px] border-b-0 bg-mustard/30 px-2' : ''
       }`}
     >
-      <span className="w-6 shrink-0 font-typewriter text-[12px] leading-4 opacity-50">{guess.order}</span>
-      <span className="min-w-0 flex-1 truncate font-display text-[17px] leading-6">{guess.word}</span>
-      <span className="shrink-0 font-condensed text-[17px] font-bold leading-6">{formatSimilarity(guess.similarity)}</span>
+      <span className="w-6 shrink-0 font-typewriter text-[12px] leading-4 opacity-50">
+        {guess.order}
+      </span>
+      <span className="min-w-0 flex-1 truncate font-display text-[17px] leading-6">
+        {guess.word}
+      </span>
+      <span className="shrink-0 font-condensed text-[17px] font-bold leading-6">
+        {formatSimilarity(guess.similarity)}
+      </span>
       <span className="flex w-[84px] shrink-0 flex-col items-end gap-1">
         <span
           className={`font-body-kr text-[12px] font-semibold leading-4 ${
@@ -145,7 +168,9 @@ const HangmentleGame = () => {
           <span className="h-1.5 w-full overflow-hidden rounded-full bg-ink/10">
             <span
               className="block h-full rounded-full bg-tape-blue"
-              style={{ width: `${((HANGMENTLE_TOP_RANK - guess.rank + 1) / HANGMENTLE_TOP_RANK) * 100}%` }}
+              style={{
+                width: `${((HANGMENTLE_TOP_RANK - guess.rank + 1) / HANGMENTLE_TOP_RANK) * 100}%`,
+              }}
             />
           </span>
         )}
@@ -156,13 +181,26 @@ const HangmentleGame = () => {
   const isLoading = vocabQuery.isPending || puzzleQuery.isPending;
   const isError = vocabQuery.isError || puzzleQuery.isError;
   const finished = progress.status !== 'playing';
+  const guessedWords = new Set(progress.guesses.map((guess) => guess.word));
+
+  // 힌트·입력창 묶음이 화면 위에 붙었는지. top을 -1px로 두어 붙는 순간 1px이 화면 밖으로 나가게 한다
+  useEffect(() => {
+    const el = stickyRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsStuck(entry.intersectionRatio < 1 && entry.boundingClientRect.top < 1),
+      { threshold: [1] },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [round, finished]);
 
   return (
     <div className="flex flex-col gap-6">
       <p className="font-body-kr text-[14px] leading-5 text-paper/80">
         {isEng
           ? 'Guess the secret Korean word. Each guess shows how close its meaning is — use the scores as clues.'
-          : '정답 단어와 뜻이 얼마나 가까운지 점수로 알려 줘요. 점수가 높은 단어를 실마리 삼아 정답을 찾아보세요.'}
+          : '정답 단어와 뜻이 얼마나 가까운지 유사도(%)로 알려 줘요. 유사도가 높은 단어를 실마리 삼아 정답을 찾아보세요.'}
       </p>
 
       {HANGMENTLE_PUZZLE_COUNT > 1 && (
@@ -201,84 +239,150 @@ const HangmentleGame = () => {
 
       {round && (
         <>
-          <section className={GAME_CARD}>
-            <p className="font-typewriter text-[12px] leading-4 opacity-60">
-              {`PUZZLE ${String(puzzleNo).padStart(2, '0')} · ${
-                isEng ? `${progress.guesses.length} GUESSES` : `${progress.guesses.length}번 추측`
-              }`}
-            </p>
-            <p className="pt-3 font-body-kr text-[14px] leading-6">
-              {isEng ? (
-                <>
-                  The closest word scores <b>{formatSimilarity(round.hints.first)}</b>, the 10th{' '}
-                  <b>{formatSimilarity(round.hints.tenth)}</b>, and the 1000th{' '}
-                  <b>{formatSimilarity(round.hints.thousandth)}</b>.
-                </>
-              ) : (
-                <>
-                  정답과 가장 가까운 단어는 <b>{formatSimilarity(round.hints.first)}</b>점, 10번째는{' '}
-                  <b>{formatSimilarity(round.hints.tenth)}</b>점, 1000번째는{' '}
-                  <b>{formatSimilarity(round.hints.thousandth)}</b>점이에요.
-                </>
-              )}
-            </p>
-          </section>
-
-          {finished ? (
-            <section
-              className={`rounded-[16px] border-2 border-ink p-5 text-center drop-shadow-[5px_5px_0px_var(--color-ink)] ${
-                progress.status === 'solved' ? 'bg-rust text-paper' : 'bg-ink text-paper'
-              }`}
-            >
-              <p className="font-typewriter text-[12px] leading-4 opacity-80">
-                {progress.status === 'solved' ? (isEng ? 'YOU GOT IT' : '정답') : isEng ? 'THE ANSWER WAS' : '정답은'}
+          {/* 진행 중에는 스크롤해도 힌트·입력창이 화면 위에 붙어 있고, 붙었을 때만 뒤를 가린다 */}
+          <div
+            ref={stickyRef}
+            className={`-mx-5 -my-3 flex flex-col gap-4 px-5 py-3 transition-colors duration-200 ${
+              finished ? '' : 'sticky -top-px z-20'
+            } ${isStuck && !finished ? 'bg-dusk/90 shadow-[0_8px_16px_-8px_var(--color-ink)] backdrop-blur-md' : ''}`}
+          >
+            <section className={GAME_CARD}>
+              <p className="font-typewriter text-[12px] leading-4 opacity-60">
+                {`PUZZLE ${String(puzzleNo).padStart(2, '0')} · ${
+                  isEng ? `${progress.guesses.length} GUESSES` : `${progress.guesses.length}번 추측`
+                }`}
               </p>
-              <p className="pt-2 font-display text-[40px] leading-[48px]">{round.answer}</p>
-              <p className="pt-2 font-body-kr text-[14px] leading-5 opacity-90">
-                {progress.status === 'solved'
-                  ? isEng
-                    ? `Solved in ${progress.guesses.length} guesses`
-                    : `${progress.guesses.length}번 만에 맞혔어요!`
-                  : isEng
-                    ? 'Better luck next time'
-                    : '다음엔 꼭 맞혀 봐요'}
+              <p className="pt-3 font-body-kr text-[14px] leading-6">
+                {isEng ? (
+                  <>
+                    The closest word is <b>{formatSimilarity(round.hints.first)}</b> similar, the
+                    10th <b>{formatSimilarity(round.hints.tenth)}</b>, and the 1000th{' '}
+                    <b>{formatSimilarity(round.hints.thousandth)}</b>.
+                  </>
+                ) : (
+                  <>
+                    정답과 가장 가까운 단어의 유사도는 <b>{formatSimilarity(round.hints.first)}</b>,
+                    10번째는 <b>{formatSimilarity(round.hints.tenth)}</b>, 1000번째는{' '}
+                    <b>{formatSimilarity(round.hints.thousandth)}</b>예요.
+                  </>
+                )}
               </p>
-              <div className="mt-5 border-t border-dashed border-paper/50 pt-4">
-                <p className="font-typewriter text-[12px] leading-4 opacity-80">{isEng ? 'CLOSEST WORDS' : '가장 가까운 단어'}</p>
-                <p className="pt-2 font-body-kr text-[14px] leading-6">{round.nearest(10).join(' · ')}</p>
-              </div>
             </section>
-          ) : (
-            <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={input}
-                  onChange={(e) => {
-                    setInput(e.target.value);
-                    setMessage(null);
-                  }}
-                  enterKeyHint="send"
-                  autoComplete="off"
-                  autoCorrect="off"
-                  placeholder={isEng ? 'Type a Korean word' : '단어를 입력하세요'}
-                  aria-label={isEng ? 'Your guess' : '추측할 단어'}
-                  className="h-12 min-w-0 flex-1 rounded-full bg-paper px-5 font-body-kr text-[16px] text-ink outline-none placeholder:text-ink/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper"
-                />
-                <button
-                  type="submit"
-                  disabled={!input.trim()}
-                  className="h-12 shrink-0 rounded-full border-2 border-ink bg-rust px-5 font-display text-[16px] text-paper drop-shadow-[3px_3px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px] disabled:opacity-40"
-                >
-                  {isEng ? 'Guess' : '추측'}
-                </button>
-              </div>
-              {message && (
-                <p role="alert" className="px-2 font-body-kr text-[13px] font-semibold text-paper">
-                  {message}
+
+            {finished ? (
+              <section
+                className={`rounded-[16px] border-2 border-ink p-5 text-center drop-shadow-[5px_5px_0px_var(--color-ink)] ${
+                  progress.status === 'solved' ? 'bg-rust text-paper' : 'bg-ink text-paper'
+                }`}
+              >
+                <p className="font-typewriter text-[12px] leading-4 opacity-80">
+                  {progress.status === 'solved'
+                    ? isEng
+                      ? 'YOU GOT IT'
+                      : '정답'
+                    : isEng
+                      ? 'THE ANSWER WAS'
+                      : '정답은'}
                 </p>
+                <p className="pt-2 font-display text-[40px] leading-[48px]">{round.answer}</p>
+                <p className="pt-2 font-body-kr text-[14px] leading-5 opacity-90">
+                  {progress.status === 'solved'
+                    ? isEng
+                      ? `Solved in ${progress.guesses.length} guesses`
+                      : `${progress.guesses.length}번 만에 맞혔어요!`
+                    : isEng
+                      ? 'Better luck next time'
+                      : '다음엔 꼭 맞혀 봐요'}
+                </p>
+              </section>
+            ) : (
+              <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => {
+                      setInput(e.target.value);
+                      setMessage(null);
+                    }}
+                    enterKeyHint="send"
+                    autoComplete="off"
+                    autoCorrect="off"
+                    placeholder={isEng ? 'Type a Korean word' : '단어를 입력하세요'}
+                    aria-label={isEng ? 'Your guess' : '추측할 단어'}
+                    className="h-12 min-w-0 flex-1 rounded-full bg-paper px-5 font-body-kr text-[16px] text-ink outline-none placeholder:text-ink/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper"
+                  />
+                  <button
+                    type="submit"
+                    disabled={!input.trim()}
+                    className="h-12 shrink-0 rounded-full border-2 border-ink bg-rust px-5 font-display text-[16px] text-paper drop-shadow-[3px_3px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px] disabled:opacity-40"
+                  >
+                    {isEng ? 'Guess' : '추측'}
+                  </button>
+                </div>
+                {message && (
+                  <p
+                    role="alert"
+                    className="px-2 font-body-kr text-[13px] font-semibold text-paper"
+                  >
+                    {message}
+                  </p>
+                )}
+              </form>
+            )}
+          </div>
+
+          {finished && (
+            <section className={GAME_CARD}>
+              <p className="font-typewriter text-[12px] leading-4 opacity-60">
+                {isEng ? 'SIMILARITY RANKING' : '유사도 순위'}
+              </p>
+              <ul className="pt-2">
+                {[
+                  { word: round.answer, similarity: 10000, rank: 0 },
+                  ...round.nearest(rankingCount),
+                ].map((neighbor) => (
+                  <li
+                    key={neighbor.word}
+                    className={`flex items-center gap-3 border-b border-dashed border-ink/30 py-2 last:border-b-0 ${
+                      guessedWords.has(neighbor.word)
+                        ? '-mx-2 rounded-[8px] border-b-0 bg-mustard/30 px-2'
+                        : ''
+                    }`}
+                  >
+                    <span
+                      className={`w-10 shrink-0 font-typewriter text-[12px] leading-4 ${
+                        neighbor.rank === 0 ? 'font-bold text-rust' : 'opacity-50'
+                      }`}
+                    >
+                      {neighbor.rank === 0 ? (isEng ? 'ANS' : '정답') : neighbor.rank}
+                    </span>
+                    <span className="min-w-0 flex-1 truncate font-display text-[16px] leading-6">
+                      {neighbor.word}
+                    </span>
+                    <span className="shrink-0 font-condensed text-[15px] font-bold leading-6">
+                      {formatSimilarity(neighbor.similarity)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              {rankingCount < HANGMENTLE_TOP_RANK && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    setRankingCount((count) => Math.min(count + RANKING_PAGE, HANGMENTLE_TOP_RANK))
+                  }
+                  className="mt-3 h-10 w-full rounded-full border border-ink/20 font-body-kr text-[14px] font-semibold active:bg-ink/5"
+                >
+                  {isEng ? 'Show more' : `더 보기 (${rankingCount}/${HANGMENTLE_TOP_RANK})`}
+                </button>
               )}
-            </form>
+              <p className="pt-3 font-body-kr text-[12px] leading-4 opacity-60">
+                {isEng
+                  ? 'Highlighted words are ones you guessed.'
+                  : '노란 줄은 내가 추측했던 단어예요.'}
+              </p>
+            </section>
           )}
 
           {progress.guesses.length > 0 && (
@@ -289,7 +393,9 @@ const HangmentleGame = () => {
                 <span>{isEng ? 'SCORE' : '유사도'}</span>
                 <span className="w-[84px] text-right">{isEng ? 'RANK' : '순위'}</span>
               </div>
-              {lastGuess && !finished && <ul className="pb-2">{renderGuessRow(lastGuess, true)}</ul>}
+              {lastGuess && !finished && (
+                <ul className="pb-2">{renderGuessRow(lastGuess, true)}</ul>
+              )}
               <ul>{sortGuesses(progress.guesses).map((guess) => renderGuessRow(guess))}</ul>
             </section>
           )}

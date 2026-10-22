@@ -24,6 +24,12 @@ export interface HangmentleGuess {
   order: number;
 }
 
+export interface HangmentleNeighbor {
+  word: string;
+  similarity: number;
+  rank: number;
+}
+
 export type HangmentleGuessResult =
   | { kind: 'unknown'; word: string }
   | { kind: 'duplicate'; word: string }
@@ -33,15 +39,16 @@ export interface HangmentleRound {
   answer: string;
   // 정답을 뺀 가장 가까운 단어·10번째·1000번째의 유사도 × 10000
   hints: { first: number; tenth: number; thousandth: number };
-  // 정답과 가장 가까운 단어 (정답 제외, 가까운 순)
-  nearest: (count: number) => string[];
+  // 정답과 가장 가까운 단어 (정답 제외, 가까운 순, 순위는 1부터)
+  nearest: (count: number) => HangmentleNeighbor[];
   evaluate: (input: string, previous: HangmentleGuess[]) => HangmentleGuessResult;
 }
 
 // 띄어쓰기는 무시한다 ('송골 매' → '송골매')
 export const normalizeGuess = (input: string) => input.replace(/\s+/g, '');
 
-export const formatSimilarity = (scaled: number) => (scaled / 100).toFixed(2);
+// 유사도를 퍼센트로 (정답은 100.00%)
+export const formatSimilarity = (scaled: number) => `${(scaled / 100).toFixed(2)}%`;
 
 export const createHangmentleRound = (vocab: string[], sims: number[]): HangmentleRound => {
   const wordIndex = new Map(vocab.map((word, index) => [word, index]));
@@ -56,7 +63,10 @@ export const createHangmentleRound = (vocab: string[], sims: number[]): Hangment
       tenth: sims[byCloseness[10]],
       thousandth: sims[byCloseness[HANGMENTLE_TOP_RANK]],
     },
-    nearest: (count) => byCloseness.slice(1, count + 1).map((index) => vocab[index]),
+    nearest: (count) =>
+      byCloseness
+        .slice(1, count + 1)
+        .map((index, i) => ({ word: vocab[index], similarity: sims[index], rank: i + 1 })),
     evaluate: (input, previous) => {
       const word = normalizeGuess(input);
       const index = wordIndex.get(word);
