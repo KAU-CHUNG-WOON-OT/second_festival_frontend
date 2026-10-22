@@ -31,12 +31,12 @@ describe('createHangmentleRound', () => {
     expect(far.kind === 'ok' && far.guess.rank).toBeNull();
   });
 
-  it('목록에 없는 단어와 이미 추측한 단어를 구분한다', () => {
+  it('목록에 없는 단어를 알려 주고, 이미 추측한 단어는 그때 결과를 다시 돌려준다', () => {
     expect(round.evaluate('없는말', []).kind).toBe('unknown');
     const first = round.evaluate('음악', []);
     expect(first.kind).toBe('ok');
     if (first.kind !== 'ok') return;
-    expect(round.evaluate('음악', [first.guess]).kind).toBe('duplicate');
+    expect(round.evaluate(' 음악 ', [first.guess])).toEqual({ kind: 'duplicate', guess: first.guess });
   });
 
   it('힌트는 정답을 뺀 1·10·1000번째 유사도다', () => {

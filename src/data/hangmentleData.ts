@@ -32,7 +32,8 @@ export interface HangmentleNeighbor {
 
 export type HangmentleGuessResult =
   | { kind: 'unknown'; word: string }
-  | { kind: 'duplicate'; word: string }
+  // 이미 추측한 단어는 그때 결과를 그대로 돌려준다 (다시 검색해 볼 수 있게)
+  | { kind: 'duplicate'; guess: HangmentleGuess }
   | { kind: 'ok'; guess: HangmentleGuess };
 
 export interface HangmentleRound {
@@ -103,7 +104,8 @@ export const createHangmentleRound = (vocab: string[], sims: number[]): Hangment
       const word = normalizeGuess(input);
       const index = wordIndex.get(word);
       if (index === undefined) return { kind: 'unknown', word };
-      if (previous.some((guess) => guess.word === word)) return { kind: 'duplicate', word };
+      const existing = previous.find((guess) => guess.word === word);
+      if (existing) return { kind: 'duplicate', guess: existing };
       return {
         kind: 'ok',
         guess: { word, similarity: sims[index], rank: rankOf.get(index) ?? null, order: previous.length + 1 },

@@ -69,6 +69,7 @@ const HangmentleGame = () => {
   const [rankingCount, setRankingCount] = useState(RANKING_PAGE);
   const stickyRef = useRef<HTMLDivElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
+  const lastRowRef = useRef<HTMLLIElement>(null);
   const [isStuck, setIsStuck] = useState(false);
 
   const vocabQuery = useQuery({
@@ -126,9 +127,10 @@ const HangmentleGame = () => {
       return;
     }
     if (result.kind === 'duplicate') {
-      setMessage(
-        isEng ? `You already tried "${result.word}"` : `'${result.word}'은(는) 이미 추측했어요`,
-      );
+      // 이미 추측한 단어도 검색처럼 결과를 맨 위 강조 줄에 다시 보여 준다 (횟수는 그대로)
+      setMessage(null);
+      setInput('');
+      setLastGuess({ ...result.guess });
       return;
     }
     setMessage(null);
@@ -162,6 +164,7 @@ const HangmentleGame = () => {
   const renderGuessRow = (guess: HangmentleGuess, highlight = false) => (
     <li
       key={`${guess.order}-${guess.word}`}
+      ref={highlight ? lastRowRef : undefined}
       className={`flex items-center gap-3 border-b border-dashed border-ink/30 py-3 last:border-b-0 ${
         highlight ? '-mx-2 rounded-[8px] border-b-0 bg-mustard/30 px-2' : ''
       }`}
@@ -213,6 +216,17 @@ const HangmentleGame = () => {
     observer.observe(el);
     return () => observer.disconnect();
   }, [round, finished]);
+
+  // 방금 입력한 단어 줄이 상단 고정 영역 밑에 가려져 있으면 보이도록 스크롤한다
+  useEffect(() => {
+    const row = lastRowRef.current;
+    const band = stickyRef.current;
+    if (!row || !band) return;
+    const hiddenBy = band.getBoundingClientRect().bottom - row.getBoundingClientRect().top;
+    if (hiddenBy > 0) {
+      row.closest('.overflow-y-auto')?.scrollBy({ top: -(hiddenBy + 8), behavior: 'smooth' });
+    }
+  }, [lastGuess]);
 
   const guessHeader = (
     <div className="flex items-center gap-3 font-typewriter text-[11px] leading-4 opacity-50">
