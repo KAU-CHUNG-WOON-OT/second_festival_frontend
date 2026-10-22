@@ -35,13 +35,12 @@ const TimetableModal = ({ event, onClose, trackNo, done = false }: TimetableModa
     canDrag.current = (sheetRef.current?.scrollTop ?? 0) <= 0;
   };
 
-  // 열릴 때 애니메이션이 transform을 붙잡고 있어서 끄는 만큼은 translate로 옮긴다
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!canDrag.current) return;
     const delta = e.touches[0].clientY - touchStartY.current;
     touchDeltaY.current = delta;
-    if (sheetRef.current) {
-      sheetRef.current.style.translate = `0 ${Math.max(delta, 0)}px`;
+    if (delta > 0 && sheetRef.current) {
+      sheetRef.current.style.transform = `translateY(${delta}px)`;
       sheetRef.current.style.transition = "none";
     }
   };
@@ -50,8 +49,8 @@ const TimetableModal = ({ event, onClose, trackNo, done = false }: TimetableModa
     if (!canDrag.current) return;
     if (touchDeltaY.current > 80) handleClose();
     else if (sheetRef.current) {
-      sheetRef.current.style.translate = "0 0";
-      sheetRef.current.style.transition = "translate 0.3s cubic-bezier(0.22, 1, 0.36, 1)";
+      sheetRef.current.style.transform = "translateY(0)";
+      sheetRef.current.style.transition = "transform 0.3s cubic-bezier(0.22, 1, 0.36, 1)";
     }
   };
 
@@ -80,7 +79,7 @@ const TimetableModal = ({ event, onClose, trackNo, done = false }: TimetableModa
       >
         <div
           ref={sheetRef}
-          className={`max-h-[94dvh] w-full max-w-[430px] overflow-y-auto overflow-x-clip overscroll-y-none rounded-t-[32px] border-2 border-ink bg-cream text-ink ${closing ? "modal-slide-down" : "modal-slide-up"}`}
+          className={`max-h-[94dvh] w-full max-w-[430px] overflow-y-auto overflow-x-clip rounded-t-[32px] border-2 border-ink bg-cream text-ink ${closing ? "modal-slide-down" : "modal-slide-up"}`}
           onClick={(e) => e.stopPropagation()}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
