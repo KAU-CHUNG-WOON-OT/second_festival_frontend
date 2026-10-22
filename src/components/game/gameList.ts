@@ -2,6 +2,7 @@ import { lazy, type ComponentType } from 'react';
 import BombGame from './BombGame';
 import ChosungGame from './ChosungGame';
 import FingerGame from './FingerGame';
+import HangmentleGame from './HangmentleGame';
 import LiarGame from './LiarGame';
 import StopGame from './StopGame';
 
@@ -19,10 +20,23 @@ export interface GameEntry {
   caption: string;
   // 목록 카드 배경·글자색 (Tailwind 클래스)
   colorClass: string;
+  // 특별 게임: 목록 맨 위에 번호 대신 SPECIAL로 표시
+  special?: boolean;
   Component: ComponentType;
 }
 
 export const GAMES: GameEntry[] = [
+  {
+    id: 'hangmentle',
+    title: '항멘틀',
+    title_en: 'Hangmentle',
+    sub: '뜻이 가까운 단어로 정답 찾기',
+    sub_en: 'Find the Korean word by meaning',
+    caption: 'SPECIAL · HANGMENTLE',
+    colorClass: 'bg-sky-light text-ink',
+    special: true,
+    Component: HangmentleGame,
+  },
   {
     id: 'liar',
     title: '라이어 게임',

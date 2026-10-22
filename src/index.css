@@ -4,10 +4,13 @@
 @theme {
   --font-sans:
     'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  --font-display: 'Black Han Sans', sans-serif;
-  --font-typewriter: 'Courier Prime', monospace;
-  --font-condensed: 'Big Shoulders Display', sans-serif;
-  --font-body-kr: 'Noto Sans KR', sans-serif;
+  /* 글꼴 전체를 Pretendard로 시험 적용. 되돌리려면 아래 4줄을 원래 값으로:
+     display 'Black Han Sans' · typewriter 'Courier Prime', monospace ·
+     condensed 'Big Shoulders Display' · body-kr 'Noto Sans KR' (+ 아래 font-display 굵기 규칙 삭제) */
+  --font-display: 'Pretendard Variable', Pretendard, sans-serif;
+  --font-typewriter: 'Pretendard Variable', Pretendard, sans-serif;
+  --font-condensed: 'Pretendard Variable', Pretendard, sans-serif;
+  --font-body-kr: 'Pretendard Variable', Pretendard, sans-serif;
 
   --color-ink: #2a1810;
   --color-paper: #fbf3df;
@@ -18,6 +21,19 @@
   --color-olive: #6d6a2c;
   --color-sky-light: #8ec9ee;
   --color-maroon: #6b2d2a;
+  --color-dusk: #4a1f24;
+}
+
+:root {
+  /* 노을 하늘 (dusk → maroon → rust → mustard → paper). Layout이 화면에 고정해 깐다 */
+  --gradient-retro-dusk: linear-gradient(
+    180deg,
+    var(--color-dusk) 0%,
+    var(--color-maroon) 16%,
+    var(--color-rust) 46%,
+    var(--color-mustard) 72%,
+    var(--color-paper) 100%
+  );
 }
 
 /* 레트로 3색 줄무늬 (rust · mustard · sky-light) */
@@ -31,6 +47,33 @@
     var(--color-sky-light) 66.6%,
     var(--color-sky-light) 100%
   );
+}
+
+/* Black Han Sans처럼 굵게 보이도록 제목 역할에 기본 굵기를 준다.
+   base 레이어라 font-bold 같은 굵기 클래스를 직접 쓴 곳은 그 값이 이긴다 */
+@layer base {
+  .font-display {
+    font-weight: 800;
+  }
+}
+
+/* 한글이 단어 중간에서 끊기지 않게 (넘칠 때만 강제로 줄바꿈) */
+body {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+/* 모바일 탭 시 회색 번쩍임 제거 (눌림은 각 요소의 active 스타일로 표시) */
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 키보드로 이동할 때만 보이는 포커스 표시 */
+a:focus-visible,
+button:focus-visible,
+[role='button']:focus-visible {
+  outline: 2px solid var(--color-mustard);
+  outline-offset: 2px;
 }
 
 ::-webkit-scrollbar {

@@ -122,7 +122,7 @@ const StopGame = () => {
 
   return (
     <div className="flex flex-col gap-6">
-      <p className="font-typewriter text-[12px] leading-4 tracking-[3.6px]">{`${currentPlayer + 1} / ${playerCount}`}</p>
+      <p className="font-typewriter text-[12px] leading-4 tracking-[3.6px] text-paper">{`${currentPlayer + 1} / ${playerCount}`}</p>
       <section className={`${GAME_CARD} text-center`}>
         <p className="font-display text-[24px] leading-8">{playerName(currentPlayer)}</p>
         <p className="pt-3 font-condensed text-[80px] font-bold leading-[80px]">

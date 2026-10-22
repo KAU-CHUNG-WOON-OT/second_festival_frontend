@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../contexts/LanguageContext';
 import RetroPageHeader from '../components/common/RetroPageHeader';
+import EmptyState from '../components/common/EmptyState';
 import Poster from '../components/common/Poster';
 import InfoCard from '../components/common/InfoCard';
 import BoothIntroCard from '../components/yard/BoothIntroCard';
@@ -26,11 +27,12 @@ const BoothDetailPage = () => {
 
   if (!booth) {
     return (
-      <div className="flex h-full flex-col items-center justify-center text-ink/60">
-        <p className="font-display text-lg">{t('common.boothNotFound')}</p>
-        <button onClick={() => navigate(-1)} className="mt-4 font-body-kr text-sm underline">
-          {t('common.backToList')}
-        </button>
+      <div className="flex flex-col gap-6 px-5 pb-16 pt-5">
+        <RetroPageHeader />
+        <EmptyState
+          message={t('common.boothNotFound')}
+          action={{ label: t('common.backToList'), onClick: () => navigate('/yard') }}
+        />
       </div>
     );
   }
@@ -51,7 +53,7 @@ const BoothDetailPage = () => {
       )}
       <InfoCard rows={infoRows} />
       <BoothIntroCard introduction={booth.introduction} introduction_en={booth.introduction_en} />
-      <MenuList menu={booth.menu} showLikes={true} likePrefix="menu" title="판매 · 참여 항목" />
+      <MenuList menu={booth.menu} title="판매 · 참여 항목" />
       <PaymentCard account={booth.account} qrCode={booth.qr_img} />
     </div>
   );

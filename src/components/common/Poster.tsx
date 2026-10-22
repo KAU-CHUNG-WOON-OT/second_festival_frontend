@@ -12,12 +12,22 @@ export interface PosterProps {
 interface PosterImageProps {
   src: string;
   alt: string;
+  failed: boolean;
+  onFail: () => void;
 }
 
-const PosterImage = ({ src, alt }: PosterImageProps) => {
+const PosterImage = ({ src, alt, failed, onFail }: PosterImageProps) => {
   const [loaded, setLoaded] = useState(false);
-  const [failed, setFailed] = useState(false);
   const [aspectRatio, setAspectRatio] = useState<number | null>(null);
+
+  // 불러오지 못하면 3:4 큰 빈 칸 대신 낮은 칸으로 줄인다
+  if (failed) {
+    return (
+      <div className="flex h-full min-h-40 w-full items-center justify-center bg-paper">
+        <img src={logoImg} alt="" width={68} height={48} className="opacity-25" />
+      </div>
+    );
+  }
 
   return (
     <div
@@ -37,15 +47,13 @@ const PosterImage = ({ src, alt }: PosterImageProps) => {
           }
           setLoaded(true);
         }}
-        onError={() => setFailed(true)}
+        onError={onFail}
         className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
           loaded ? 'opacity-100' : 'opacity-0'
         }`}
       />
-      {(!loaded || failed) && (
-        <div
-          className={`absolute inset-0 flex items-center justify-center bg-paper ${failed ? '' : 'animate-pulse'}`}
-        >
+      {!loaded && (
+        <div className="absolute inset-0 flex animate-pulse items-center justify-center bg-paper">
           <img src={logoImg} alt="" width={68} height={48} className="opacity-25" />
         </div>
       )}
@@ -59,6 +67,7 @@ const FRAME_CLASS =
 const Poster = ({ images, name, zoomTitle = '포스터' }: PosterProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [zoomSrc, setZoomSrc] = useState<string | null>(null);
+  const [failedSrcs, setFailedSrcs] = useState<ReadonlySet<string>>(() => new Set());
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // 빈 배열 — 로고 placeholder
@@ -90,12 +99,15 @@ const Poster = ({ images, name, zoomTitle = '포스터' }: PosterProps) => {
               key={idx}
               type="button"
               onClick={() => setZoomSrc(src)}
+              disabled={failedSrcs.has(src)}
               aria-label={`${zoomTitle} 크게 보기`}
               className="w-full flex-shrink-0 snap-start"
             >
               <PosterImage
                 src={src}
                 alt={`${name} 포스터${images.length > 1 ? ` ${idx + 1}` : ''}`}
+                failed={failedSrcs.has(src)}
+                onFail={() => setFailedSrcs((prev) => new Set(prev).add(src))}
               />
             </button>
           ))}

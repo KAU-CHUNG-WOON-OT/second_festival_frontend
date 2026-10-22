@@ -57,15 +57,11 @@ const SPOTS: MapSpot[] = [
 
 const pct = (value: number, total: number) => `${(value / total) * 100}%`;
 
-interface BoothMapProps {
-  // 목록 화면의 작은 지도는 글자를 줄임
-  compact?: boolean;
-}
-
-const BoothMap = ({ compact = false }: BoothMapProps) => {
+// 글자 크기를 지도 폭에 비례(cqw)시켜 사진처럼 어떤 크기에서도 같은 모양으로 보이게 함
+const BoothMap = () => {
   return (
     <div
-      className="relative w-full rounded-[8px] border-2 border-ink bg-paper"
+      className="@container relative w-full rounded-[8px] border-2 border-ink bg-paper"
       style={{ aspectRatio: `${MAP_W} / ${MAP_H}` }}
     >
       {SPOTS.map((spot) => (
@@ -77,7 +73,7 @@ const BoothMap = ({ compact = false }: BoothMapProps) => {
             top: pct(spot.y, MAP_H),
             width: pct(spot.w ?? 34, MAP_W),
             height: pct(spot.h ?? 20, MAP_H),
-            fontSize: spot.tone === 'ink' ? 8 : compact ? 7 : 11,
+            fontSize: spot.tone === 'ink' ? '2.5cqw' : '2.2cqw',
             lineHeight: 1,
           }}
         >

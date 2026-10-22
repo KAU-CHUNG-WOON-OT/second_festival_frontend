@@ -14,8 +14,8 @@ const TimetablePage = () => {
   const selectedEvent = selectedIndex === null ? null : timetableEvents[selectedIndex];
 
   return (
-    <div className="flex flex-col px-5 pb-[102px] pt-5 text-ink">
-      <RetroPageHeader />
+    <div className="flex flex-col px-5 pb-16 pt-5 text-ink">
+      <RetroPageHeader showMenu />
 
       <RetroPageTitle title={t('nav.timetable')} caption="SIDE A · TRACK LIST" />
 

@@ -103,7 +103,7 @@ const LiarGame = () => {
 
     return (
       <div className="flex flex-col gap-6">
-        <p className="font-typewriter text-[12px] leading-4 tracking-[3.6px]">
+        <p className="font-typewriter text-[12px] leading-4 tracking-[3.6px] text-paper">
           {`${currentPlayer + 1} / ${playerCount}`}
         </p>
 

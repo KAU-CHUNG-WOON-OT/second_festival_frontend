@@ -1,13 +1,16 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
+import { FiX } from 'react-icons/fi';
 
 interface MapModalProps {
   isOpen: boolean;
   onClose: () => void;
-  imageSrc: string;
+  imageSrc?: string;
+  // 이미지 대신 코드로 그린 지도(부스 배치도 등)를 띄울 때
+  children?: ReactNode;
 }
 
-const MapModal = ({ isOpen, onClose, imageSrc }: MapModalProps) => {
+const MapModal = ({ isOpen, onClose, imageSrc, children }: MapModalProps) => {
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -72,10 +75,10 @@ const MapModal = ({ isOpen, onClose, imageSrc }: MapModalProps) => {
       <button
         type="button"
         aria-label="닫기"
-        className="absolute right-6 top-6 z-[10000] flex size-9 items-center justify-center rounded-full border border-ink bg-paper font-body-kr text-[16px] text-ink"
+        className="absolute right-6 top-6 z-[10000] flex size-9 items-center justify-center rounded-full border border-ink bg-paper text-ink"
         onClick={onClose}
       >
-        ✕
+        <FiX size={18} />
       </button>
 
       <div
@@ -93,17 +96,29 @@ const MapModal = ({ isOpen, onClose, imageSrc }: MapModalProps) => {
           onTouchEnd={(e) => { onEnd(); handleDoubleTap(e); }}
           onClick={handleDoubleTap}
         >
-          <img
-            ref={imageRef}
-            src={imageSrc}
-            alt="지도 상세"
-            className={`max-w-full max-h-full object-contain transition-transform ${isDragging ? '' : 'duration-300'} ease-out will-change-transform rounded-[8px] border-2 border-ink`}
-            style={{
-              transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
-              cursor: scale > 1 ? (isDragging ? "grabbing" : "grab") : "zoom-in",
-            }}
-            draggable={false}
-          />
+          {children ? (
+            <div
+              className={`w-full max-w-[720px] transition-transform ${isDragging ? '' : 'duration-300'} ease-out will-change-transform`}
+              style={{
+                transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
+                cursor: scale > 1 ? (isDragging ? "grabbing" : "grab") : "zoom-in",
+              }}
+            >
+              {children}
+            </div>
+          ) : (
+            <img
+              ref={imageRef}
+              src={imageSrc}
+              alt="지도 상세"
+              className={`max-w-full max-h-full object-contain transition-transform ${isDragging ? '' : 'duration-300'} ease-out will-change-transform rounded-[8px] border-2 border-ink`}
+              style={{
+                transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
+                cursor: scale > 1 ? (isDragging ? "grabbing" : "grab") : "zoom-in",
+              }}
+              draggable={false}
+            />
+          )}
         </div>
       </div>
 

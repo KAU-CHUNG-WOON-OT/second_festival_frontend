@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchCurrentClub, type CurrentClub } from '../../lib/api/club';
 import reelIcon from '../../assets/cassette_reel.svg';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export interface NowPlayingCardProps {
   clubName: string;
@@ -34,14 +35,20 @@ const NowPlayingCard = ({ clubName, clubStatus, clubType, clubCode }: NowPlaying
   );
 };
 
-const NowPlayingEmpty = () => (
-  <section className="flex items-center gap-3 rounded-[16px] border-2 border-ink bg-paper px-4 py-[14px] text-ink drop-shadow-[4px_4px_0px_var(--color-ink)]">
-    <span className="rounded-[4px] bg-ink/15 px-2 py-[2px] font-typewriter text-[11px] font-bold leading-4 text-ink/60">
-      STAND BY
-    </span>
-    <p className="truncate font-body-kr text-[14px] font-semibold opacity-70">현재 진행 중인 공연이 없어요</p>
-  </section>
-);
+const NowPlayingEmpty = () => {
+  const { language } = useLanguage();
+
+  return (
+    <section className="flex items-center gap-3 rounded-[16px] border-2 border-ink bg-paper px-4 py-[14px] text-ink drop-shadow-[4px_4px_0px_var(--color-ink)]">
+      <span className="rounded-[4px] bg-ink/15 px-2 py-[2px] font-typewriter text-[11px] font-bold leading-4 text-ink/60">
+        STAND BY
+      </span>
+      <p className="truncate font-body-kr text-[14px] font-semibold opacity-70">
+        {language === 'ENG' ? 'Nothing on stage right now' : '현재 진행 중인 공연이 없어요'}
+      </p>
+    </section>
+  );
+};
 
 const NowPlaying = () => {
   const { data: club, error } = useQuery<CurrentClub | null>({

@@ -9,13 +9,14 @@ description: 2026 활주로 축제 프론트의 레트로(카세트·티켓) 디
 
 ## 핵심 규칙
 
-1. **토큰만 사용**: 색은 `ink / paper / cream / mustard / rust / tape-blue / sky-light / olive / maroon` (`src/index.css` `@theme`). 임의 hex 금지.
-2. **글꼴 역할 고정**: 제목 `font-display`, 영문 라벨·메타 `font-typewriter`, 큰 숫자·시간 `font-condensed`, 본문 `font-body-kr`.
+1. **토큰만 사용**: 색은 `ink / paper / cream / mustard / rust / tape-blue / sky-light / olive / maroon / dusk` (`src/index.css` `@theme`). 임의 hex 금지.
+2. **글꼴 역할 고정**: 페이지 큰 제목 `font-sans font-light`(RetroPageTitle), 카드 제목 `font-display`, 영문 라벨·메타 `font-typewriter`, 큰 숫자·시간 `font-condensed`, 본문 `font-body-kr`.
 3. **카드 공식**: `rounded-[16px] border-2 border-ink bg-paper` + 흐림 없는 그림자 `drop-shadow-[5px_5px_0px_var(--color-ink)]`. 누르는 카드는 `active:translate-x-[2px] active:translate-y-[2px]`.
-4. **페이지 뼈대**: `px-5 pb-16 pt-5 text-ink` 컨테이너 → `<RetroPageHeader />` → `<RetroPageTitle title=… />`. 직접 알약·60px 제목을 다시 만들지 않는다.
-5. **새 경로는 `src/layout/Layout.tsx`의 `REDESIGNED_PATHS`에 추가** (푸터 없는 시안이면 `NO_FOOTER_PATHS`도).
-6. **줄무늬는 `bg-retro-stripe`**. 그라디언트를 복사하지 않는다.
-7. **공통 컴포넌트 우선**: `RetroDialog`, `InfoCard`, `MenuList`, `PaymentCard`, `Poster`, `CategoryList`, `SearchBar`, `LoginRequiredPopup`. 새로 만들기 전에 `src/components/common`부터 확인.
+4. **페이지 뼈대**: `px-5 pb-16 pt-5 text-ink` 컨테이너 → `<RetroPageHeader />`(목록 페이지는 `showMenu`) → `<RetroPageTitle title=… />`. 직접 알약·큰 제목을 다시 만들지 않는다.
+5. **새 경로는 `src/layout/Layout.tsx`의 `REDESIGNED_PATHS`에 추가**. 노을 배경·별·푸터가 자동으로 붙는다.
+6. **노을 하늘은 화면에 고정**: 페이지·섹션에 배경색을 칠하지 않는다. 카드 밖 글자는 제목 바로 아래면 `text-paper`, 맨 아래쪽이면 `text-ink` (`docs/design-system.md` 4장).
+7. **줄무늬는 `bg-retro-stripe`, 노을은 `--gradient-retro-dusk`**. 그라디언트를 복사하지 않는다.
+8. **공통 컴포넌트 우선**: `RetroDialog`, `InfoCard`, `MenuList`, `PaymentCard`, `Poster`, `CategoryList`, `SearchBar`, `EmptyState`. 목록 페이지 필터는 `useUrlFilters`. 새로 만들기 전에 `src/components/common`부터 확인.
 
 ## 피그마 시안을 구현할 때
 

@@ -35,7 +35,12 @@
     "menuPlaceholder": "Search menu",
     "pubPlaceholder": "Search pub or department",
     "noResults": "No results found",
+    "reset": "Clear search",
+    "clear": "Clear search text",
     "boothPlaceholder": "Search by booth or department"
+  },
+  "sidebar": {
+    "login": "Log in"
   },
   "footer": {
     "organization": "KAU 52nd Student Council CHUNGWOON",
@@ -65,7 +70,7 @@
     "yardEvent": "Yard Event",
     "foodTruck": "Food Truck",
     "foodLocations": "Food Locations",
-    "performance": "Performance",
+    "performance": "Live Shows",
     "clubsEvents": "Clubs & Events",
     "pubGuide": "Pub Guide",
     "deptYard": "Dept & Yard",

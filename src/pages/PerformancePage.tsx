@@ -3,16 +3,23 @@ import { useTranslation } from 'react-i18next';
 import RetroPageHeader from '../components/common/RetroPageHeader';
 import RetroPageTitle from '../components/common/RetroPageTitle';
 import CategoryList from '../components/common/CategoryList';
+import EmptyState from '../components/common/EmptyState';
 import NowPlaying from '../components/timetable/NowPlaying';
 import TrackCard from '../components/timetable/TrackCard';
 import TimetableModal from '../components/timetable/TimetableModal';
 import { PERFORMANCE_DATE_TABS, performanceEvents } from '../data/performanceData';
 import type { TimetableEvent } from '../data/timetableData';
+import { useLanguage } from '../contexts/LanguageContext';
+import { useUrlFilters } from '../hooks/useUrlFilters';
+
+const FILTER_DEFAULTS = { date: PERFORMANCE_DATE_TABS[0] };
 
 // 시안이 없어 타임테이블 시안과 같은 구성으로 맞춤
 const PerformancePage = () => {
   const { t } = useTranslation();
-  const [selectedDate, setSelectedDate] = useState(PERFORMANCE_DATE_TABS[0]);
+  const { language } = useLanguage();
+  const { filters, setFilter } = useUrlFilters(FILTER_DEFAULTS);
+  const selectedDate = filters.date;
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const events = (performanceEvents[selectedDate] ?? []) as TimetableEvent[];
@@ -20,7 +27,7 @@ const PerformancePage = () => {
 
   return (
     <div className="flex flex-col px-5 pb-16 pt-5 text-ink">
-      <RetroPageHeader />
+      <RetroPageHeader showMenu />
 
       <RetroPageTitle title={t('nav.performance')} caption="SIDE B · LIVE STAGE" />
 
@@ -33,14 +40,16 @@ const PerformancePage = () => {
           categories={PERFORMANCE_DATE_TABS}
           selectedCategory={selectedDate}
           onSelect={(date) => {
-            setSelectedDate(date);
+            setFilter('date', date);
             setSelectedIndex(null);
           }}
         />
       </div>
 
       {events.length === 0 ? (
-        <p className="py-16 text-center font-body-kr text-[15px] font-bold opacity-60">공연 정보가 없어요</p>
+        <div className="pt-6">
+          <EmptyState message={language === 'ENG' ? 'No performances on this day' : '이 날은 공연 정보가 없어요'} />
+        </div>
       ) : (
         <div className="flex flex-col gap-4 pt-6">
           {events.map((event, index) => (

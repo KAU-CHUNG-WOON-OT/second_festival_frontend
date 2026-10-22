@@ -50,7 +50,7 @@ const FingerGame = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="font-body-kr text-[14px] leading-5 opacity-70">
+      <p className="font-body-kr text-[14px] leading-5 text-paper/80">
         {isEng
           ? 'Hold still for 3 seconds and one finger gets picked at random.'
           : '손가락을 올리고 3초 동안 가만히 있으면 한 명이 무작위로 뽑혀요.'}

@@ -300,7 +300,7 @@ const CrocodileGame = () => {
 
   return (
     <div className="flex flex-col gap-6">
-      <p className="font-body-kr text-[14px] leading-5 opacity-70">
+      <p className="font-body-kr text-[14px] leading-5 text-paper/80">
         {isEng
           ? 'Take turns pressing one tooth, top or bottom. One of them makes the crocodile bite!'
           : '돌아가며 윗니든 아랫니든 하나씩 눌러요. 그중 하나를 누르면 악어가 콱 물어요!'}

@@ -16,6 +16,7 @@ export interface TimetableEvent {
 
 export const FESTIVAL_DATE = "2026-10-28";
 export const FESTIVAL_DATE_LABEL = "10.28 WED";
+export const FESTIVAL_TITLE = "활주로: 항대인의 밤";
 
 export const TYPE_ICON: Record<string, string> = {
     EVENT: "✈",

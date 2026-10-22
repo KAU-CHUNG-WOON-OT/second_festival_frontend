@@ -35,7 +35,12 @@
     "menuPlaceholder": "메뉴를 검색해주세요",
     "pubPlaceholder": "주점명 혹은 학과를 입력해주세요",
     "noResults": "검색 결과가 없습니다",
+    "reset": "검색 초기화",
+    "clear": "검색어 지우기",
     "boothPlaceholder": "부스명 혹은 학과를 입력해주세요"
+  },
+  "sidebar": {
+    "login": "로그인하기"
   },
   "footer": {
     "organization": "한국항공대학교 제52대 총학생회 청운",

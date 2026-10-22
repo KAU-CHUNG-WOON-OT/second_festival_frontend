@@ -78,7 +78,7 @@ const Makers = () => {
         </p>
       </section>
 
-      <div className="flex flex-col gap-7 pt-8">
+      <div className="mt-8 flex flex-col gap-7 rounded-[16px] border-2 border-ink bg-paper px-5 py-7 drop-shadow-[5px_5px_0px_var(--color-ink)]">
         {SECTIONS.map((section) => (
           <section key={section.title} className="flex flex-col items-center">
             <span className="rounded-full border border-ink bg-ink px-5 py-1 font-body-kr text-[15px] font-semibold leading-[22.5px] text-paper drop-shadow-[3px_3px_0px_var(--color-mustard)]">

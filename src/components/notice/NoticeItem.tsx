@@ -34,7 +34,7 @@ const NoticeItem = ({ notice, compact = false, onClick }: NoticeItemProps) => {
         </span>
       )}
       <div className="min-w-0 flex-1">
-        <p className="truncate font-display text-[16px] leading-6">
+        <p className="line-clamp-2 font-display text-[16px] leading-6">
           {isEng ? notice.title_en : notice.title}
         </p>
         <p className="pt-2 font-typewriter text-[12px] leading-4 opacity-60">{notice.date}</p>

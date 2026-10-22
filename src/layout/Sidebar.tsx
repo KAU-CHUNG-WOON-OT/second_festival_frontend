@@ -1,7 +1,11 @@
 import { useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useIsLogin } from '../hooks/useIsLogin';
+import { getKakaoLoginUrl } from '../lib/kakaoLogin';
+import { track } from '@/lib/mixpanel';
 import closeIcon from '../assets/sidebar_close.svg';
+import kakaoIcon from '../assets/kakao_icon.svg';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -17,6 +21,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const isLogin = useIsLogin();
   const logoTapCount = useRef(0);
   const logoTapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -29,6 +34,13 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     { label: t('nav.game'), path: '/game' },
     { label: t('nav.makers'), path: '/makers' },
   ];
+
+  const handleLogin = () => {
+    const loginUrl = getKakaoLoginUrl();
+    if (!loginUrl) return;
+    track('sidebar_kakao_login_clicked');
+    window.location.href = loginUrl;
+  };
 
   // 로고 3번 탭 → 관리자 페이지
   const handleLogoTap = () => {
@@ -82,9 +94,21 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           ))}
         </nav>
 
+        {/* 로그인하지 않았을 때만 */}
+        {!isLogin && (
+          <button
+            type="button"
+            onClick={handleLogin}
+            className="mx-5 mt-auto flex h-11 items-center justify-center gap-2 rounded-full bg-[#fee500] font-body-kr text-[15px] font-bold text-black"
+          >
+            <img src={kakaoIcon} alt="" width={18} height={17} />
+            {t('sidebar.login')}
+          </button>
+        )}
+
         <p
           onClick={handleLogoTap}
-          className="mt-auto px-[31px] pb-10 font-display text-[36px] leading-9 text-rust"
+          className={`px-[31px] pb-10 font-display text-[36px] leading-9 text-rust ${isLogin ? 'mt-auto' : 'mt-6'}`}
         >
           활주로
         </p>

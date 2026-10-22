@@ -107,6 +107,16 @@ OAuth 리다이렉트가 완료될 때 (카카오 로그인 완료 시) 발송�
 
 ---
 
+### `sidebar_kakao_login_clicked`
+
+로그인하지 않은 상태에서 사이드바 맨 아래 '로그인하기' 버튼을 탭했을 때 발송됩니다.
+
+**파일:** `src/layout/Sidebar.tsx`
+
+추가 속성 없음.
+
+---
+
 ### `onboarding_guest_login_clicked`
 
 온보딩 화면에서 비회원 접속을 최종 확정했을 때 발송됩니다.
@@ -156,42 +166,6 @@ OAuth 리다이렉트가 완료될 때 (카카오 로그인 완료 시) 발송�
 | `event_title` | string | 공연 제목 |
 | `event_type` | string | 공연 유형 (`PERFORMANCE` / `EVENT` / `CEREMONY` / `BREAKTIME`) |
 | `event_date` | string | 날짜 (예: `5월 15일`) |
-
----
-
-### `item_liked`
-
-주점 또는 푸드트럭 메뉴 아이템에 좋아요를 성공적으로 눌렀을 때 발송됩니다.
-
-**파일:** `src/hooks/useBarLike.ts`, `src/hooks/useMenuLike.ts`
-
-| 속성 | 타입 | 설명 |
-|------|------|------|
-| `item_type` | string | `bar` (주점) 또는 `menu` (메뉴) |
-| `item_id` | number | 좋아요한 아이템 ID |
-
----
-
-### `item_unliked`
-
-주점 또는 푸드트럭 메뉴 아이템의 좋아요를 성공적으로 취소했을 때 발송됩니다.
-
-**파일:** `src/hooks/useBarLike.ts`, `src/hooks/useMenuLike.ts`
-
-| 속성 | 타입 | 설명 |
-|------|------|------|
-| `item_type` | string | `bar` (주점) 또는 `menu` (메뉴) |
-| `item_id` | number | 좋아요 취소한 아이템 ID |
-
----
-
-### `menu_like_kakao_login_clicked`
-
-비로그인 상태에서 메뉴 좋아요 클릭 시 카카오 로그인 유도 버튼을 눌렀을 때 발송됩니다.
-
-**파일:** `src/components/common/MenuList.tsx`
-
-추가 속성 없음.
 
 ---
 

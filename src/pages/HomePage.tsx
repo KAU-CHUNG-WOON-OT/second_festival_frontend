@@ -16,28 +16,27 @@ const HomePage = () => {
     .filter((n) => n.isImportant)
     .sort((a, b) => b.date.localeCompare(a.date))[0];
 
-  // 시안의 '가게 정보' 자리는 해당 페이지가 아직 없어 주점 안내로 연결
+  // 시안의 '가게 정보'·'실시간 좌석' 자리는 해당 페이지가 아직 없어 부스 정보·주점 안내로 연결
   const QUICK_MENUS: HomeQuickMenuItem[] = [
-    { title: t('home.boothInfo'), sub: t('home.yardEvent'), path: '/yard', colorClass: 'bg-maroon text-paper' },
-    { title: t('home.pubGuide'), sub: t('home.deptYard'), path: '/pub', colorClass: 'bg-mustard text-ink' },
+    { title: t('home.boothInfo'), sub: t('home.yardEvent'), path: '/yard', colorClass: 'bg-mustard text-ink' },
     { title: t('home.foodTruck'), sub: t('home.foodLocations'), path: '/foodtruck', colorClass: 'bg-rust text-paper' },
     { title: t('home.performance'), sub: t('home.clubsEvents'), path: '/performance', colorClass: 'bg-olive text-paper' },
+    { title: t('home.pubGuide'), sub: t('home.deptYard'), path: '/pub', colorClass: 'bg-sky-light text-ink' },
   ];
 
   return (
-    <div className="flex flex-col bg-cream text-ink">
+    <div className="flex flex-col text-ink">
       <HomeHero />
 
       {importantNotice && (
         <HomeNoticeBanner
-          to="/notice"
+          to={`/notice?id=${importantNotice.id}`}
           title={isEng ? importantNotice.title_en : importantNotice.title}
           dateText={importantNotice.date}
         />
       )}
 
-      <section className="px-5 py-10">
-        <h2 className="pb-5 font-typewriter text-[12px] leading-4 tracking-[3.6px]">— TRACK LIST —</h2>
+      <section className="px-5 pb-10 pt-8">
         <HomeQuickMenuGrid items={QUICK_MENUS} />
       </section>
 
