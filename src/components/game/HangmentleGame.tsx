@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '@/contexts/LanguageContext';
 import CategoryList from '../common/CategoryList';
+import SkyDots from '../common/SkyDots';
 import { GAME_CARD, PRIMARY_BUTTON, SECONDARY_BUTTON } from './gameStyles';
 import {
   HANGMENTLE_PUZZLE_COUNT,
@@ -239,97 +240,107 @@ const HangmentleGame = () => {
 
       {round && (
         <>
-          {/* 진행 중에는 스크롤해도 힌트·입력창이 화면 위에 붙어 있고, 붙었을 때만 뒤를 가린다 */}
+          {/* 진행 중에는 스크롤해도 힌트·입력창이 화면 위에 붙어 있다.
+              붙으면 화면 맨 위이므로 뒤 하늘과 같은 그라디언트·별을 깔아, 아래 목록만 하늘 밑으로 사라지게 한다 */}
           <div
             ref={stickyRef}
-            className={`-mx-5 -my-3 flex flex-col gap-4 px-5 py-3 transition-colors duration-200 ${
-              finished ? '' : 'sticky -top-px z-20'
-            } ${isStuck && !finished ? 'bg-dusk/90 shadow-[0_8px_16px_-8px_var(--color-ink)] backdrop-blur-md' : ''}`}
+            className={`-mx-5 -my-3 overflow-hidden px-5 py-3 ${finished ? '' : 'sticky -top-px z-20'}`}
+            style={
+              isStuck && !finished
+                ? { background: 'var(--gradient-retro-dusk) top / 100% 100dvh no-repeat' }
+                : undefined
+            }
           >
-            <section className={GAME_CARD}>
-              <p className="font-typewriter text-[12px] leading-4 opacity-60">
-                {`PUZZLE ${String(puzzleNo).padStart(2, '0')} · ${
-                  isEng ? `${progress.guesses.length} GUESSES` : `${progress.guesses.length}번 추측`
-                }`}
-              </p>
-              <p className="pt-3 font-body-kr text-[14px] leading-6">
-                {isEng ? (
-                  <>
-                    The closest word is <b>{formatSimilarity(round.hints.first)}</b> similar, the
-                    10th <b>{formatSimilarity(round.hints.tenth)}</b>, and the 1000th{' '}
-                    <b>{formatSimilarity(round.hints.thousandth)}</b>.
-                  </>
-                ) : (
-                  <>
-                    정답과 가장 가까운 단어의 유사도는 <b>{formatSimilarity(round.hints.first)}</b>,
-                    10번째는 <b>{formatSimilarity(round.hints.tenth)}</b>, 1000번째는{' '}
-                    <b>{formatSimilarity(round.hints.thousandth)}</b>예요.
-                  </>
-                )}
-              </p>
-            </section>
-
-            {finished ? (
-              <section
-                className={`rounded-[16px] border-2 border-ink p-5 text-center drop-shadow-[5px_5px_0px_var(--color-ink)] ${
-                  progress.status === 'solved' ? 'bg-rust text-paper' : 'bg-ink text-paper'
-                }`}
-              >
-                <p className="font-typewriter text-[12px] leading-4 opacity-80">
-                  {progress.status === 'solved'
-                    ? isEng
-                      ? 'YOU GOT IT'
-                      : '정답'
-                    : isEng
-                      ? 'THE ANSWER WAS'
-                      : '정답은'}
+            {isStuck && !finished && <SkyDots night />}
+            <div className="relative z-10 flex flex-col gap-4">
+              <section className={GAME_CARD}>
+                <p className="font-typewriter text-[12px] leading-4 opacity-60">
+                  {`PUZZLE ${String(puzzleNo).padStart(2, '0')} · ${
+                    isEng
+                      ? `${progress.guesses.length} GUESSES`
+                      : `${progress.guesses.length}번 추측`
+                  }`}
                 </p>
-                <p className="pt-2 font-display text-[40px] leading-[48px]">{round.answer}</p>
-                <p className="pt-2 font-body-kr text-[14px] leading-5 opacity-90">
-                  {progress.status === 'solved'
-                    ? isEng
-                      ? `Solved in ${progress.guesses.length} guesses`
-                      : `${progress.guesses.length}번 만에 맞혔어요!`
-                    : isEng
-                      ? 'Better luck next time'
-                      : '다음엔 꼭 맞혀 봐요'}
+                <p className="pt-3 font-body-kr text-[14px] leading-6">
+                  {isEng ? (
+                    <>
+                      The closest word is <b>{formatSimilarity(round.hints.first)}</b> similar, the
+                      10th <b>{formatSimilarity(round.hints.tenth)}</b>, and the 1000th{' '}
+                      <b>{formatSimilarity(round.hints.thousandth)}</b>.
+                    </>
+                  ) : (
+                    <>
+                      정답과 가장 가까운 단어의 유사도는{' '}
+                      <b>{formatSimilarity(round.hints.first)}</b>, 10번째는{' '}
+                      <b>{formatSimilarity(round.hints.tenth)}</b>, 1000번째는{' '}
+                      <b>{formatSimilarity(round.hints.thousandth)}</b>예요.
+                    </>
+                  )}
                 </p>
               </section>
-            ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={input}
-                    onChange={(e) => {
-                      setInput(e.target.value);
-                      setMessage(null);
-                    }}
-                    enterKeyHint="send"
-                    autoComplete="off"
-                    autoCorrect="off"
-                    placeholder={isEng ? 'Type a Korean word' : '단어를 입력하세요'}
-                    aria-label={isEng ? 'Your guess' : '추측할 단어'}
-                    className="h-12 min-w-0 flex-1 rounded-full bg-paper px-5 font-body-kr text-[16px] text-ink outline-none placeholder:text-ink/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper"
-                  />
-                  <button
-                    type="submit"
-                    disabled={!input.trim()}
-                    className="h-12 shrink-0 rounded-full border-2 border-ink bg-rust px-5 font-display text-[16px] text-paper drop-shadow-[3px_3px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px] disabled:opacity-40"
-                  >
-                    {isEng ? 'Guess' : '추측'}
-                  </button>
-                </div>
-                {message && (
-                  <p
-                    role="alert"
-                    className="px-2 font-body-kr text-[13px] font-semibold text-paper"
-                  >
-                    {message}
+
+              {finished ? (
+                <section
+                  className={`rounded-[16px] border-2 border-ink p-5 text-center drop-shadow-[5px_5px_0px_var(--color-ink)] ${
+                    progress.status === 'solved' ? 'bg-rust text-paper' : 'bg-ink text-paper'
+                  }`}
+                >
+                  <p className="font-typewriter text-[12px] leading-4 opacity-80">
+                    {progress.status === 'solved'
+                      ? isEng
+                        ? 'YOU GOT IT'
+                        : '정답'
+                      : isEng
+                        ? 'THE ANSWER WAS'
+                        : '정답은'}
                   </p>
-                )}
-              </form>
-            )}
+                  <p className="pt-2 font-display text-[40px] leading-[48px]">{round.answer}</p>
+                  <p className="pt-2 font-body-kr text-[14px] leading-5 opacity-90">
+                    {progress.status === 'solved'
+                      ? isEng
+                        ? `Solved in ${progress.guesses.length} guesses`
+                        : `${progress.guesses.length}번 만에 맞혔어요!`
+                      : isEng
+                        ? 'Better luck next time'
+                        : '다음엔 꼭 맞혀 봐요'}
+                  </p>
+                </section>
+              ) : (
+                <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={input}
+                      onChange={(e) => {
+                        setInput(e.target.value);
+                        setMessage(null);
+                      }}
+                      enterKeyHint="send"
+                      autoComplete="off"
+                      autoCorrect="off"
+                      placeholder={isEng ? 'Type a Korean word' : '단어를 입력하세요'}
+                      aria-label={isEng ? 'Your guess' : '추측할 단어'}
+                      className="h-12 min-w-0 flex-1 rounded-full bg-paper px-5 font-body-kr text-[16px] text-ink outline-none placeholder:text-ink/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-paper"
+                    />
+                    <button
+                      type="submit"
+                      disabled={!input.trim()}
+                      className="h-12 shrink-0 rounded-full border-2 border-ink bg-rust px-5 font-display text-[16px] text-paper drop-shadow-[3px_3px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px] disabled:opacity-40"
+                    >
+                      {isEng ? 'Guess' : '추측'}
+                    </button>
+                  </div>
+                  {message && (
+                    <p
+                      role="alert"
+                      className="px-2 font-body-kr text-[13px] font-semibold text-paper"
+                    >
+                      {message}
+                    </p>
+                  )}
+                </form>
+              )}
+            </div>
           </div>
 
           {finished && (
