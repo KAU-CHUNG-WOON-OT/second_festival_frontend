@@ -63,9 +63,11 @@ body {
   overflow-wrap: break-word;
 }
 
-/* 모바일 탭 시 회색 번쩍임 제거 (눌림은 각 요소의 active 스타일로 표시) */
+/* 모바일 탭 시 회색 번쩍임 제거 (눌림은 각 요소의 active 스타일로 표시)
+   color-scheme: 다크모드에서도 브라우저 자동 어둡게 하기·입력창 기본색이 바뀌지 않게 밝은 화면으로 고정 */
 html {
   -webkit-tap-highlight-color: transparent;
+  color-scheme: only light;
 }
 
 /* 키보드로 이동할 때만 보이는 포커스 표시 */

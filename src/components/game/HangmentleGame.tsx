@@ -141,6 +141,10 @@ const HangmentleGame = () => {
     return isEng ? `#${guess.rank}` : `${guess.rank}위`;
   };
 
+  // 화면에는 문제마다 늘린 점수를 보여 준다 (순서는 원래 유사도와 같음)
+  const showScore = (similarity: number) =>
+    formatSimilarity(round ? round.toScore(similarity) : similarity);
+
   const renderGuessRow = (guess: HangmentleGuess, highlight = false) => (
     <li
       key={`${guess.order}-${guess.word}`}
@@ -155,7 +159,7 @@ const HangmentleGame = () => {
         {guess.word}
       </span>
       <span className="shrink-0 font-condensed text-[17px] font-bold leading-6">
-        {formatSimilarity(guess.similarity)}
+        {showScore(guess.similarity)}
       </span>
       <span className="flex w-[84px] shrink-0 flex-col items-end gap-1">
         <span
@@ -244,15 +248,24 @@ const HangmentleGame = () => {
               붙으면 화면 맨 위이므로 뒤 하늘과 같은 그라디언트·별을 깔아, 아래 목록만 하늘 밑으로 사라지게 한다 */}
           <div
             ref={stickyRef}
-            className={`-mx-5 -my-3 overflow-hidden px-5 py-3 ${finished ? '' : 'sticky -top-px z-20'}`}
+            // 아래 여백(pb-9)의 마지막 24px은 붙었을 때 서서히 투명해져, 목록이 잘리지 않고 하늘로 스며들게 한다.
+            // 같은 크기의 음수 여백으로 레이아웃은 그대로 두고, 겹치는 여백이 아래 카드를 가리지 않게 클릭은 통과시킨다
+            className={`pointer-events-none -mx-5 -mb-9 -mt-3 overflow-hidden px-5 pb-9 pt-3 ${
+              finished ? '' : 'sticky -top-px z-20'
+            }`}
             style={
               isStuck && !finished
-                ? { background: 'var(--gradient-retro-dusk) top / 100% 100dvh no-repeat' }
+                ? {
+                    background: 'var(--gradient-retro-dusk) top / 100% 100dvh no-repeat',
+                    maskImage: 'linear-gradient(to bottom, black calc(100% - 24px), transparent)',
+                    WebkitMaskImage:
+                      'linear-gradient(to bottom, black calc(100% - 24px), transparent)',
+                  }
                 : undefined
             }
           >
             {isStuck && !finished && <SkyDots night />}
-            <div className="relative z-10 flex flex-col gap-4">
+            <div className="pointer-events-auto relative z-10 flex flex-col gap-4">
               <section className={GAME_CARD}>
                 <p className="font-typewriter text-[12px] leading-4 opacity-60">
                   {`PUZZLE ${String(puzzleNo).padStart(2, '0')} · ${
@@ -264,16 +277,15 @@ const HangmentleGame = () => {
                 <p className="pt-3 font-body-kr text-[14px] leading-6">
                   {isEng ? (
                     <>
-                      The closest word is <b>{formatSimilarity(round.hints.first)}</b> similar, the
-                      10th <b>{formatSimilarity(round.hints.tenth)}</b>, and the 1000th{' '}
-                      <b>{formatSimilarity(round.hints.thousandth)}</b>.
+                      The closest word is <b>{showScore(round.hints.first)}</b> similar, the 10th{' '}
+                      <b>{showScore(round.hints.tenth)}</b>, and the 1000th{' '}
+                      <b>{showScore(round.hints.thousandth)}</b>.
                     </>
                   ) : (
                     <>
-                      정답과 가장 가까운 단어의 유사도는{' '}
-                      <b>{formatSimilarity(round.hints.first)}</b>, 10번째는{' '}
-                      <b>{formatSimilarity(round.hints.tenth)}</b>, 1000번째는{' '}
-                      <b>{formatSimilarity(round.hints.thousandth)}</b>예요.
+                      정답과 가장 가까운 단어의 유사도는 <b>{showScore(round.hints.first)}</b>,
+                      10번째는 <b>{showScore(round.hints.tenth)}</b>, 1000번째는{' '}
+                      <b>{showScore(round.hints.thousandth)}</b>예요.
                     </>
                   )}
                 </p>
@@ -372,7 +384,7 @@ const HangmentleGame = () => {
                       {neighbor.word}
                     </span>
                     <span className="shrink-0 font-condensed text-[15px] font-bold leading-6">
-                      {formatSimilarity(neighbor.similarity)}
+                      {showScore(neighbor.similarity)}
                     </span>
                   </li>
                 ))}

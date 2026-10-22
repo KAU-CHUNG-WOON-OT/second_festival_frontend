@@ -5,6 +5,7 @@ import {
   HANGMENTLE_PUZZLE_COUNT,
   HANGMENTLE_TOP_RANK,
   createHangmentleRound,
+  createScoreScale,
   formatSimilarity,
   normalizeGuess,
   sortGuesses,
@@ -45,11 +46,38 @@ describe('createHangmentleRound', () => {
     expect(round.hints.thousandth).toBe(5000 - HANGMENTLE_TOP_RANK);
   });
 
+  it('점수는 정답 100%, 가장 가까운 단어 99%, 10번째 90%, 1000번째 50%', () => {
+    expect(round.toScore(10000)).toBe(10000);
+    expect(round.toScore(round.hints.first)).toBe(9900);
+    expect(round.toScore(round.hints.tenth)).toBe(9000);
+    expect(round.toScore(round.hints.thousandth)).toBe(5000);
+  });
+
   it('가장 가까운 단어에 정답은 들어가지 않는다', () => {
     expect(round.nearest(2)).toEqual([
       { word: '공연', similarity: 5000, rank: 1 },
       { word: '음악', similarity: 4998, rank: 2 },
     ]);
+  });
+});
+
+describe('createScoreScale', () => {
+  // 실제 문제 1(유행어)의 기준점: 41.69% · 31.93% · 19.12%
+  const toScore = createScoreScale(4169, 3193, 1912);
+
+  it('기준점 사이는 원래 유사도에 비례한다', () => {
+    expect(toScore(956)).toBe(2500); // 0과 1000번째의 한가운데
+  });
+
+  it('유사도가 0 이하면 0점이다', () => {
+    expect(toScore(0)).toBe(0);
+    expect(toScore(-500)).toBe(0);
+  });
+
+  it('원래 유사도 순서를 바꾸지 않는다', () => {
+    const raw = [-300, 0, 500, 1912, 2500, 3193, 3800, 4169, 6000, 10000];
+    const scores = raw.map(toScore);
+    expect([...scores].sort((a, b) => a - b)).toEqual(scores);
   });
 });
 
