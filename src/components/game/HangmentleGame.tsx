@@ -16,7 +16,7 @@ import {
   type HangmentlePuzzleFile,
 } from '@/data/hangmentleData';
 
-type Status = 'playing' | 'solved' | 'gaveUp';
+type Status = 'playing' | 'solved';
 
 interface SavedProgress {
   guesses: HangmentleGuess[];
@@ -30,7 +30,10 @@ const storageKey = (puzzleNo: number) => `hangmentle:${puzzleNo}`;
 const loadProgress = (puzzleNo: number): SavedProgress => {
   try {
     const raw = localStorage.getItem(storageKey(puzzleNo));
-    return raw ? (JSON.parse(raw) as SavedProgress) : EMPTY_PROGRESS;
+    if (!raw) return EMPTY_PROGRESS;
+    const saved = JSON.parse(raw) as SavedProgress;
+    // 예전 '포기' 기록은 이어서 풀 수 있게 진행 중으로 돌린다
+    return { guesses: saved.guesses, status: saved.status === 'solved' ? 'solved' : 'playing' };
   } catch {
     return EMPTY_PROGRESS;
   }
@@ -65,7 +68,10 @@ const HangmentleGame = () => {
   const [lastGuess, setLastGuess] = useState<HangmentleGuess | null>(null);
   const [rankingCount, setRankingCount] = useState(RANKING_PAGE);
   const stickyRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const [isStuck, setIsStuck] = useState(false);
+  // 힌트·입력창 묶음의 높이. 목록 카드 머리줄이 그 바로 아래에 멈추도록 쓴다
+  const [bandHeight, setBandHeight] = useState(0);
 
   const vocabQuery = useQuery({
     queryKey: ['hangmentle', 'vocab'],
@@ -99,6 +105,15 @@ const HangmentleGame = () => {
     setRankingCount(RANKING_PAGE);
   };
 
+  // 정답을 맞히면 키보드를 내리고 페이지 맨 위로 올려 정답 카드·순위표가 바로 보이게 한다
+  const scrollToPageTop = () => {
+    (document.activeElement as HTMLElement | null)?.blur();
+    const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    rootRef.current
+      ?.closest('.overflow-y-auto')
+      ?.scrollTo({ top: 0, behavior: smooth ? 'smooth' : 'auto' });
+  };
+
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     if (!round || !input.trim()) return;
@@ -125,6 +140,7 @@ const HangmentleGame = () => {
       guesses: [...prev.guesses, result.guess],
       status: result.guess.rank === 0 ? 'solved' : prev.status,
     }));
+    if (result.guess.rank === 0) scrollToPageTop();
   };
 
   const restart = () => {
@@ -197,11 +213,16 @@ const HangmentleGame = () => {
       { threshold: [1] },
     );
     observer.observe(el);
-    return () => observer.disconnect();
+    const resizeObserver = new ResizeObserver(() => setBandHeight(el.offsetHeight));
+    resizeObserver.observe(el);
+    return () => {
+      observer.disconnect();
+      resizeObserver.disconnect();
+    };
   }, [round, finished]);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div ref={rootRef} className="flex flex-col gap-6">
       <p className="font-body-kr text-[14px] leading-5 text-paper/80">
         {isEng
           ? 'Guess the secret Korean word. Each guess shows how close its meaning is — use the scores as clues.'
@@ -248,19 +269,14 @@ const HangmentleGame = () => {
               붙으면 화면 맨 위이므로 뒤 하늘과 같은 그라디언트·별을 깔아, 아래 목록만 하늘 밑으로 사라지게 한다 */}
           <div
             ref={stickyRef}
-            // 아래 여백(pb-9)의 마지막 24px은 붙었을 때 서서히 투명해져, 목록이 잘리지 않고 하늘로 스며들게 한다.
+            // 아래 여백(pb-6)이 목록 카드 윗변까지 덮어 틈이 생기지 않게 한다.
             // 같은 크기의 음수 여백으로 레이아웃은 그대로 두고, 겹치는 여백이 아래 카드를 가리지 않게 클릭은 통과시킨다
-            className={`pointer-events-none -mx-5 -mb-9 -mt-3 overflow-hidden px-5 pb-9 pt-3 ${
+            className={`pointer-events-none -mx-5 -mb-6 -mt-3 overflow-hidden px-5 pb-6 pt-3 ${
               finished ? '' : 'sticky -top-px z-20'
             }`}
             style={
               isStuck && !finished
-                ? {
-                    background: 'var(--gradient-retro-dusk) top / 100% 100dvh no-repeat',
-                    maskImage: 'linear-gradient(to bottom, black calc(100% - 24px), transparent)',
-                    WebkitMaskImage:
-                      'linear-gradient(to bottom, black calc(100% - 24px), transparent)',
-                  }
+                ? { background: 'var(--gradient-retro-dusk) top / 100% 100dvh no-repeat' }
                 : undefined
             }
           >
@@ -292,29 +308,15 @@ const HangmentleGame = () => {
               </section>
 
               {finished ? (
-                <section
-                  className={`rounded-[16px] border-2 border-ink p-5 text-center drop-shadow-[5px_5px_0px_var(--color-ink)] ${
-                    progress.status === 'solved' ? 'bg-rust text-paper' : 'bg-ink text-paper'
-                  }`}
-                >
+                <section className="rounded-[16px] border-2 border-ink bg-rust p-5 text-center text-paper drop-shadow-[5px_5px_0px_var(--color-ink)]">
                   <p className="font-typewriter text-[12px] leading-4 opacity-80">
-                    {progress.status === 'solved'
-                      ? isEng
-                        ? 'YOU GOT IT'
-                        : '정답'
-                      : isEng
-                        ? 'THE ANSWER WAS'
-                        : '정답은'}
+                    {isEng ? 'YOU GOT IT' : '정답'}
                   </p>
                   <p className="pt-2 font-display text-[40px] leading-[48px]">{round.answer}</p>
                   <p className="pt-2 font-body-kr text-[14px] leading-5 opacity-90">
-                    {progress.status === 'solved'
-                      ? isEng
-                        ? `Solved in ${progress.guesses.length} guesses`
-                        : `${progress.guesses.length}번 만에 맞혔어요!`
-                      : isEng
-                        ? 'Better luck next time'
-                        : '다음엔 꼭 맞혀 봐요'}
+                    {isEng
+                      ? `Solved in ${progress.guesses.length} guesses`
+                      : `${progress.guesses.length}번 만에 맞혔어요!`}
                   </p>
                 </section>
               ) : (
@@ -410,11 +412,22 @@ const HangmentleGame = () => {
 
           {progress.guesses.length > 0 && (
             <section className={GAME_CARD}>
-              <div className="flex items-center gap-3 pb-1 font-typewriter text-[11px] leading-4 opacity-50">
-                <span className="w-6">#</span>
-                <span className="flex-1">{isEng ? 'WORD' : '단어'}</span>
-                <span>{isEng ? 'SCORE' : '유사도'}</span>
-                <span className="w-[84px] text-right">{isEng ? 'RANK' : '순위'}</span>
+              {/* 진행 중에는 카드 윗부분(테두리·머리줄)이 입력창 바로 아래에 멈추고 그 밑으로 목록만 움직인다.
+                  카드 테두리(2px)와 안쪽 여백(20px)만큼 넓혀 카드 윗부분을 그대로 다시 그린다 */}
+              <div
+                className={
+                  finished
+                    ? ''
+                    : 'sticky z-10 -mx-[22px] -mt-[22px] rounded-t-[16px] border-x-2 border-t-2 border-ink bg-paper px-5 pt-5'
+                }
+                style={finished ? undefined : { top: bandHeight - 1 }}
+              >
+                <div className="flex items-center gap-3 pb-2 font-typewriter text-[11px] leading-4 opacity-50">
+                  <span className="w-6">#</span>
+                  <span className="flex-1">{isEng ? 'WORD' : '단어'}</span>
+                  <span>{isEng ? 'SCORE' : '유사도'}</span>
+                  <span className="w-[84px] text-right">{isEng ? 'RANK' : '순위'}</span>
+                </div>
               </div>
               {lastGuess && !finished && (
                 <ul className="pb-2">{renderGuessRow(lastGuess, true)}</ul>
@@ -423,20 +436,10 @@ const HangmentleGame = () => {
             </section>
           )}
 
-          {finished ? (
+          {finished && (
             <button type="button" onClick={restart} className={PRIMARY_BUTTON}>
               {isEng ? 'Play Again' : '처음부터 다시'}
             </button>
-          ) : (
-            progress.guesses.length > 0 && (
-              <button
-                type="button"
-                onClick={() => setProgress((prev) => ({ ...prev, status: 'gaveUp' }))}
-                className={SECONDARY_BUTTON}
-              >
-                {isEng ? 'Give Up & Show Answer' : '포기하고 정답 보기'}
-              </button>
-            )
           )}
 
           <p className="text-center font-body-kr text-[11px] leading-4 text-ink/50">
