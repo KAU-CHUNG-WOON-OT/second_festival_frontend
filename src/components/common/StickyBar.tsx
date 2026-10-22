@@ -19,8 +19,10 @@ interface StickyBarProps {
 }
 
 // 목록 필터·검색창처럼 스크롤해도 상단바 바로 아래에 붙어 있는 띠.
-// 붙어서 내용 위에 겹치면 뒤 하늘·별을 똑같이 깔고 아래 12px을 흐리게 해 카드가 자연스럽게 밑으로 들어간다.
-// 위·아래 12px 여백은 같은 크기의 음수 여백으로 상쇄해 배치는 그대로 둔다. 띠 전체가 탭을 받아 밑에 가려진 카드가 눌리지 않는다.
+// 붙어서 내용 위에 겹치면 뒤 하늘·별을 똑같이 깔고, 아래 여백 20px 중 위 8px은 하늘로 덮은 뒤 12px을 흐리게 해
+// 카드가 검색창에 바로 닿지 않고 자연스럽게 밑으로 들어간다.
+// 아래 여백은 같은 크기의 음수 여백으로 상쇄해 배치는 그대로 둔다(바로 아래 목록의 위 여백과 겹친다).
+// 띠 전체가 탭을 받아 밑에 가려진 카드가 눌리지 않는다.
 // 페이지 루트(긴 세로 흐름)의 바로 아래 자식이어야 붙어 있을 수 있다
 const StickyBar = ({ children }: StickyBarProps) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -29,7 +31,7 @@ const StickyBar = ({ children }: StickyBarProps) => {
   return (
     <div
       ref={ref}
-      className="sticky z-20 -mx-5 -mb-3 mt-3 px-5 py-3"
+      className="sticky z-20 -mx-5 -mb-5 mt-3 px-5 pb-5 pt-3"
       style={{
         top: STICKY_BAND_TOP,
         background: isOver ? skyBackground('var(--band-top)') : undefined,
