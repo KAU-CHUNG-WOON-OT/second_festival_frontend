@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FiChevronLeft } from 'react-icons/fi';
 import { useSidebar } from '../../contexts/SidebarContext';
 import SkyDots from './SkyDots';
@@ -12,16 +12,31 @@ interface RetroPageHeaderProps {
   showMenu?: boolean;
 }
 
-// 노을 배경 위 흰 아이콘 헤더: 메뉴 또는 뒤로가기 · (선택) 가운데 제목 · 청운 로고
+// 앱 안에 이전 기록이 없을 때(공유 링크로 바로 들어온 경우) 뒤로가기로 갈 곳: 상세는 그 목록, 나머지는 홈
+const fallbackPath = (pathname: string) => {
+  const list = pathname.match(/^\/(yard|pub|foodtruck|game)\/[^/]+$/)?.[1];
+  return list ? `/${list}` : '/home';
+};
+
+// 노을 배경 위 흰 아이콘 헤더: 메뉴 또는 뒤로가기 · (선택) 가운데 제목 · 청운 로고(홈 링크)
 // 스크롤해도 화면 맨 위에 고정된다. 뒤에 하늘·별을 똑같이 깔고 아래 12px을 흐리게 해 내용이 자연스럽게 밑으로 들어간다.
+// 상단바 전체가 탭을 받아 밑에 가려진 카드가 눌리지 않는다.
 // 페이지 위 여백(pt-5)과 좌우 여백(px-5)을 음수 여백으로 덮어 처음부터 화면 맨 위·양끝에 맞춘다
 const RetroPageHeader = ({ title, showMenu = false }: RetroPageHeaderProps) => {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const { openSidebar } = useSidebar();
+
+  const goBack = () => {
+    // BrowserRouter가 기록마다 매기는 순번. 0이면 앱에서 처음 연 화면이라 navigate(-1)은 앱 밖으로 나간다
+    const idx = (window.history.state as { idx?: number } | null)?.idx ?? 0;
+    if (idx > 0) navigate(-1);
+    else navigate(fallbackPath(pathname), { replace: true });
+  };
 
   return (
     <div
-      className="pointer-events-none sticky top-0 z-30 -mx-5 -mb-3 -mt-5 px-5 pb-3 pt-5"
+      className="sticky top-0 z-30 -mx-5 -mb-3 -mt-5 px-5 pb-3 pt-5"
       style={{
         background: skyBackground(),
         maskImage: 'linear-gradient(to bottom, black calc(100% - 12px), transparent)',
@@ -32,7 +47,7 @@ const RetroPageHeader = ({ title, showMenu = false }: RetroPageHeaderProps) => {
       <div className="absolute inset-x-0 top-0 h-16 overflow-hidden">
         <SkyDots night />
       </div>
-      <div className="pointer-events-auto relative flex h-11 items-center justify-between text-paper">
+      <div className="relative flex h-11 items-center justify-between text-paper">
         {showMenu ? (
           <button
             type="button"
@@ -45,7 +60,7 @@ const RetroPageHeader = ({ title, showMenu = false }: RetroPageHeaderProps) => {
         ) : (
           <button
             type="button"
-            onClick={() => navigate(-1)}
+            onClick={goBack}
             aria-label="뒤로"
             className="-ml-3 flex size-11 items-center justify-center"
           >
@@ -57,7 +72,10 @@ const RetroPageHeader = ({ title, showMenu = false }: RetroPageHeaderProps) => {
             {title}
           </h1>
         )}
-        <img src={cheongunLogo} alt="청운" width={46} height={32} className="brightness-0 invert" />
+        {/* 탭 영역만 44px 높이로 넓히고 음수 여백으로 로고 자리는 그대로 둔다 */}
+        <Link to="/home" aria-label="홈으로 이동" className="-mr-2 flex h-11 items-center px-2">
+          <img src={cheongunLogo} alt="청운" width={46} height={32} className="brightness-0 invert" />
+        </Link>
       </div>
     </div>
   );

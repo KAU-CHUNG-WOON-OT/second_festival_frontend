@@ -18,7 +18,10 @@ const NoticeModal = ({ notice, onClose }: NoticeModalProps) => {
   const [closing, setClosing] = useState(false);
   const touchStartY = useRef(0);
   const touchDeltaY = useRef(0);
+  // 이번 터치로 시트를 끌어 닫을 수 있는지. 본문을 내려 둔 채 아래로 쓸면 본문만 스크롤한다
+  const canDrag = useRef(false);
   const sheetRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
     if (notice) {
@@ -39,23 +42,28 @@ const NoticeModal = ({ notice, onClose }: NoticeModalProps) => {
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartY.current = e.touches[0].clientY;
     touchDeltaY.current = 0;
+    const content = contentRef.current;
+    canDrag.current = !(content && content.contains(e.target as Node) && content.scrollTop > 0);
   };
 
+  // 열릴 때 애니메이션이 transform을 붙잡고 있어서 끄는 만큼은 translate로 옮긴다
   const handleTouchMove = (e: React.TouchEvent) => {
+    if (!canDrag.current) return;
     const delta = e.touches[0].clientY - touchStartY.current;
     touchDeltaY.current = delta;
-    if (delta > 0 && sheetRef.current) {
-      sheetRef.current.style.transform = `translateY(${delta}px)`;
+    if (sheetRef.current) {
+      sheetRef.current.style.translate = `0 ${Math.max(delta, 0)}px`;
       sheetRef.current.style.transition = "none";
     }
   };
 
   const handleTouchEnd = () => {
+    if (!canDrag.current) return;
     if (touchDeltaY.current > 80) {
       handleClose();
     } else if (sheetRef.current) {
-      sheetRef.current.style.transform = "translateY(0)";
-      sheetRef.current.style.transition = "transform 0.3s cubic-bezier(0.22, 1, 0.36, 1)";
+      sheetRef.current.style.translate = "0 0";
+      sheetRef.current.style.transition = "translate 0.3s cubic-bezier(0.22, 1, 0.36, 1)";
     }
   };
 
@@ -112,7 +120,10 @@ const NoticeModal = ({ notice, onClose }: NoticeModalProps) => {
           </div>
 
           <h2 className="pt-3 font-display text-[20px] leading-[27.5px]">{title}</h2>
-          <p className="max-h-[40vh] overflow-y-auto whitespace-pre-line pt-3 font-body-kr text-[15px] leading-7 opacity-80">
+          <p
+            ref={contentRef}
+            className="max-h-[40vh] overflow-y-auto overscroll-y-none whitespace-pre-line pt-3 font-body-kr text-[15px] leading-7 opacity-80"
+          >
             {content}
           </p>
 

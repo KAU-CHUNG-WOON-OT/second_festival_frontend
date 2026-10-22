@@ -216,16 +216,24 @@ const HangmentleGame = () => {
   const hasListBody = !finished && progress.guesses.length > 0;
   const isOverList = useStickyOverlap(stickyRef, Boolean(round));
 
-  // 방금 입력한 단어 줄이 상단 고정 영역 밑에 가려져 있으면 보이도록 스크롤한다
+  // 방금 입력한 단어 줄이 보이도록 스크롤한다. 줄은 힌트·입력창 묶음 바로 밑에 있어서 묶음이 붙어 있으면
+  // (목록 끝에서 밀려 올라간 중이어도) 그 밑에 가려진다. 위로 올리면 묶음은 붙는 자리로 내려오므로,
+  // 붙었을 때의 아래 끝과 머리줄 밑 페이드(20px)를 기준으로 목표를 한 번에 정한다.
+  // 줄이 화면(키보드가 열려 있으면 그 위) 아래로 벗어나 있으면, 묶음이 다시 붙지 않는 데까지만 내린다
   useEffect(() => {
     const row = lastRowRef.current;
     const band = stickyRef.current;
-    if (!row || !band) return;
-    const hiddenBy = band.getBoundingClientRect().bottom - row.getBoundingClientRect().top;
-    if (hiddenBy > 0) {
-      // 머리줄 밑 페이드(20px)보다 아래로 내려 강조 줄이 온전히 보이게
-      row.closest('.overflow-y-auto')?.scrollBy({ top: -(hiddenBy + 24), behavior: 'smooth' });
-    }
+    const container = row?.closest('.overflow-y-auto');
+    if (!row || !band || !container) return;
+    const { top, bottom } = row.getBoundingClientRect();
+    const minTop = STICKY_BAND_TOP + band.offsetHeight + 24;
+    const viewport = window.visualViewport;
+    const maxBottom = (viewport ? viewport.offsetTop + viewport.height : window.innerHeight) - 16;
+    const isBandStuck = band.getBoundingClientRect().top < STICKY_BAND_TOP + 0.5;
+    let delta = 0;
+    if (isBandStuck) delta = top - minTop;
+    else if (bottom > maxBottom) delta = Math.max(0, Math.min(bottom - maxBottom, top - minTop));
+    if (delta !== 0) container.scrollBy({ top: delta, behavior: 'smooth' });
   }, [lastGuess]);
 
   const guessHeader = (
