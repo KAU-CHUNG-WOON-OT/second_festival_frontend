@@ -19,7 +19,8 @@ const consumeAccessTokenFromUrl = (): string | null => {
   params.delete('refreshToken');
   const remaining = params.toString();
   const cleanedUrl = `${window.location.pathname}${remaining ? `?${remaining}` : ''}${window.location.hash}`;
-  window.history.replaceState({}, '', cleanedUrl);
+  // 라우터가 기록에 넣어 둔 순번(idx)을 지우지 않도록 state는 그대로 둔다 (뒤로가기가 이 값으로 앱 안 기록을 판단)
+  window.history.replaceState(window.history.state, '', cleanedUrl);
   return token;
 };
 

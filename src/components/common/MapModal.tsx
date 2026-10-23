@@ -15,7 +15,8 @@ const MapModal = ({ isOpen, onClose, imageSrc, children }: MapModalProps) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
-  const [lastTapTime, setLastTapTime] = useState(0);
+  const lastTapTime = useRef(0);
+  const tapStart = useRef({ x: 0, y: 0, time: 0, moved: false });
   const imageRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
@@ -37,16 +38,34 @@ const MapModal = ({ isOpen, onClose, imageSrc, children }: MapModalProps) => {
     setPosition({ x: 0, y: 0 });
   };
 
-  const handleDoubleTap = (e: React.TouchEvent | React.MouseEvent) => {
-    const currentTime = new Date().getTime();
-    const tapLength = currentTime - lastTapTime;
-    
-    if (tapLength < 300 && tapLength > 0) {
-      e.preventDefault();
+  // 탭은 포인터 이벤트 한 곳에서만 센다 (터치 뒤에 따라오는 click까지 세면 한 번 탭이 두 번 탭이 된다).
+  // 누른 채 10px 넘게 움직였으면 끌기라서 탭으로 세지 않는다. 마우스는 왼쪽 버튼만 센다
+  const handleTapStart = (e: React.PointerEvent) => {
+    if (!e.isPrimary || e.button !== 0) return;
+    tapStart.current = { x: e.clientX, y: e.clientY, time: Date.now(), moved: false };
+  };
+
+  const handleTapMove = (e: React.PointerEvent) => {
+    if (!e.isPrimary || tapStart.current.moved) return;
+    if (Math.hypot(e.clientX - tapStart.current.x, e.clientY - tapStart.current.y) > 10) {
+      tapStart.current.moved = true;
+    }
+  };
+
+  // 두 번 탭 간격은 첫 탭을 뗀 때부터 두 번째 탭을 누른 때까지로 잰다 (누르고 있던 시간은 빼고)
+  const handleDoubleTap = (e: React.PointerEvent) => {
+    if (!e.isPrimary || e.button !== 0) return;
+    if (tapStart.current.moved) {
+      lastTapTime.current = 0;
+      return;
+    }
+    if (tapStart.current.time - lastTapTime.current < 300) {
+      lastTapTime.current = 0;
       if (scale > 1) handleReset();
       else setScale(2.5);
+    } else {
+      lastTapTime.current = Date.now();
     }
-    setLastTapTime(currentTime);
   };
 
   const onStart = (e: any) => {
@@ -93,8 +112,10 @@ const MapModal = ({ isOpen, onClose, imageSrc, children }: MapModalProps) => {
           onMouseLeave={onEnd}
           onTouchStart={onStart}
           onTouchMove={onMove}
-          onTouchEnd={(e) => { onEnd(); handleDoubleTap(e); }}
-          onClick={handleDoubleTap}
+          onTouchEnd={onEnd}
+          onPointerDown={handleTapStart}
+          onPointerMove={handleTapMove}
+          onPointerUp={handleDoubleTap}
         >
           {children ? (
             <div

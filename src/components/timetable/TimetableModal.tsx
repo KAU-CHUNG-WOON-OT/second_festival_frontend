@@ -18,6 +18,8 @@ const TimetableModal = ({ event, onClose, trackNo, done = false }: TimetableModa
   const [closing, setClosing] = useState(false);
   const touchStartY = useRef(0);
   const touchDeltaY = useRef(0);
+  // 이번 터치로 시트를 끌어 닫을 수 있는지. 시트를 내려 둔 채 아래로 쓸면 스크롤만 한다
+  const canDrag = useRef(false);
   const sheetRef = useRef<HTMLDivElement>(null);
 
   if (!event) return null;
@@ -30,9 +32,11 @@ const TimetableModal = ({ event, onClose, trackNo, done = false }: TimetableModa
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartY.current = e.touches[0].clientY;
     touchDeltaY.current = 0;
+    canDrag.current = (sheetRef.current?.scrollTop ?? 0) <= 0;
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
+    if (!canDrag.current) return;
     const delta = e.touches[0].clientY - touchStartY.current;
     touchDeltaY.current = delta;
     if (delta > 0 && sheetRef.current) {
@@ -42,6 +46,7 @@ const TimetableModal = ({ event, onClose, trackNo, done = false }: TimetableModa
   };
 
   const handleTouchEnd = () => {
+    if (!canDrag.current) return;
     if (touchDeltaY.current > 80) handleClose();
     else if (sheetRef.current) {
       sheetRef.current.style.transform = "translateY(0)";

@@ -90,6 +90,7 @@ interface ToothProps {
 
 const Tooth = ({ index, base, dir, pressed, disabled, onPress }: ToothProps) => {
   const ref = useRef<Group>(null);
+  const pressedAt = useRef(0);
   // 닫혔을 때 위아래 이빨이 엇갈리도록 위턱은 반 칸 밀어서 놓는다
   const slot = index % TEETH_PER_JAW;
   const [x, z] = rimPoint((slot + (dir === 1 ? 0.3 : 0.7)) / TEETH_PER_JAW);
@@ -111,13 +112,23 @@ const Tooth = ({ index, base, dir, pressed, disabled, onPress }: ToothProps) => 
         color={pressed ? 'cream' : 'paper'}
         geometry={TOOTH_GEOMETRY}
       />
-      {/* 손가락으로 누르기 쉽도록 이빨보다 넓은 투명 판정 영역 */}
+      {/* 손가락으로 누르기 쉽도록 이빨 모양을 조금 키운 투명 판정 영역. 이빨과 같은 모양·자리라 뒤 이빨을 가리지 않는다 */}
       <mesh
-        position={[0, base + dir * 0.2, 0]}
+        position={[0, base + dir * 0.17, 0]}
+        rotation={[dir === 1 ? 0 : Math.PI, 0, 0]}
+        scale={1.15}
+        geometry={TOOTH_GEOMETRY}
         onClick={(event) => {
+          if (disabled) return;
+          if (pressed) {
+            // 이미 눌린 이빨은 탭을 뒤 이빨로 넘긴다. 방금 누른 이빨이면(실수로 두 번 탭) 뒤 이빨까지 눌리지 않게 막는다
+            if (Date.now() - pressedAt.current < 400) event.stopPropagation();
+            return;
+          }
           event.stopPropagation();
           if (event.delta > DRAG_THRESHOLD_PX) return;
-          if (!disabled && !pressed) onPress(index);
+          pressedAt.current = Date.now();
+          onPress(index);
         }}
         onPointerOver={() => {
           if (!disabled && !pressed) document.body.style.cursor = 'pointer';
@@ -126,7 +137,6 @@ const Tooth = ({ index, base, dir, pressed, disabled, onPress }: ToothProps) => 
           document.body.style.cursor = '';
         }}
       >
-        <cylinderGeometry args={[0.24, 0.24, 0.45, 12]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
     </group>

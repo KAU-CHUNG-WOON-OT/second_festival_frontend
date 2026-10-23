@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import RetroPageHeader from '../components/common/RetroPageHeader';
 import RetroPageTitle from '../components/common/RetroPageTitle';
 import CategoryList from '../components/common/CategoryList';
+import StickyBar from '../components/common/StickyBar';
 import EmptyState from '../components/common/EmptyState';
 import NowPlaying from '../components/timetable/NowPlaying';
 import TrackCard from '../components/timetable/TrackCard';
@@ -35,7 +36,8 @@ const PerformancePage = () => {
         <NowPlaying />
       </div>
 
-      <div className="pt-6">
+      {/* 스크롤해도 날짜 탭은 상단바 아래에 붙어 있다 */}
+      <StickyBar>
         <CategoryList
           categories={PERFORMANCE_DATE_TABS}
           selectedCategory={selectedDate}
@@ -44,7 +46,7 @@ const PerformancePage = () => {
             setSelectedIndex(null);
           }}
         />
-      </div>
+      </StickyBar>
 
       {events.length === 0 ? (
         <div className="pt-6">

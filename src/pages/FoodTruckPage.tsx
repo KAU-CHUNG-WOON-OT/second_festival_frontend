@@ -6,6 +6,7 @@ import RetroPageTitle from '../components/common/RetroPageTitle';
 import FestivalMap from '../components/common/FestivalMap';
 import CategoryList from '../components/common/CategoryList';
 import SearchBar from '../components/common/SearchBar';
+import StickyBar from '../components/common/StickyBar';
 import MapModal from '../components/common/MapModal';
 import TruckList from '../components/foodtruck/TruckList';
 import { useUrlFilters } from '../hooks/useUrlFilters';
@@ -46,20 +47,21 @@ const FoodTruckPage = () => {
       <div className="pt-6">
         <FestivalMap images={TRUCK_MAP_IMAGES} onClick={setMapImageSrc} />
       </div>
-      <div className="pt-6">
+      {/* 스크롤해도 분류·검색창은 상단바 아래에 붙어 있다 */}
+      <StickyBar>
         <CategoryList
           categories={TRUCK_CATEGORIES}
           selectedCategory={filters.category}
           onSelect={(category) => setFilter('category', category)}
         />
-      </div>
-      <div className="pt-4">
-        <SearchBar
-          value={filters.q}
-          onChange={(q) => setFilter('q', q)}
-          placeholder={t('search.menuPlaceholder')}
-        />
-      </div>
+        <div className="pt-4">
+          <SearchBar
+            value={filters.q}
+            onChange={(q) => setFilter('q', q)}
+            placeholder={t('search.menuPlaceholder')}
+          />
+        </div>
+      </StickyBar>
       <div className="pt-5">
         <TruckList
           trucks={filteredTrucks}

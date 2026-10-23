@@ -7,6 +7,7 @@ import RetroPageTitle from '../components/common/RetroPageTitle';
 import MapModal from '../components/common/MapModal';
 import CategoryList from '../components/common/CategoryList';
 import SearchBar from '../components/common/SearchBar';
+import StickyBar from '../components/common/StickyBar';
 import BoothGrid from '../components/yard/BoothGrid';
 import BoothMap from '../components/yard/BoothMap';
 import { CATEGORIES, dummyBooths } from '../data/boothData';
@@ -57,20 +58,21 @@ const YardPage = () => {
         </span>
       </button>
 
-      <div className="pt-6">
+      {/* 스크롤해도 분류·검색창은 상단바 아래에 붙어 있다 */}
+      <StickyBar>
         <CategoryList
           categories={CATEGORIES}
           selectedCategory={filters.category}
           onSelect={(category) => setFilter('category', category)}
         />
-      </div>
-      <div className="pt-4">
-        <SearchBar
-          value={filters.q}
-          onChange={(q) => setFilter('q', q)}
-          placeholder={t('search.boothPlaceholder')}
-        />
-      </div>
+        <div className="pt-4">
+          <SearchBar
+            value={filters.q}
+            onChange={(q) => setFilter('q', q)}
+            placeholder={t('search.boothPlaceholder')}
+          />
+        </div>
+      </StickyBar>
       <div className="pt-5">
         <BoothGrid
           booths={filteredBooths}

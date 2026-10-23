@@ -24,24 +24,61 @@ export interface HangmentleGuess {
   order: number;
 }
 
+export interface HangmentleNeighbor {
+  word: string;
+  similarity: number;
+  rank: number;
+}
+
 export type HangmentleGuessResult =
   | { kind: 'unknown'; word: string }
-  | { kind: 'duplicate'; word: string }
+  // 이미 추측한 단어는 그때 결과를 그대로 돌려준다 (다시 검색해 볼 수 있게)
+  | { kind: 'duplicate'; guess: HangmentleGuess }
   | { kind: 'ok'; guess: HangmentleGuess };
 
 export interface HangmentleRound {
   answer: string;
   // 정답을 뺀 가장 가까운 단어·10번째·1000번째의 유사도 × 10000
   hints: { first: number; tenth: number; thousandth: number };
-  // 정답과 가장 가까운 단어 (정답 제외, 가까운 순)
-  nearest: (count: number) => string[];
+  // 원래 유사도를 화면에 보여 줄 점수(× 10000)로 바꾼다. 순서는 그대로다
+  toScore: (similarity: number) => number;
+  // 정답과 가장 가까운 단어 (정답 제외, 가까운 순, 순위는 1부터)
+  nearest: (count: number) => HangmentleNeighbor[];
   evaluate: (input: string, previous: HangmentleGuess[]) => HangmentleGuessResult;
 }
 
 // 띄어쓰기는 무시한다 ('송골 매' → '송골매')
 export const normalizeGuess = (input: string) => input.replace(/\s+/g, '');
 
-export const formatSimilarity = (scaled: number) => (scaled / 100).toFixed(2);
+// 원래 코사인 유사도는 가장 가까운 단어도 40% 안팎이라 낮아 보이므로, 문제마다 기준점에 맞춰 점수를 늘린다.
+// 정답 100%, 가장 가까운 단어 99%, 10번째 90%, 1000번째 50%, 관련 없는 단어(유사도 0 이하) 0%.
+// 기준점 사이는 원래 유사도에 비례하므로 순서와 순위는 바뀌지 않는다.
+const SCORE_ANCHORS = { first: 9900, tenth: 9000, thousandth: 5000 };
+
+export const createScoreScale = (first: number, tenth: number, thousandth: number) => {
+  const points: [number, number][] = [
+    [0, 0],
+    [thousandth, SCORE_ANCHORS.thousandth],
+    [tenth, SCORE_ANCHORS.tenth],
+    [first, SCORE_ANCHORS.first],
+    [10000, 10000],
+  ];
+  return (similarity: number) => {
+    if (similarity <= 0) return 0;
+    if (similarity >= 10000) return 10000;
+    for (let i = 1; i < points.length; i += 1) {
+      const [x0, y0] = points[i - 1];
+      const [x1, y1] = points[i];
+      if (similarity <= x1) {
+        return x1 === x0 ? y1 : Math.round(y0 + ((similarity - x0) / (x1 - x0)) * (y1 - y0));
+      }
+    }
+    return 10000;
+  };
+};
+
+// 점수를 퍼센트로 (정답은 100.00%)
+export const formatSimilarity = (scaled: number) => `${(scaled / 100).toFixed(2)}%`;
 
 export const createHangmentleRound = (vocab: string[], sims: number[]): HangmentleRound => {
   const wordIndex = new Map(vocab.map((word, index) => [word, index]));
@@ -49,19 +86,26 @@ export const createHangmentleRound = (vocab: string[], sims: number[]): Hangment
   const rankOf = new Map<number, number>();
   byCloseness.slice(0, HANGMENTLE_TOP_RANK + 1).forEach((index, rank) => rankOf.set(index, rank));
 
+  const hints = {
+    first: sims[byCloseness[1]],
+    tenth: sims[byCloseness[10]],
+    thousandth: sims[byCloseness[HANGMENTLE_TOP_RANK]],
+  };
+
   return {
     answer: vocab[byCloseness[0]],
-    hints: {
-      first: sims[byCloseness[1]],
-      tenth: sims[byCloseness[10]],
-      thousandth: sims[byCloseness[HANGMENTLE_TOP_RANK]],
-    },
-    nearest: (count) => byCloseness.slice(1, count + 1).map((index) => vocab[index]),
+    hints,
+    toScore: createScoreScale(hints.first, hints.tenth, hints.thousandth),
+    nearest: (count) =>
+      byCloseness
+        .slice(1, count + 1)
+        .map((index, i) => ({ word: vocab[index], similarity: sims[index], rank: i + 1 })),
     evaluate: (input, previous) => {
       const word = normalizeGuess(input);
       const index = wordIndex.get(word);
       if (index === undefined) return { kind: 'unknown', word };
-      if (previous.some((guess) => guess.word === word)) return { kind: 'duplicate', word };
+      const existing = previous.find((guess) => guess.word === word);
+      if (existing) return { kind: 'duplicate', guess: existing };
       return {
         kind: 'ok',
         guess: { word, similarity: sims[index], rank: rankOf.get(index) ?? null, order: previous.length + 1 },
