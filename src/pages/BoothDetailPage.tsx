@@ -40,7 +40,6 @@ const BoothDetailPage = () => {
   const infoRows = [
     { label: isEng ? 'Type' : '구분', value: booth.category },
     { label: isEng ? 'Hours' : '운영 시간', value: booth.operatingTime },
-    { label: isEng ? 'Booth' : '부스 위치', value: booth.booth },
     { label: isEng ? 'Instagram' : '인스타그램', value: booth.insta },
   ];
 

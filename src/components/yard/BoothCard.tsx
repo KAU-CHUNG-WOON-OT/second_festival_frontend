@@ -28,9 +28,6 @@ const BoothCard = ({ booth, onClick }: BoothCardProps) => {
       <h3 className="break-keep font-display text-[18px] leading-[22.5px]">
         {isEng ? booth.name_en : booth.name}
       </h3>
-      <p className="whitespace-pre-line font-body-kr text-[14px] leading-5 opacity-70">
-        {booth.category} · {booth.booth}
-      </p>
     </button>
   );
 };
