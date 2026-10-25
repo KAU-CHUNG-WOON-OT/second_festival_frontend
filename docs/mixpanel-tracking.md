@@ -60,6 +60,7 @@ Mixpanel의 Simplified ID Merge 기능이 로그인 이전의 익명 이벤트�
 | `/performance` | Performance |
 | `/foodtruck` | FoodTruck List |
 | `/foodtruck/:id` | FoodTruck Detail |
+| `/stores` | Store Deals |
 | `/yard` | Yard List |
 | `/yard/:id` | Booth Detail |
 | `/pub` | Pub List |
