@@ -8,7 +8,8 @@ interface HomeNoticeBannerProps {
   dateText: string;
 }
 
-// 히어로 바로 아래 공지 띠: 위아래 테두리를 두른 종이 띠 + NEW 뱃지 + 흐르는 제목 + 오른쪽 화살표
+// 히어로 바로 아래 공지 띠: 위아래 테두리를 두른 종이 띠 + NEW 뱃지 + 흐르는 제목 + 오른쪽 화살표.
+// 기기의 '동작 줄이기'가 켜져 있으면 흐르지 않고 한 벌만 보인다 (넘치면 오른쪽 끝이 흐려짐)
 const HomeNoticeBanner = ({ to, title, dateText }: HomeNoticeBannerProps) => {
   const { t } = useTranslation();
 
@@ -33,7 +34,9 @@ const HomeNoticeBanner = ({ to, title, dateText }: HomeNoticeBannerProps) => {
       <div className="min-w-0 flex-1 overflow-hidden whitespace-nowrap [mask-image:linear-gradient(to_right,transparent,black_12px,black_calc(100%-16px),transparent)]">
         <div className="flex w-max animate-[marquee_14s_linear_infinite] motion-reduce:animate-none">
           {item}
-          {item}
+          <span aria-hidden className="flex motion-reduce:hidden">
+            {item}
+          </span>
         </div>
       </div>
       <FiChevronRight size={18} aria-hidden className="shrink-0 opacity-60" />
