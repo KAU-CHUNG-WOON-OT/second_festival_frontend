@@ -6,6 +6,7 @@ import { useStickyOverlap } from '@/hooks/useStickyOverlap';
 import { GAME_CARD } from '../gameStyles';
 import {
   HANGMENTLE_TOP_RANK,
+  HANGMENTLE_WORD_MAX_LENGTH,
   sortGuesses,
   type HangmentleGuess,
   type HangmentleGuessResult,
@@ -151,6 +152,9 @@ interface HangmentleBoardProps {
   solvedCard: ReactNode;
   // 입력한 글자를 채점하고 목록에 넣는다. 서버에 물어보는 동안(Promise)은 추측 버튼을 막는다
   onGuess: (input: string) => HangmentleGuessOutcome | Promise<HangmentleGuessOutcome>;
+  // 판이 다시 그려져도(이벤트 회차가 잠깐 닫힘 등) 입력하던 글자를 잃지 않도록 처음 값과 바뀐 값을 주고받는다
+  initialInput?: string;
+  onInputChange?: (input: string) => void;
 }
 
 // 힌트·입력창·추측 목록. 진행 중에는 스크롤해도 힌트·입력창·목록 머리줄이 상단바 아래에 붙어 있다
@@ -162,16 +166,22 @@ const HangmentleBoard = ({
   solved,
   solvedCard,
   onGuess,
+  initialInput = '',
+  onInputChange,
 }: HangmentleBoardProps) => {
   const { language } = useLanguage();
   const isEng = language === 'ENG';
 
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState(initialInput);
   const [message, setMessage] = useState<string | null>(null);
   const [lastGuess, setLastGuess] = useState<HangmentleGuess | null>(null);
   const [busy, setBusy] = useState(false);
   const stickyRef = useRef<HTMLDivElement>(null);
   const lastRowRef = useRef<HTMLLIElement>(null);
+
+  useEffect(() => {
+    onInputChange?.(input);
+  }, [input, onInputChange]);
 
   // 정답을 맞히면 키보드를 내리고 페이지 맨 위로 올려 정답 카드·순위표가 바로 보이게 한다
   const scrollToPageTop = () => {
@@ -297,6 +307,7 @@ const HangmentleBoard = ({
                     setMessage(null);
                   }}
                   enterKeyHint="send"
+                  maxLength={HANGMENTLE_WORD_MAX_LENGTH}
                   autoComplete="off"
                   autoCorrect="off"
                   placeholder={isEng ? 'Type a Korean word' : '단어를 입력하세요'}

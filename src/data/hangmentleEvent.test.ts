@@ -4,13 +4,22 @@ import type { HangmentleGuessResponse } from '@/lib/api/hangmentle';
 import type { HangmentleProgress } from '@/lib/hangmentleProgress';
 import {
   HANGMENTLE_EVENT_ROUNDS,
+  OPENING_FAST_RETRY_MS,
   classifyGuessError,
+  classifyRoundError,
+  findEventRound,
   formatKstTime,
   guessErrorText,
   guessFromResponse,
+  openedWhileWatching,
   resolveEventProgress,
+  roundPhase,
+  roundPollInterval,
   solveRankText,
+  watchClosedRounds,
+  type RoundPhaseEntry,
 } from './hangmentleEvent';
+import { parseServerTime } from './hangmentleClock';
 
 // 실제 이벤트 정답과 상관없는 가짜 단어만 쓴다
 const response = (patch: Partial<HangmentleGuessResponse>): HangmentleGuessResponse => ({
@@ -95,14 +104,36 @@ describe('guessFromResponse', () => {
 });
 
 describe('classifyGuessError', () => {
-  it('열리지 않은 회차(403·409), 로그인 만료(401), 서버 오류를 구분한다', () => {
-    expect(classifyGuessError(new ApiError('아직 열리지 않은 문제예요', 403, 'GAME-403'))).toBe(
-      'notOpen',
-    );
+  it('열리지 않은 회차는 409 GAME-409일 때만', () => {
     expect(classifyGuessError(new ApiError('아직 열리지 않은 문제예요', 409, 'GAME-409'))).toBe(
       'notOpen',
     );
+    // 다른 409·403은 '아직 안 열림'이 아니다
+    expect(classifyGuessError(new ApiError('이미 가입된 학번입니다.', 409, 'USER-409'))).toBe(
+      'server',
+    );
+    expect(classifyGuessError(new ApiError('접근 권한이 없습니다.', 403, 'AUTH-403'))).toBe(
+      'server',
+    );
+  });
+
+  it('로그인 만료(401), 너무 많은 추측(429), 잘못된 입력(400), 준비 중(503), 없는 회차(404)', () => {
     expect(classifyGuessError(new ApiError('만료된 토큰입니다.', 401, 'AUTH-403'))).toBe('auth');
+    expect(classifyGuessError(new ApiError('잠시 후 다시 시도해 주세요', 429, 'GAME-429'))).toBe(
+      'tooMany',
+    );
+    expect(classifyGuessError(new ApiError('word: 단어는 50자 이하', 400, 'COMMON-400'))).toBe(
+      'invalid',
+    );
+    expect(classifyGuessError(new ApiError('문제를 준비하고 있어요', 503, 'GAME-503'))).toBe(
+      'notReady',
+    );
+    expect(classifyGuessError(new ApiError('존재하지 않는 문제예요', 404, 'GAME-404'))).toBe(
+      'notFound',
+    );
+    expect(classifyGuessError(new ApiError('요청한 주소를 찾을 수 없습니다.', 404, 'COMMON-404'))).toBe(
+      'server',
+    );
     expect(classifyGuessError(new ApiError('서버 오류', 500, 'COMMON-500'))).toBe('server');
   });
 
@@ -114,6 +145,102 @@ describe('classifyGuessError', () => {
     expect(guessErrorText('notOpen', false)).toBe('아직 열리지 않은 문제예요');
     expect(guessErrorText('network', false)).toBe('연결이 불안정해요. 다시 시도해 주세요');
     expect(guessErrorText('server', true)).toBe('Something went wrong. Please try again.');
+    expect(guessErrorText('invalid', false)).toBe('단어를 확인해 주세요 (50자까지 입력할 수 있어요)');
+  });
+
+  it('429는 서버 문구를 그대로, 없으면 기본 문구', () => {
+    expect(guessErrorText('tooMany', false, '1분에 30번까지 추측할 수 있어요')).toBe(
+      '1분에 30번까지 추측할 수 있어요',
+    );
+    expect(guessErrorText('tooMany', false, '  ')).toBe(
+      '너무 빨리 추측하고 있어요. 잠시 후 다시 시도해 주세요',
+    );
+    expect(guessErrorText('tooMany', true, '한국어 문구')).toBe(
+      'Too many guesses. Please wait a moment and try again.',
+    );
+  });
+});
+
+describe('classifyRoundError', () => {
+  it('404 GAME-404만 없는 문제, 나머지는 다시 시도', () => {
+    expect(classifyRoundError(new ApiError('존재하지 않는 문제예요', 404, 'GAME-404'))).toBe(
+      'notFound',
+    );
+    expect(classifyRoundError(new ApiError('Not Found', 404))).toBe('failed');
+    expect(classifyRoundError(new ApiError('서버 오류', 500, 'COMMON-500'))).toBe('failed');
+    expect(classifyRoundError(new TypeError('Failed to fetch'))).toBe('failed');
+  });
+});
+
+describe('roundPhase · roundPollInterval', () => {
+  const HINTS = { first: 4200, tenth: 3300, thousandth: 1900 };
+  const OPENS_AT = '2026-10-28T22:00:00';
+  const opensAtMs = parseServerTime(OPENS_AT)!;
+  const closed = { open: false, opensAt: OPENS_AT, hints: HINTS };
+
+  it('열리기 전에는 카운트다운, 열린 뒤에도 서버가 닫혀 있다고 하면 곧 열림', () => {
+    expect(roundPhase(closed, opensAtMs - 1)).toBe('countdown');
+    expect(roundPhase(closed, opensAtMs)).toBe('opening');
+    expect(roundPhase(closed, opensAtMs + 3000)).toBe('opening');
+  });
+
+  it('서버가 열렸다고 하면 시계와 상관없이 연다', () => {
+    expect(roundPhase({ ...closed, open: true }, opensAtMs - 5000)).toBe('open');
+    expect(roundPhase({ ...closed, open: true }, opensAtMs + 5000)).toBe('open');
+  });
+
+  it('힌트가 없으면 준비 중. 열릴 시각이 지났으면 곧 열린다고 하지 않는다', () => {
+    // 열리기 전이면 카운트다운은 그대로 (시각은 정해져 있으므로)
+    expect(roundPhase({ ...closed, hints: null }, opensAtMs - 1000)).toBe('countdown');
+    expect(roundPhase({ ...closed, hints: null }, opensAtMs + 1000)).toBe('notReady');
+    expect(roundPhase({ open: true, opensAt: OPENS_AT, hints: null }, opensAtMs + 1000)).toBe(
+      'notReady',
+    );
+  });
+
+  it('열리는 시각이 없으면 closed', () => {
+    expect(roundPhase({ open: false, opensAt: null, hints: HINTS }, opensAtMs)).toBe('closed');
+    expect(roundPhase({ open: false, opensAt: null, hints: null }, opensAtMs)).toBe('notReady');
+  });
+
+  it('곧 열림 상태에서는 처음 몇 초 동안 1초마다, 그 뒤로는 느리게 다시 묻는다', () => {
+    expect(roundPollInterval(closed, opensAtMs + 10)).toBe(1000);
+    expect(roundPollInterval(closed, opensAtMs + OPENING_FAST_RETRY_MS - 1)).toBe(1000);
+    expect(roundPollInterval(closed, opensAtMs + OPENING_FAST_RETRY_MS)).toBe(5000);
+  });
+
+  it('열려서 풀 수 있으면 더 묻지 않고, 열리기 전·준비 중에는 가끔 묻는다', () => {
+    expect(roundPollInterval({ ...closed, open: true }, opensAtMs + 10)).toBe(false);
+    expect(roundPollInterval(closed, opensAtMs - 60_000)).toBe(60_000);
+    expect(roundPollInterval({ ...closed, open: true, hints: null }, opensAtMs)).toBe(10_000);
+  });
+});
+
+describe('watchClosedRounds · openedWhileWatching', () => {
+  const entries = (p1: RoundPhaseEntry['phase'], p2: RoundPhaseEntry['phase']) => [
+    { round: 1, phase: p1 },
+    { round: 2, phase: p2 },
+  ];
+
+  it('열리기 전으로 본 회차만 기억하고, 바뀐 게 없으면 같은 배열', () => {
+    const watched = watchClosedRounds([], entries('countdown', 'countdown'));
+    expect(watched).toEqual([1, 2]);
+    expect(watchClosedRounds(watched, entries('countdown', 'countdown'))).toBe(watched);
+    // 이미 열린 회차는 기억하지 않는다 (열린 뒤에 들어온 화면에서는 데려가지 않음)
+    expect(watchClosedRounds([], entries('open', null))).toEqual([]);
+  });
+
+  it('기억한 회차가 열리거나 열릴 시각이 지나면 그 회차', () => {
+    expect(openedWhileWatching([1, 2], entries('countdown', 'countdown'))).toBeNull();
+    expect(openedWhileWatching([1, 2], entries('opening', 'countdown'))).toBe(1);
+    expect(openedWhileWatching([1, 2], entries('open', 'countdown'))).toBe(1);
+    expect(openedWhileWatching([2], entries('open', 'countdown'))).toBeNull();
+    expect(openedWhileWatching([1, 2], entries('open', 'open'))).toBe(2);
+  });
+
+  it('닫은 안내(ignore)는 빼고, 상태를 모르면 열렸다고 보지 않는다', () => {
+    expect(openedWhileWatching([1, 2], entries('open', 'open'), [2])).toBe(1);
+    expect(openedWhileWatching([1], entries(null, null))).toBeNull();
   });
 });
 
@@ -158,9 +285,18 @@ describe('resolveEventProgress', () => {
 
 describe('HANGMENTLE_EVENT_ROUNDS', () => {
   it('1회차는 10시, 2회차는 11시', () => {
-    expect(HANGMENTLE_EVENT_ROUNDS.map((r) => [r.round, r.label])).toEqual([
-      [1, '10시'],
-      [2, '11시'],
+    expect(HANGMENTLE_EVENT_ROUNDS.map((r) => [r.round, r.label, r.title])).toEqual([
+      [1, '10시', '10시 문제'],
+      [2, '11시', '11시 문제'],
     ]);
+    expect(HANGMENTLE_EVENT_ROUNDS.map((r) => formatKstTime(r.scheduledAt, false))).toEqual([
+      '22:00',
+      '23:00',
+    ]);
+  });
+
+  it('번호로 회차를 찾는다', () => {
+    expect(findEventRound(2)?.label).toBe('11시');
+    expect(findEventRound(3)).toBeNull();
   });
 });

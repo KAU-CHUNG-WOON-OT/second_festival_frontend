@@ -1,17 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useIsLogin } from '@/hooks/useIsLogin';
+import { useServerNowAt } from '@/hooks/useServerNow';
 import { ApiError } from '@/lib/apiClient';
-import { getKakaoLoginUrl } from '@/lib/kakaoLogin';
-import { track } from '@/lib/mixpanel';
-import kakaoIcon from '@/assets/kakao_icon.svg';
+import { serverNow } from '@/lib/serverClock';
 import { GAME_CARD, SECONDARY_BUTTON } from '../gameStyles';
 import HangmentleBoard, {
   GuessListCard,
   HintCard,
   type HangmentleGuessOutcome,
 } from './HangmentleBoard';
+import CountdownText from './HangmentleCountdown';
+import { LoginCard } from './HangmentleLogin';
 import HangmentleRanking from './HangmentleRanking';
 import NearestList from './NearestList';
 import {
@@ -21,13 +22,16 @@ import {
   formatSimilarity,
   normalizeGuess,
 } from '@/data/hangmentleData';
+import { formatOpensAt, parseServerTime } from '@/data/hangmentleClock';
 import {
-  HANGMENTLE_RANKING_SIZE,
+  OPENING_FAST_RETRY_MS,
   classifyGuessError,
-  formatKstTime,
+  classifyRoundError,
   guessErrorText,
   guessFromResponse,
   resolveEventProgress,
+  roundPhase,
+  roundPollInterval,
   solveRankText,
   type HangmentleEventRound,
 } from '@/data/hangmentleEvent';
@@ -41,37 +45,77 @@ import {
 } from '@/lib/api/hangmentle';
 import { eventProgressKey, loadProgress, saveProgress } from '@/lib/hangmentleProgress';
 
-// 열리기 전에는 이 간격으로 다시 물어 열리면 바로 풀 수 있게 한다
-const CLOSED_REFRESH_MS = 30_000;
+interface StatusCardProps {
+  label: string;
+  title: string;
+  children?: ReactNode;
+}
+
+// 문제를 풀 수 없는 동안(불러오는 중·곧 열림·준비 중) 보여 주는 카드
+const StatusCard = ({ label, title, children }: StatusCardProps) => (
+  <section className={`${GAME_CARD} text-center`}>
+    <p className="font-typewriter text-[12px] leading-4 opacity-60">{label}</p>
+    <p className="pt-2 font-display text-[22px] leading-[30px]">{title}</p>
+    {children}
+  </section>
+);
+
+const StatusNote = ({ children }: { children: ReactNode }) => (
+  <p className="pt-1 font-body-kr text-[14px] leading-5 opacity-70">{children}</p>
+);
 
 interface HangmentleEventProps {
   event: HangmentleEventRound;
+  // 없는 회차일 때 이벤트 안내로 돌아가기
+  onShowHub: () => void;
 }
 
-// 이벤트 회차: 정답은 서버만 알고, 추측할 때마다 서버가 채점한다. 비회원은 힌트와 랭킹만 본다
-const HangmentleEvent = ({ event }: HangmentleEventProps) => {
+// 이벤트 회차: 정답은 서버만 알고, 추측할 때마다 서버가 채점한다. 비회원은 힌트와 랭킹만 본다.
+// 열리기 전에는 서버 시계로 센 카운트다운을 보여 주고, 0이 되는 순간 서버에 다시 물어 열리면 바로 문제 화면으로 바꾼다
+const HangmentleEvent = ({ event, onShowHub }: HangmentleEventProps) => {
   const { round } = event;
   const { language } = useLanguage();
   const isEng = language === 'ENG';
   const label = isEng ? event.labelEn : event.label;
+  const title = isEng ? event.titleEn : event.title;
   const isLogin = useIsLogin();
   const queryClient = useQueryClient();
 
   const storageKey = eventProgressKey(round);
   const [localProgress, setLocalProgress] = useState(() => loadProgress(storageKey));
   const [nearestCount, setNearestCount] = useState(NEAREST_PAGE);
+  // 입력하던 단어. 잠깐 닫혔다(409) 다시 열려 입력판을 새로 그려도 이어서 보낼 수 있게 여기에 둔다
+  const [draft, setDraft] = useState('');
 
   const infoQuery = useQuery({
     queryKey: hangmentleEventKeys.round(round),
     queryFn: () => fetchHangmentleRound(round),
     refetchInterval: (query) =>
-      query.state.data && !query.state.data.open ? CLOSED_REFRESH_MS : false,
+      query.state.data ? roundPollInterval(query.state.data, serverNow()) : false,
+    // 없는 회차는 다시 물어도 같으므로 바로 안내한다
+    retry: (failureCount, error) => classifyRoundError(error) !== 'notFound' && failureCount < 1,
   });
+  const info = infoQuery.data;
+  const opensAtMs = parseServerTime(info?.opensAt);
+  // 열리는 순간과, 열린 뒤에도 서버가 닫혀 있다고 할 때 1초마다 묻기를 멈추는 순간에 다시 그린다
+  const now = useServerNowAt([
+    opensAtMs,
+    opensAtMs === null ? null : opensAtMs + OPENING_FAST_RETRY_MS,
+  ]);
+  const phase = info ? roundPhase(info, now) : null;
+
+  // 카운트다운이 0이 되면 바로 서버에 묻는다 (이후 서버가 아직 닫혀 있다고 하면 refetchInterval이 1초마다 다시 묻는다)
+  const { refetch: refetchInfo } = infoQuery;
+  const passedOpensAt = !!info && !info.open && opensAtMs !== null && now >= opensAtMs;
+  useEffect(() => {
+    if (passedOpensAt) refetchInfo();
+  }, [passedOpensAt, refetchInfo]);
+
   // 다른 기기에서 맞혔거나 기기 기록이 지워졌어도 맞힌 상태를 되살린다
   const recordQuery = useQuery({
     queryKey: hangmentleEventKeys.myRecord(round),
     queryFn: () => fetchMyHangmentleRecord(round),
-    enabled: isLogin,
+    enabled: isLogin && phase === 'open',
   });
   const record = isLogin ? recordQuery.data : undefined;
   const progress = resolveEventProgress(localProgress, record);
@@ -83,7 +127,7 @@ const HangmentleEvent = ({ event }: HangmentleEventProps) => {
   const nearestQuery = useQuery({
     queryKey: hangmentleEventKeys.nearest(round, nearestCount),
     queryFn: () => fetchHangmentleNearest(round, nearestCount),
-    enabled: isLogin && solved,
+    enabled: isLogin && solved && phase === 'open',
     placeholderData: keepPreviousData,
     staleTime: Infinity,
   });
@@ -91,13 +135,6 @@ const HangmentleEvent = ({ event }: HangmentleEventProps) => {
   useEffect(() => {
     saveProgress(storageKey, localProgress);
   }, [storageKey, localProgress]);
-
-  const handleLogin = () => {
-    const loginUrl = getKakaoLoginUrl();
-    if (!loginUrl) return;
-    track('hangmentle_kakao_login_clicked', { round });
-    window.location.href = loginUrl;
-  };
 
   const handleGuess = async (input: string): Promise<HangmentleGuessOutcome> => {
     const word = normalizeGuess(input);
@@ -134,112 +171,157 @@ const HangmentleEvent = ({ event }: HangmentleEventProps) => {
       return { kind: 'ok', guess };
     } catch (error) {
       const kind = classifyGuessError(error);
-      // 아직 안 열렸다고 하면 회차 정보를 다시 받아 '열리지 않은 문제' 안내로 바꾼다
-      if (kind === 'notOpen') {
+      // 서버가 아직 안 열렸다거나 준비 중이라고 하면 회차 정보를 다시 받아 화면을 맞춘다 (입력하던 단어는 draft에 남는다)
+      if (kind === 'notOpen' || kind === 'notReady') {
         queryClient.invalidateQueries({ queryKey: hangmentleEventKeys.round(round) });
       }
-      return { kind: 'error', message: guessErrorText(kind, isEng) };
+      return {
+        kind: 'error',
+        message: guessErrorText(kind, isEng, error instanceof ApiError ? error.message : undefined),
+      };
     }
   };
 
-  const ranking = <HangmentleRanking round={round} label={label} myRank={myRank} />;
-  const cardLabel = `EVENT ${label}`;
+  const ranking = (
+    <HangmentleRanking round={round} label={label} myRank={myRank} live={phase === 'open'} />
+  );
+  const cardLabel = `EVENT ${String(round).padStart(2, '0')} · ${title}`;
+  const loginCard = !isLogin && <LoginCard round={round} />;
 
-  const loginCard = (
-    <section className={`${GAME_CARD} text-center`}>
-      <p className="font-display text-[20px] leading-7">
-        {isEng ? 'Log in to join the event' : '로그인하면 참여할 수 있어요'}
-      </p>
-      <p className="pt-2 font-body-kr text-[14px] leading-5 opacity-70">
-        {isEng
-          ? `Guests can only see the hints and the ranking. The first ${HANGMENTLE_RANKING_SIZE} to solve it make the ranking.`
-          : `비회원은 힌트와 랭킹만 볼 수 있어요. 먼저 맞힌 ${HANGMENTLE_RANKING_SIZE}명이 랭킹에 올라요.`}
-      </p>
-      <button
-        type="button"
-        onClick={handleLogin}
-        className="mt-4 flex h-11 w-full items-center justify-center gap-2 rounded-full border-2 border-ink bg-[#fee500] font-body-kr text-[15px] font-bold text-ink drop-shadow-[3px_3px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px]"
-      >
-        <img src={kakaoIcon} alt="" width={18} height={17} />
-        {isEng ? 'Log in with Kakao' : '카카오로 로그인하기'}
-      </button>
-    </section>
+  const retryButton = (text: string) => (
+    <button type="button" onClick={() => refetchInfo()} className={`${SECONDARY_BUTTON} mt-4`}>
+      {text}
+    </button>
   );
 
   if (infoQuery.isPending) {
     return (
       <>
-        <section className={`${GAME_CARD} text-center`}>
-          <p className="font-body-kr text-[15px] font-semibold opacity-70">
-            {isEng ? 'Loading the puzzle…' : '문제를 불러오는 중이에요…'}
-          </p>
-        </section>
+        <StatusCard label={cardLabel} title={isEng ? 'Loading the puzzle…' : '문제를 불러오는 중이에요…'} />
         {ranking}
       </>
     );
   }
 
   if (infoQuery.isError) {
-    const notFound = infoQuery.error instanceof ApiError && infoQuery.error.status === 404;
+    const notFound = classifyRoundError(infoQuery.error) === 'notFound';
+    return (
+      <>
+        <StatusCard
+          label={cardLabel}
+          title={
+            notFound
+              ? isEng
+                ? 'This round does not exist.'
+                : '없는 문제예요'
+              : isEng
+                ? 'Could not load the puzzle.'
+                : '문제를 불러오지 못했어요'
+          }
+        >
+          {notFound ? (
+            <button type="button" onClick={onShowHub} className={`${SECONDARY_BUTTON} mt-4`}>
+              {isEng ? 'Back to the event page' : '이벤트 안내로 가기'}
+            </button>
+          ) : (
+            retryButton(isEng ? 'Try Again' : '다시 시도')
+          )}
+        </StatusCard>
+        {!notFound && ranking}
+      </>
+    );
+  }
+
+  // 여기부터 info가 있다
+  const loaded = infoQuery.data;
+
+  if (phase === 'countdown' && opensAtMs !== null) {
     return (
       <>
         <section className={`${GAME_CARD} text-center`}>
-          <p className="font-body-kr text-[15px] font-semibold opacity-70">
-            {notFound
-              ? isEng
-                ? 'This round does not exist.'
-                : '없는 문제예요.'
-              : isEng
-                ? 'Could not load the puzzle.'
-                : '문제를 불러오지 못했어요.'}
+          <p className="font-typewriter text-[12px] leading-4 opacity-60">{cardLabel}</p>
+          <p className="pt-4 font-body-kr text-[14px] font-semibold leading-5 opacity-70">
+            {isEng ? 'Starts in' : '시작까지'}
           </p>
-          {!notFound && (
-            <button
-              type="button"
-              onClick={() => infoQuery.refetch()}
-              className={`${SECONDARY_BUTTON} mt-4`}
-            >
-              {isEng ? 'Try Again' : '다시 시도'}
-            </button>
-          )}
+          <p className="pt-1">
+            <CountdownText
+              targetMs={opensAtMs}
+              compactDays
+              className="font-condensed text-[52px] font-bold leading-[60px] tracking-[-0.5px]"
+            />
+          </p>
+          <p className="pt-1 font-body-kr text-[14px] leading-5 opacity-70">
+            {isEng
+              ? `Opens ${formatOpensAt(opensAtMs, true)}`
+              : `${formatOpensAt(opensAtMs, false)}에 열려요`}
+          </p>
+          <p className="mt-4 border-t border-dashed border-ink/50 pt-4 font-body-kr text-[13px] leading-5 opacity-70">
+            {isEng
+              ? 'Keep this page open — it turns into the puzzle the moment it opens.'
+              : '이 화면을 켜 두면 시간이 되는 순간 바로 문제로 바뀌어요.'}
+          </p>
         </section>
+        {loginCard}
         {ranking}
       </>
     );
   }
 
-  const info = infoQuery.data;
-
-  if (!info.open) {
+  if (phase === 'opening') {
+    // 기기 시계로는 열릴 시각이 지났는데 서버는 아직 닫혀 있다고 함 → 잠깐 기다리며 1초마다 다시 묻는다
+    const waitedLong = opensAtMs !== null && now >= opensAtMs + OPENING_FAST_RETRY_MS;
     return (
       <>
-        <section className={`${GAME_CARD} text-center`}>
-          <p className="font-typewriter text-[12px] leading-4 opacity-60">{cardLabel}</p>
-          <p className="pt-2 font-display text-[20px] leading-7">
-            {isEng ? 'Not open yet' : '아직 열리지 않은 문제예요'}
-          </p>
-          {info.opensAt && (
-            <p className="pt-1 font-body-kr text-[14px] leading-5 opacity-70">
-              {isEng
-                ? `Opens at ${formatKstTime(info.opensAt, false)}`
-                : `${formatKstTime(info.opensAt, false)}에 열려요`}
-            </p>
-          )}
-        </section>
-        {!isLogin && loginCard}
+        <StatusCard label={cardLabel} title={isEng ? 'Opening soon…' : '곧 열려요'}>
+          <StatusNote>
+            {isEng
+              ? 'Hang on a moment. The puzzle appears as soon as it opens.'
+              : '잠시만 기다려 주세요. 열리면 바로 문제가 나와요.'}
+          </StatusNote>
+          {waitedLong && retryButton(isEng ? 'Check Again' : '다시 확인')}
+        </StatusCard>
+        {loginCard}
+        {ranking}
+      </>
+    );
+  }
+
+  if (phase === 'notReady' || !loaded.hints) {
+    return (
+      <>
+        <StatusCard
+          label={cardLabel}
+          title={isEng ? 'The puzzle is being prepared' : '문제를 준비하고 있어요'}
+        >
+          <StatusNote>
+            {isEng ? 'Please check again in a moment.' : '잠시 후 다시 확인해 주세요.'}
+          </StatusNote>
+          {retryButton(isEng ? 'Check Again' : '다시 확인')}
+        </StatusCard>
+        {ranking}
+      </>
+    );
+  }
+
+  if (phase === 'closed') {
+    return (
+      <>
+        <StatusCard label={cardLabel} title={isEng ? 'Not open yet' : '아직 열리지 않은 문제예요'} />
+        {loginCard}
         {ranking}
       </>
     );
   }
 
   // 화면에는 회차마다 늘린 점수를 보여 준다 (연습 문제와 같은 방식, 순서는 원래 유사도와 같음)
-  const toScore = createScoreScale(info.hints.first, info.hints.tenth, info.hints.thousandth);
+  const { hints } = loaded;
+  const toScore = createScoreScale(hints.first, hints.tenth, hints.thousandth);
   const showScore = (similarity: number) => formatSimilarity(toScore(similarity));
 
   if (!isLogin) {
     return (
       <>
-        <HintCard label={cardLabel} hints={info.hints} showScore={showScore} />
+        <HintCard label={cardLabel} hints={hints} showScore={showScore} />
         {loginCard}
         {ranking}
       </>
@@ -250,11 +332,13 @@ const HangmentleEvent = ({ event }: HangmentleEventProps) => {
     <>
       <HangmentleBoard
         label={cardLabel}
-        hints={info.hints}
+        hints={hints}
         showScore={showScore}
         guesses={progress.guesses}
         solved={solved}
         onGuess={handleGuess}
+        initialInput={draft}
+        onInputChange={setDraft}
         solvedCard={
           <section className="rounded-[16px] border-2 border-ink bg-rust p-5 text-center text-paper drop-shadow-[5px_5px_0px_var(--color-ink)]">
             <p className="font-typewriter text-[12px] leading-4 opacity-80">

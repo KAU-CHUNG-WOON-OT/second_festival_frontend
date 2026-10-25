@@ -1,64 +1,101 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
-import CategoryList from '../common/CategoryList';
+import { track } from '@/lib/mixpanel';
 import HangmentleEvent from './hangmentle/HangmentleEvent';
-import HangmentlePractice from './hangmentle/HangmentlePractice';
-import { HANGMENTLE_PUZZLE_COUNT } from '@/data/hangmentleData';
-import { HANGMENTLE_EVENT_ROUNDS, type HangmentleEventRound } from '@/data/hangmentleEvent';
+import HangmentleHub from './hangmentle/HangmentleHub';
+import HangmentlePracticeView from './hangmentle/HangmentlePracticeView';
+import { useEventRoundsOverview } from './hangmentle/useEventRounds';
+import { findEventRound } from '@/data/hangmentleEvent';
+import {
+  hangmentleViewKey,
+  hangmentleViewParams,
+  isCanonicalHangmentleView,
+  parseHangmentleView,
+  type HangmentleView,
+} from '@/data/hangmentleView';
 
-type HangmentleTab =
-  | { id: string; label: string; labelEn: string; kind: 'practice'; puzzleNo: number }
-  | { id: string; label: string; labelEn: string; kind: 'event'; event: HangmentleEventRound };
-
-// 연습 문제(브라우저에서 채점, 랭킹 없음) 다음에 이벤트 회차(서버 채점, 랭킹)
-const TABS: HangmentleTab[] = [
-  ...Array.from({ length: HANGMENTLE_PUZZLE_COUNT }, (_, i) => ({
-    id: `practice-${i + 1}`,
-    label: `연습 ${i + 1}`,
-    labelEn: `Practice ${i + 1}`,
-    kind: 'practice' as const,
-    puzzleNo: i + 1,
-  })),
-  ...HANGMENTLE_EVENT_ROUNDS.map((event) => ({
-    id: `event-${event.round}`,
-    label: event.label,
-    labelEn: event.labelEn,
-    kind: 'event' as const,
-    event,
-  })),
-];
-// 처음 들어오면 10시 이벤트 회차
-const DEFAULT_TAB_ID = `event-${HANGMENTLE_EVENT_ROUNDS[0].round}`;
-
+// 항멘틀: 이벤트 안내(설명·10시·11시 문제 카드) → 회차 화면(?round=1) / 연습 화면(?view=practice).
+// 화면은 주소 쿼리로 바꿔 상단 뒤로가기·브라우저 뒤로가기가 그대로 된다.
+// 직접 누르면 기록을 쌓고(push), 문제가 열려 저절로 넘어가거나 연습 문제만 바꿀 때는 바꿔치기(replace)
 const HangmentleGame = () => {
   const { language } = useLanguage();
   const isEng = language === 'ENG';
+  const [searchParams, setSearchParams] = useSearchParams();
+  const view = parseHangmentleView(searchParams);
+  const event = view.kind === 'round' ? findEventRound(view.round) : null;
+  const rootRef = useRef<HTMLDivElement>(null);
 
-  const [tabId, setTabId] = useState(DEFAULT_TAB_ID);
-  const tab = TABS.find((t) => t.id === tabId) ?? TABS[0];
-  const tabLabel = (t: HangmentleTab) => (isEng ? t.labelEn : t.label);
+  // 회차 요약 + 서버 시계 맞추기 (1분마다, 화면이 다시 보일 때)
+  const overviewQuery = useEventRoundsOverview();
+
+  const go = useCallback(
+    (next: HangmentleView, replace = false) =>
+      setSearchParams((prev) => hangmentleViewParams(next, prev), { replace }),
+    [setSearchParams],
+  );
+
+  // 없는 회차(?round=9) 등 잘못된 주소는 맞는 주소로 바꿔치기
+  useEffect(() => {
+    if (!isCanonicalHangmentleView(searchParams)) {
+      setSearchParams((prev) => hangmentleViewParams(parseHangmentleView(prev), prev), {
+        replace: true,
+      });
+    }
+  }, [searchParams, setSearchParams]);
+
+  // 화면이 바뀌면 맨 위부터 보여 준다 (주소의 경로가 같아서 Layout이 스크롤을 건드리지 않는다)
+  const viewKey = hangmentleViewKey(view);
+  const shownViewKey = useRef(viewKey);
+  useEffect(() => {
+    if (shownViewKey.current === viewKey) return;
+    shownViewKey.current = viewKey;
+    rootRef.current?.closest('.overflow-y-auto')?.scrollTo(0, 0);
+  }, [viewKey]);
+
+  const openRound = useCallback(
+    (round: number, auto: boolean, source: 'card' | 'auto' | 'banner') => {
+      track('hangmentle_round_entered', { round, source });
+      go({ kind: 'round', round }, auto);
+    },
+    [go],
+  );
+  const openRoundFromHub = useCallback(
+    (round: number, auto: boolean) => openRound(round, auto, auto ? 'auto' : 'card'),
+    [openRound],
+  );
 
   return (
-    <div className="flex flex-col gap-6">
-      <p className="font-body-kr text-[14px] leading-5 text-paper/80">
-        {isEng
-          ? 'Guess the secret Korean word. Each guess shows how close its meaning is — use the scores as clues.'
-          : '정답 단어와 뜻이 얼마나 가까운지 유사도(%)로 알려 줘요. 유사도가 높은 단어를 실마리 삼아 정답을 찾아보세요.'}
-      </p>
+    <div ref={rootRef} className="flex flex-col gap-6">
+      {view.kind === 'hub' && (
+        <HangmentleHub
+          overview={overviewQuery.data}
+          overviewFailed={overviewQuery.isError}
+          onRetryOverview={() => overviewQuery.refetch()}
+          onOpenRound={openRoundFromHub}
+          onPractice={() => {
+            track('hangmentle_practice_opened');
+            go({ kind: 'practice', puzzleNo: 1 });
+          }}
+        />
+      )}
 
-      <CategoryList
-        categories={TABS.map(tabLabel)}
-        selectedCategory={tabLabel(tab)}
-        onSelect={(label) =>
-          setTabId(TABS.find((t) => tabLabel(t) === label)?.id ?? DEFAULT_TAB_ID)
-        }
-      />
+      {/* 회차마다 새로 그려 입력창·불러온 순위가 다른 회차로 넘어가지 않게 한다 */}
+      {event && (
+        <HangmentleEvent
+          key={event.round}
+          event={event}
+          onShowHub={() => go({ kind: 'hub' }, true)}
+        />
+      )}
 
-      {/* 탭마다 새로 그려 입력창·강조 줄·불러온 순위가 다른 문제로 넘어가지 않게 한다 */}
-      {tab.kind === 'practice' ? (
-        <HangmentlePractice key={tab.id} puzzleNo={tab.puzzleNo} />
-      ) : (
-        <HangmentleEvent key={tab.id} event={tab.event} />
+      {view.kind === 'practice' && (
+        <HangmentlePracticeView
+          overview={overviewQuery.data}
+          puzzleNo={view.puzzleNo}
+          onSelectPuzzle={(puzzleNo) => go({ kind: 'practice', puzzleNo }, true)}
+          onOpenRound={(round) => openRound(round, false, 'banner')}
+        />
       )}
 
       <p className="text-center font-body-kr text-[11px] leading-4 text-ink/50">

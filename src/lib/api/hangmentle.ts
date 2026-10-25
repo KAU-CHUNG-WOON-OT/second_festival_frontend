@@ -1,15 +1,30 @@
 import { apiFetch } from '@/lib/apiClient';
+import { withServerTime } from '@/lib/serverClock';
 
 // 항멘틀 이벤트 회차(1 = 10시, 2 = 11시) API. 채점·기록·랭킹은 모두 서버가 한다.
 // 유사도는 코사인 유사도 × 10000 정수 (정답은 10000)
+
+export interface HangmentleHints {
+  first: number;
+  tenth: number;
+  thousandth: number;
+}
 
 export interface HangmentleRoundInfo {
   round: number;
   open: boolean;
   // 열리는 시각 (서울 기준 ISO 날짜·시간)
   opensAt: string | null;
-  // 정답을 뺀 가장 가까운 단어·10번째·1000번째의 유사도
-  hints: { first: number; tenth: number; thousandth: number };
+  // 정답을 뺀 가장 가까운 단어·10번째·1000번째의 유사도. 서버가 문제 데이터를 못 읽었으면 null
+  hints: HangmentleHints | null;
+  // 응답을 만든 서버 시각 (서울 기준, ms까지). 카운트다운을 서버 시계에 맞추는 데 쓴다
+  serverTime?: string;
+}
+
+// 모든 회차 요약 (이벤트 안내 카드·시계 맞추기)
+export interface HangmentleRoundsOverview {
+  serverTime: string;
+  rounds: HangmentleRoundInfo[];
 }
 
 export interface HangmentleGuessResponse {
@@ -47,6 +62,7 @@ export interface HangmentleNearestWord {
 
 // react-query 키. 연습 문제 키(['hangmentle', 'vocab'] 등)와 겹치지 않게 'event' 아래에 둔다
 export const hangmentleEventKeys = {
+  overview: ['hangmentle', 'event', 'rounds'] as const,
   round: (round: number) => ['hangmentle', 'event', round, 'info'] as const,
   rankings: (round: number) => ['hangmentle', 'event', round, 'rankings'] as const,
   myRecord: (round: number) => ['hangmentle', 'event', round, 'me'] as const,
@@ -54,13 +70,19 @@ export const hangmentleEventKeys = {
     ['hangmentle', 'event', round, 'nearest', limit] as const,
 };
 
-const roundPath = (round: number) => `/api/game/hangmentle/rounds/${round}`;
+const ROUNDS_PATH = '/api/game/hangmentle/rounds';
+const roundPath = (round: number) => `${ROUNDS_PATH}/${round}`;
 
 // 공개 API는 토큰·쿠키 없이 부른다 (비회원도 보고, 간단한 요청이라 사전 요청도 생기지 않음)
 const PUBLIC = { auth: false, credentials: 'omit' } as const;
+// 서버 시각을 담은 응답은 캐시된 값을 받으면 시계가 어긋나므로 늘 새로 받는다
+const PUBLIC_FRESH = { ...PUBLIC, cache: 'no-store' } as const;
+
+export const fetchHangmentleRounds = (): Promise<HangmentleRoundsOverview> =>
+  withServerTime(() => apiFetch<HangmentleRoundsOverview>(ROUNDS_PATH, PUBLIC_FRESH));
 
 export const fetchHangmentleRound = (round: number): Promise<HangmentleRoundInfo> =>
-  apiFetch<HangmentleRoundInfo>(roundPath(round), PUBLIC);
+  withServerTime(() => apiFetch<HangmentleRoundInfo>(roundPath(round), PUBLIC_FRESH));
 
 export const postHangmentleGuess = (
   round: number,

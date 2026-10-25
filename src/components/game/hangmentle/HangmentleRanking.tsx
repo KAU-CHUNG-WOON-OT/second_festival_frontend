@@ -4,7 +4,7 @@ import { GAME_CARD } from '../gameStyles';
 import { fetchHangmentleRankings, hangmentleEventKeys } from '@/lib/api/hangmentle';
 import { HANGMENTLE_RANKING_SIZE, formatKstTime } from '@/data/hangmentleEvent';
 
-// 이벤트 탭을 보고 있는 동안 랭킹을 다시 받아 오는 간격 (화면이 꺼져 있거나 다른 탭이면 멈춘다)
+// 열린 회차를 보고 있는 동안 랭킹을 다시 받아 오는 간격 (화면이 꺼져 있거나 다른 탭이면 멈춘다)
 const RANKING_REFRESH_MS = 30_000;
 
 interface HangmentleRankingProps {
@@ -13,17 +13,19 @@ interface HangmentleRankingProps {
   label: string;
   // 내가 맞힌 순서. 랭킹 안이면 그 줄을 강조한다
   myRank: number | null;
+  // 열려서 누군가 맞힐 수 있는 동안만 주기적으로 새로 고친다 (열리기 전에는 비어 있으므로)
+  live: boolean;
 }
 
 // 이벤트 회차 랭킹: 먼저 맞힌 10명 (가린 이름·학과·맞힌 시각)
-const HangmentleRanking = ({ round, label, myRank }: HangmentleRankingProps) => {
+const HangmentleRanking = ({ round, label, myRank, live }: HangmentleRankingProps) => {
   const { language } = useLanguage();
   const isEng = language === 'ENG';
 
   const rankingQuery = useQuery({
     queryKey: hangmentleEventKeys.rankings(round),
     queryFn: () => fetchHangmentleRankings(round),
-    refetchInterval: RANKING_REFRESH_MS,
+    refetchInterval: live ? RANKING_REFRESH_MS : false,
   });
   const entries = rankingQuery.data;
 
@@ -105,9 +107,13 @@ const HangmentleRanking = ({ round, label, myRank }: HangmentleRankingProps) => 
       )}
 
       <p className="pt-3 font-body-kr text-[12px] leading-4 opacity-60">
-        {isEng
-          ? 'Times are KST. Refreshes every 30 seconds.'
-          : '맞힌 시각 기준이에요. 30초마다 새로 고쳐요.'}
+        {live
+          ? isEng
+            ? 'Times are KST. Refreshes every 30 seconds.'
+            : '맞힌 시각 기준이에요. 30초마다 새로 고쳐요.'
+          : isEng
+            ? `When the puzzle opens, the first ${HANGMENTLE_RANKING_SIZE} to solve it show up here.`
+            : `문제가 열리면 먼저 맞힌 ${HANGMENTLE_RANKING_SIZE}명이 여기에 올라요.`}
       </p>
     </section>
   );

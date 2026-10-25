@@ -12,8 +12,10 @@ interface RetroPageHeaderProps {
   showMenu?: boolean;
 }
 
-// 앱 안에 이전 기록이 없을 때(공유 링크로 바로 들어온 경우) 뒤로가기로 갈 곳: 상세는 그 목록, 나머지는 홈
-const fallbackPath = (pathname: string) => {
+// 앱 안에 이전 기록이 없을 때(공유 링크로 바로 들어온 경우) 뒤로가기로 갈 곳: 상세는 그 목록, 나머지는 홈.
+// 게임 안의 화면(항멘틀 ?round=1 등)으로 바로 들어왔으면 그 게임의 첫 화면으로
+const fallbackPath = (pathname: string, search: string) => {
+  if (search && /^\/game\/[^/]+$/.test(pathname)) return pathname;
   const list = pathname.match(/^\/(yard|pub|foodtruck|game)\/[^/]+$/)?.[1];
   return list ? `/${list}` : '/home';
 };
@@ -24,14 +26,14 @@ const fallbackPath = (pathname: string) => {
 // 페이지 위 여백(pt-5)과 좌우 여백(px-5)을 음수 여백으로 덮어 처음부터 화면 맨 위·양끝에 맞춘다
 const RetroPageHeader = ({ title, showMenu = false }: RetroPageHeaderProps) => {
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const { openSidebar } = useSidebar();
 
   const goBack = () => {
     // BrowserRouter가 기록마다 매기는 순번. 0이면 앱에서 처음 연 화면이라 navigate(-1)은 앱 밖으로 나간다
     const idx = (window.history.state as { idx?: number } | null)?.idx ?? 0;
     if (idx > 0) navigate(-1);
-    else navigate(fallbackPath(pathname), { replace: true });
+    else navigate(fallbackPath(pathname, search), { replace: true });
   };
 
   return (
