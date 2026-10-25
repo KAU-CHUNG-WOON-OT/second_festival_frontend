@@ -99,7 +99,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           <button
             type="button"
             onClick={handleLogin}
-            className="mx-5 mt-auto flex h-11 items-center justify-center gap-2 rounded-full bg-[#fee500] font-body-kr text-[15px] font-bold text-black"
+            className="mx-5 mt-auto flex h-11 items-center justify-center gap-2 rounded-full border-2 border-ink bg-[#fee500] font-body-kr text-[15px] font-bold text-ink drop-shadow-[3px_3px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px]"
           >
             <img src={kakaoIcon} alt="" width={18} height={17} />
             {t('sidebar.login')}
