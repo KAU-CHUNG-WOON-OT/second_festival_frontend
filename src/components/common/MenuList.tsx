@@ -21,7 +21,7 @@ const MenuList = ({ menu, title }: MenuListProps) => {
   if (menu.length === 0) return null;
 
   return (
-    <section className="rounded-[16px] border-2 border-ink bg-paper p-5 text-ink drop-shadow-[5px_5px_0px_var(--color-ink)]">
+    <section className="rounded-[16px] border-2 border-ink bg-paper p-5 text-ink shadow-[5px_5px_0px_0px_var(--color-ink)]">
       {title ? (
         <h2 className="font-display text-[20px] leading-7">{title}</h2>
       ) : (

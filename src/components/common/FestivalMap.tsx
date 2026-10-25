@@ -44,7 +44,7 @@ const FestivalMap = ({ title, images, onClick }: FestivalMapProps) => {
   };
 
   return (
-    <div className="group rounded-[16px] border-2 border-ink bg-paper p-5 text-ink drop-shadow-[5px_5px_0px_var(--color-ink)]">
+    <div className="group rounded-[16px] border-2 border-ink bg-paper p-5 text-ink shadow-[5px_5px_0px_0px_var(--color-ink)]">
       <p className="flex justify-between font-typewriter text-[12px] font-bold leading-4">
         <span>{title}</span>
         <span className="flex items-center gap-1 opacity-60">

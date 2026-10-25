@@ -12,7 +12,7 @@ const SearchBar = ({ value, onChange, placeholder = "검색어를 입력해주�
 
   return (
     // 카드처럼 진한 테두리 + 흐림 없는 그림자. 포커스는 바깥 흰 테두리 + 안쪽 cream 배경
-    <label className="flex h-12 items-center gap-2 rounded-full border-2 border-ink bg-paper pl-5 pr-1 text-ink outline-2 outline-offset-2 outline-transparent drop-shadow-[3px_3px_0px_var(--color-ink)] transition-colors focus-within:bg-cream focus-within:outline-paper">
+    <label className="flex h-12 items-center gap-2 rounded-full border-2 border-ink bg-paper pl-5 pr-1 text-ink outline-2 outline-offset-2 outline-transparent shadow-[3px_3px_0px_0px_var(--color-ink)] transition-colors focus-within:bg-cream focus-within:outline-paper">
       <input
         type="text"
         inputMode="search"

@@ -62,7 +62,7 @@ const ChosungGame = () => {
   if (isTimeUp) {
     return (
       <div className="flex flex-col gap-6">
-        <section className="rounded-[16px] border-2 border-ink bg-rust p-5 text-center text-paper drop-shadow-[5px_5px_0px_var(--color-ink)]">
+        <section className="rounded-[16px] border-2 border-ink bg-rust p-5 text-center text-paper shadow-[5px_5px_0px_0px_var(--color-ink)]">
           <p className="font-condensed text-[64px] font-bold leading-[64px]">{isEng ? "TIME'S UP" : '땡!'}</p>
           <p className="pt-2 font-display text-[24px] leading-8">
             {isEng ? 'Whoever was answering gets the penalty' : '지금 차례인 사람이 벌칙!'}

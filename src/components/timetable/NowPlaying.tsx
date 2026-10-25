@@ -14,7 +14,7 @@ const NowPlayingCard = ({ clubName, clubStatus, clubType, clubCode }: NowPlaying
   const reel = <img src={reelIcon} alt="" width={44} height={44} className="shrink-0 rotate-[-21.74deg]" />;
 
   return (
-    <section className="rounded-[16px] border-2 border-ink bg-rust p-4 text-paper drop-shadow-[6px_6px_0px_var(--color-ink)]">
+    <section className="rounded-[16px] border-2 border-ink bg-rust p-4 text-paper shadow-[6px_6px_0px_0px_var(--color-ink)]">
       <div className="flex items-center gap-2">
         <span className="size-3 rounded-full bg-mustard shadow-[0_0_0_2px_var(--color-paper)]" />
         <span className="font-typewriter text-[12px] leading-4 tracking-[1.2px]">NOW PLAYING</span>
@@ -39,7 +39,7 @@ const NowPlayingEmpty = () => {
   const { language } = useLanguage();
 
   return (
-    <section className="flex items-center gap-3 rounded-[16px] border-2 border-ink bg-paper px-4 py-[14px] text-ink drop-shadow-[4px_4px_0px_var(--color-ink)]">
+    <section className="flex items-center gap-3 rounded-[16px] border-2 border-ink bg-paper px-4 py-[14px] text-ink shadow-[4px_4px_0px_0px_var(--color-ink)]">
       <span className="rounded-[4px] bg-ink/15 px-2 py-[2px] font-typewriter text-[11px] font-bold leading-4 text-ink/60">
         STAND BY
       </span>

@@ -75,7 +75,7 @@ const EventRoundCard = ({ event, info, phase, loaded, isLogin, onOpen, onNeedLog
             />
             {isEng ? 'LIVE' : '진행 중'}
           </span>
-          <span className="flex h-10 items-center rounded-full border-2 border-ink bg-rust px-5 font-display text-[16px] text-paper drop-shadow-[3px_3px_0px_var(--color-ink)]">
+          <span className="flex h-10 items-center rounded-full border-2 border-ink bg-rust px-5 font-display text-[16px] text-paper shadow-[3px_3px_0px_0px_var(--color-ink)]">
             {isEng ? 'Join' : '참여하기'}
           </span>
         </>
@@ -112,7 +112,7 @@ const EventRoundCard = ({ event, info, phase, loaded, isLogin, onOpen, onNeedLog
     </>
   );
 
-  const card = 'block w-full rounded-[16px] border-2 border-ink bg-paper text-left text-ink drop-shadow-[5px_5px_0px_var(--color-ink)]';
+  const card = 'block w-full rounded-[16px] border-2 border-ink bg-paper text-left text-ink shadow-[5px_5px_0px_0px_var(--color-ink)]';
   // 누를 일이 없으면 버튼이 아닌 그냥 카드
   if (!action) return <div className={card}>{body}</div>;
   return (

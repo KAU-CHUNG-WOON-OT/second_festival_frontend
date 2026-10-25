@@ -28,7 +28,7 @@ const YardPage = () => {
         type="button"
         onClick={() => setIsMapZoomOpen(true)}
         aria-label="부스 지도 크게 보기"
-        className="mt-6 rounded-[16px] border-2 border-ink bg-paper p-5 text-left drop-shadow-[5px_5px_0px_var(--color-ink)]"
+        className="mt-6 rounded-[16px] border-2 border-ink bg-paper p-5 text-left shadow-[5px_5px_0px_0px_var(--color-ink)]"
       >
         <span className="flex justify-between font-typewriter text-[12px] font-bold leading-4">
           <span>CAMPUS BOOTH MAP</span>

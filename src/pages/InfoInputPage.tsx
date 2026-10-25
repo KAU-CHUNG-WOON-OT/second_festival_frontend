@@ -214,7 +214,7 @@ const InfoInputPage = () => {
         <button
           type="submit"
           disabled={!isValid || isSubmitting}
-          className="mt-2 h-16 w-full rounded-[16px] border-2 border-ink bg-rust font-display text-[20px] leading-7 text-paper drop-shadow-[4px_4px_0px_var(--color-ink)] disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-2 h-16 w-full rounded-[16px] border-2 border-ink bg-rust font-display text-[20px] leading-7 text-paper shadow-[4px_4px_0px_0px_var(--color-ink)] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSubmitting ? '저장 중...' : '입력 완료'}
         </button>
@@ -229,7 +229,7 @@ const InfoInputPage = () => {
           }}
         >
           <div
-            className="relative w-full max-w-[340px] rounded-[20px] border-2 border-ink bg-paper px-5 pb-5 pt-6 text-ink drop-shadow-[6px_6px_0px_var(--color-ink)] onboarding-modal-in"
+            className="relative w-full max-w-[340px] rounded-[20px] border-2 border-ink bg-paper px-5 pb-5 pt-6 text-ink shadow-[6px_6px_0px_0px_var(--color-ink)] onboarding-modal-in"
             role="dialog"
             aria-modal="true"
             aria-labelledby="info-confirm-title"

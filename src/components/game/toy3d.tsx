@@ -102,7 +102,7 @@ interface ToyStageProps {
 }
 
 export const ToyStage = ({ camera, target, children }: ToyStageProps) => (
-  <div className="aspect-square w-full overflow-hidden rounded-[24px] border-2 border-ink bg-sky-light drop-shadow-[5px_5px_0px_var(--color-ink)]">
+  <div className="aspect-square w-full overflow-hidden rounded-[24px] border-2 border-ink bg-sky-light shadow-[5px_5px_0px_0px_var(--color-ink)]">
     {/* 세로 스크롤은 브라우저에 맡기고 가로로 끄는 건 장난감 돌리기에 쓴다 */}
     <Canvas
       flat

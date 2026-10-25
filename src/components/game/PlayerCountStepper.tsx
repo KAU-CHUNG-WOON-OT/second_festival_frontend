@@ -10,7 +10,7 @@ interface PlayerCountStepperProps {
 }
 
 const STEPPER_BUTTON =
-  'flex size-11 items-center justify-center rounded-full border border-ink bg-cream drop-shadow-[3px_3px_0px_var(--color-ink)] disabled:opacity-40';
+  'flex size-11 items-center justify-center rounded-full border border-ink bg-cream shadow-[3px_3px_0px_0px_var(--color-ink)] disabled:opacity-40';
 
 const PlayerCountStepper = ({ value, min, max, onChange }: PlayerCountStepperProps) => {
   const { language } = useLanguage();

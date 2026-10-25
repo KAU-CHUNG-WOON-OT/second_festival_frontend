@@ -16,7 +16,7 @@ interface InfoCardProps {
 const InfoCard = ({ rows, title, titleAction, highlight = false }: InfoCardProps) => {
   return (
     <section
-      className={`rounded-[16px] border-2 border-ink p-5 text-ink drop-shadow-[5px_5px_0px_var(--color-ink)] ${
+      className={`rounded-[16px] border-2 border-ink p-5 text-ink shadow-[5px_5px_0px_0px_var(--color-ink)] ${
         highlight ? "bg-mustard" : "bg-paper"
       }`}
     >

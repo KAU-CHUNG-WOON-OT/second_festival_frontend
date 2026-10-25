@@ -8,7 +8,7 @@ const HomeLineupCard = () => {
   );
 
   return (
-    <section className="rounded-[16px] border border-ink bg-mustard p-4 text-ink drop-shadow-[6px_6px_0px_var(--color-ink)]">
+    <section className="rounded-[16px] border border-ink bg-mustard p-4 text-ink shadow-[6px_6px_0px_0px_var(--color-ink)]">
       <div className="flex justify-between font-typewriter text-[11px] font-bold leading-[16.5px]">
         <span>Artist Line-up</span>
         <span>C-90 · HI-FI</span>

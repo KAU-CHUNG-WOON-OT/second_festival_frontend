@@ -13,7 +13,7 @@ import PlayerCountStepper from './PlayerCountStepper';
 import { GAME_CARD, PRIMARY_BUTTON, SECONDARY_BUTTON } from './gameStyles';
 
 const BIG_BUTTON =
-  'mx-auto flex size-56 flex-col items-center justify-center rounded-full border-2 border-ink font-display text-[36px] leading-10 drop-shadow-[6px_6px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px]';
+  'mx-auto flex size-56 flex-col items-center justify-center rounded-full border-2 border-ink font-display text-[36px] leading-10 shadow-[6px_6px_0px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px]';
 
 const StopGame = () => {
   const { language } = useLanguage();
@@ -90,7 +90,7 @@ const StopGame = () => {
             return (
               <li
                 key={result.player}
-                className={`flex items-center gap-4 rounded-[16px] border-2 border-ink px-5 py-4 drop-shadow-[4px_4px_0px_var(--color-ink)] ${
+                className={`flex items-center gap-4 rounded-[16px] border-2 border-ink px-5 py-4 shadow-[4px_4px_0px_0px_var(--color-ink)] ${
                   isLoser ? 'bg-rust text-paper' : 'bg-paper'
                 }`}
               >

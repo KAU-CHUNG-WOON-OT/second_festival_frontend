@@ -16,7 +16,7 @@ const PubCard = ({ pub, onClick }: PubCardProps) => {
     <button
       type="button"
       onClick={onClick}
-      className="flex min-h-[159px] w-full flex-col items-center gap-2 rounded-[16px] border-2 border-ink bg-paper px-3 py-6 text-center text-ink drop-shadow-[4px_4px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px]"
+      className="flex min-h-[159px] w-full flex-col items-center gap-2 rounded-[16px] border-2 border-ink bg-paper px-3 py-6 text-center text-ink shadow-[4px_4px_0px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px]"
     >
       <img
         src={pub.logo_img || logoImg}

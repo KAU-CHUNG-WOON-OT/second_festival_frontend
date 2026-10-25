@@ -169,7 +169,7 @@ const AdminLoginPage = () => {
           <button
             type="submit"
             disabled={!password.trim() || isSubmitting || isLocked}
-            className="mt-2 h-16 w-full rounded-[16px] border-2 border-ink bg-rust font-display text-[20px] leading-7 text-paper drop-shadow-[4px_4px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px] disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-2 h-16 w-full rounded-[16px] border-2 border-ink bg-rust font-display text-[20px] leading-7 text-paper shadow-[4px_4px_0px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isLocked ? `${lockSeconds}초 뒤에 다시 시도` : isSubmitting ? '확인 중…' : '들어가기'}
           </button>
@@ -186,7 +186,7 @@ const AdminLoginPage = () => {
               hasLeft.current = true;
               navigate('/home', { replace: true });
             }}
-            className="h-10 shrink-0 rounded-full border-2 border-ink bg-cream px-5 font-body-kr text-[14px] font-bold drop-shadow-[3px_3px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px]"
+            className="h-10 shrink-0 rounded-full border-2 border-ink bg-cream px-5 font-body-kr text-[14px] font-bold shadow-[3px_3px_0px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px]"
           >
             나가기
           </button>

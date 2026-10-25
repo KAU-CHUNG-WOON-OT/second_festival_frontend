@@ -167,7 +167,7 @@ const StoreAdminCard = ({
                 className={`h-12 rounded-[12px] border-2 border-ink font-display text-[17px] leading-6 transition-transform disabled:cursor-not-allowed ${
                   selected
                     ? `${CONGESTION_INFO[item].colorClass} translate-x-[2px] translate-y-[2px]`
-                    : 'bg-cream text-ink drop-shadow-[3px_3px_0px_var(--color-ink)] active:translate-x-[2px] active:translate-y-[2px] disabled:opacity-50'
+                    : 'bg-cream text-ink shadow-[3px_3px_0px_0px_var(--color-ink)] active:translate-x-[2px] active:translate-y-[2px] disabled:opacity-50'
                 }`}
               >
                 {CONGESTION_INFO[item].label}
@@ -211,7 +211,7 @@ const AdminConsole = ({
 
   return (
     <>
-      <div className="mt-5 flex items-center justify-between gap-3 rounded-[16px] border-2 border-ink bg-paper px-4 py-3 text-ink drop-shadow-[4px_4px_0px_var(--color-ink)]">
+      <div className="mt-5 flex items-center justify-between gap-3 rounded-[16px] border-2 border-ink bg-paper px-4 py-3 text-ink shadow-[4px_4px_0px_0px_var(--color-ink)]">
         <div className="min-w-0">
           <p className="font-typewriter text-[11px] leading-4 opacity-60">SESSION</p>
           <p className="font-body-kr text-[14px] font-semibold leading-5">
@@ -323,7 +323,7 @@ const AdminPage = () => {
       </p>
 
       {sessionQuery.isPending ? (
-        <div className="mt-6 rounded-[16px] border-2 border-ink bg-paper px-5 py-8 text-center font-body-kr text-[15px] font-semibold text-ink/70 drop-shadow-[5px_5px_0px_var(--color-ink)]">
+        <div className="mt-6 rounded-[16px] border-2 border-ink bg-paper px-5 py-8 text-center font-body-kr text-[15px] font-semibold text-ink/70 shadow-[5px_5px_0px_0px_var(--color-ink)]">
           로그인을 확인하고 있어요…
         </div>
       ) : sessionQuery.isError ? (
