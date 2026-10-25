@@ -88,11 +88,9 @@ const HangmentlePracticeView = ({
     <>
       <p className="font-body-kr text-[14px] leading-5 text-paper/80">
         {isEng
-          ? 'Practice puzzles for anyone, no login needed. Each guess shows how close its meaning is — use the scores as clues. New puzzles every day at midnight (KST).'
+          ? 'Each guess shows how close its meaning is — use the scores as clues. New puzzles every day at midnight (KST).'
           : (
             <>
-              로그인 없이 누구나 풀 수 있는 연습 문제예요.
-              <br />
               유사도가 높은 단어를 단서로 정답을 찾아보세요.
               <br />
               연습 문제는 매일 자정에 새 문제로 바뀌어요.
