@@ -1,7 +1,7 @@
 // 항멘틀 화면 이동: 주소 쿼리에 담아 상단 뒤로가기·브라우저 뒤로가기·링크 공유가 그대로 되게 한다
 // 이벤트 안내(허브) = 쿼리 없음, 회차 = ?round=1, 연습 = ?view=practice(&puzzle=2)
 import { HANGMENTLE_PRACTICE_SLOTS } from './hangmentleData';
-import { findEventRound } from './hangmentleEvent';
+import { HANGMENTLE_EVENT_ROUNDS } from './hangmentleEvent';
 
 export type HangmentleView =
   | { kind: 'hub' }
@@ -27,7 +27,7 @@ export const parseHangmentleView = (params: URLSearchParams): HangmentleView => 
     };
   }
   const round = toWholeNumber(params.get('round'));
-  if (round !== null && findEventRound(round) !== null) {
+  if (round !== null && HANGMENTLE_EVENT_ROUNDS.some((event) => event.round === round)) {
     return { kind: 'round', round };
   }
   return { kind: 'hub' };

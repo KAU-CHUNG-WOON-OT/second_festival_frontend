@@ -21,8 +21,6 @@ export interface HangmentleEventRound {
   titleEn: string;
   // 안내에 쓰는 예정 시각 (서울). 실제로 열리는 시각은 서버의 opensAt을 따른다
   scheduledAt: string;
-  // 흐름 점검용 테스트 회차 (카드에 TEST로 표시)
-  test?: boolean;
 }
 
 export const HANGMENTLE_EVENT_ROUNDS: HangmentleEventRound[] = [
@@ -44,24 +42,8 @@ export const HANGMENTLE_EVENT_ROUNDS: HangmentleEventRound[] = [
   },
 ];
 
-// 실제 이벤트 전에 흐름을 시험해 보는 테스트 회차 (정답은 서버에만). 첫 화면에 10시·11시 카드 아래 TEST 카드로 보인다.
-// 이벤트 전에 백엔드 9회차와 함께 지운다
-export const HANGMENTLE_TEST_ROUND: HangmentleEventRound = {
-  round: 9,
-  label: '테스트',
-  labelEn: 'Test',
-  title: '테스트 문제',
-  titleEn: 'Test Puzzle',
-  scheduledAt: '2026-10-25T00:00:00',
-  test: true,
-};
-
-// 첫 화면에 카드로 보이는 회차 (실제 이벤트 + 테스트)
-export const HANGMENTLE_HUB_ROUNDS: HangmentleEventRound[] = [...HANGMENTLE_EVENT_ROUNDS, HANGMENTLE_TEST_ROUND];
-
 export const findEventRound = (round: number) =>
-  HANGMENTLE_EVENT_ROUNDS.find((event) => event.round === round) ??
-  (round === HANGMENTLE_TEST_ROUND.round ? HANGMENTLE_TEST_ROUND : null);
+  HANGMENTLE_EVENT_ROUNDS.find((event) => event.round === round) ?? null;
 
 // 랭킹에 오르는 사람 수 (이 안이면 'n등', 밖이면 'n번째')
 export const HANGMENTLE_RANKING_SIZE = 10;
