@@ -17,12 +17,12 @@ const HomePage = () => {
     .filter((n) => n.isImportant)
     .sort((a, b) => b.date.localeCompare(a.date))[0];
 
-  // 시안의 '가게 정보'·'실시간 좌석' 자리는 부스 정보·주점 안내로 연결 ('가게 정보'는 사이드바에서 /stores로 연결, '실시간 좌석'은 아직 페이지가 없음)
+  // 시안의 '가게 정보'·'실시간 좌석' 자리는 부스 정보·가게 정보로 연결 (실시간 좌석은 가게 화면에서 보여 줌)
   const QUICK_MENUS: HomeQuickMenuItem[] = [
     { title: t('home.boothInfo'), sub: t('home.yardEvent'), path: '/yard', colorClass: 'bg-mustard text-ink' },
     { title: t('home.foodTruck'), sub: t('home.foodLocations'), path: '/foodtruck', colorClass: 'bg-rust text-paper' },
     { title: t('home.performance'), sub: t('home.clubsEvents'), path: '/performance', colorClass: 'bg-olive text-paper' },
-    { title: t('home.pubGuide'), sub: t('home.deptYard'), path: '/pub', colorClass: 'bg-sky-light text-ink' },
+    { title: t('home.storeInfo'), sub: t('home.localStores'), path: '/stores', colorClass: 'bg-sky-light text-ink' },
   ];
 
   return (
