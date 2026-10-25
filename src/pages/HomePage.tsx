@@ -5,6 +5,7 @@ import HomeNoticeBanner from '../components/home/HomeNoticeBanner';
 import HomeQuickMenuGrid, { type HomeQuickMenuItem } from '../components/home/HomeQuickMenuGrid';
 import HomeGameSection from '../components/home/HomeGameSection';
 import { dummyNotices } from '../data/noticeData';
+import { SHOW_CELEBRITY } from '../data/performanceData';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const HomePage = () => {
@@ -42,9 +43,12 @@ const HomePage = () => {
         <HomeQuickMenuGrid items={QUICK_MENUS} />
       </section>
 
-      <section className="px-5 pb-12">
-        <HomeLineupCard />
-      </section>
+      {/* 연예인 라인업은 공개 전까지 숨김 (data/performanceData의 SHOW_CELEBRITY) */}
+      {SHOW_CELEBRITY && (
+        <section className="px-5 pb-12">
+          <HomeLineupCard />
+        </section>
+      )}
     </div>
   );
 };
