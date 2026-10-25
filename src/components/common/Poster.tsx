@@ -92,7 +92,8 @@ const Poster = ({ images, name, zoomTitle = '포스터' }: PosterProps) => {
         <div
           ref={scrollRef}
           onScroll={handleScroll}
-          className="flex snap-x snap-mandatory overflow-x-auto"
+          // 손가락을 그대로 따라오고 한 번에 한 장씩 멈춘다 (snap-always). 끝에서 더 밀어도 페이지가 끌려가지 않게
+          className="flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {images.map((src, idx) => (
             <button
@@ -101,7 +102,7 @@ const Poster = ({ images, name, zoomTitle = '포스터' }: PosterProps) => {
               onClick={() => setZoomSrc(src)}
               disabled={failedSrcs.has(src)}
               aria-label={`${zoomTitle} 크게 보기`}
-              className="w-full flex-shrink-0 snap-start"
+              className="w-full flex-shrink-0 snap-start snap-always"
             >
               <PosterImage
                 src={src}

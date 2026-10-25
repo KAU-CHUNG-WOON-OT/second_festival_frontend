@@ -70,8 +70,6 @@ const HangmentleGame = () => {
       {view.kind === 'hub' && (
         <HangmentleHub
           overview={overviewQuery.data}
-          overviewFailed={overviewQuery.isError}
-          onRetryOverview={() => overviewQuery.refetch()}
           onOpenRound={openRoundFromHub}
           onPractice={() => {
             track('hangmentle_practice_opened');

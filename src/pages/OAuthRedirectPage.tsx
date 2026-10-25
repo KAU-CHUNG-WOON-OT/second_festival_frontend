@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { track } from '@/lib/mixpanel';
 import { clearLoginReturnPath, peekLoginReturnPath } from '@/lib/loginReturn';
+import reelIcon from '@/assets/cassette_reel.svg';
 
 const OAuthRedirectPage = () => {
   const navigate = useNavigate();
@@ -21,9 +22,19 @@ const OAuthRedirectPage = () => {
     navigate(target, { replace: true });
   }, [dest, navigate, returnPath]);
 
+  // 바로 다음 화면으로 넘어가지만, 그 사이 흰 화면이 번쩍이지 않게 노을 하늘 위에 도는 릴을 둔다
   return (
-    <section className="flex min-h-[100dvh] items-center justify-center bg-white">
-      <p className="text-[16px] font-medium text-[#314158]">로그인 처리 중...</p>
+    <section className="flex min-h-[100dvh] flex-col items-center justify-center gap-4 px-5 text-paper">
+      <img
+        src={reelIcon}
+        alt=""
+        width={56}
+        height={56}
+        className="animate-spin [animation-duration:2.4s] motion-reduce:animate-none"
+      />
+      <p role="status" className="font-body-kr text-[16px] font-semibold leading-6">
+        로그인하는 중이에요…
+      </p>
     </section>
   );
 };

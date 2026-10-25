@@ -19,8 +19,6 @@ const FestivalMap = ({ title, images, onClick }: FestivalMapProps) => {
   const { language } = useLanguage();
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const touchStartX = useRef(0);
-  const touchStartY = useRef(0);
 
   // 특정 인덱스로 부드럽게 이동
   const scrollTo = (index: number) => {
@@ -34,28 +32,8 @@ const FestivalMap = ({ title, images, onClick }: FestivalMapProps) => {
   const goPrev = () => { if (currentIndex > 0) scrollTo(currentIndex - 1); };
   const goNext = () => { if (currentIndex < images.length - 1) scrollTo(currentIndex + 1); };
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-    touchStartY.current = e.touches[0].clientY;
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent, imageSrc: string) => {
-    const dx = e.changedTouches[0].clientX - touchStartX.current;
-    const dy = e.changedTouches[0].clientY - touchStartY.current;
-    const absDx = Math.abs(dx);
-    const absDy = Math.abs(dy);
-
-    if (absDx > 50 && absDx > absDy) {
-      // 스와이프 감지 시 페이지 이동
-      if (dx < 0) goNext();
-      else goPrev();
-    } else if (absDx < 10 && absDy < 10) {
-      // 단순 탭일 경우에만 상세 보기(모달) 오픈
-      onClick(imageSrc);
-    }
-  };
-
-  // 직접 스크롤했을 때도 인덱스 동기화 (선택 사항)
+  // 넘기기는 브라우저 가로 스크롤 + 스냅에 맡긴다 (손가락을 그대로 따라오고, 한 번에 한 장씩 멈춤).
+  // 손으로 넘긴 뒤 점 표시만 맞춘다. 끌다가 놓으면 click이 생기지 않아 탭일 때만 크게 보기가 열린다
   const handleScroll = () => {
     if (!scrollRef.current) return;
     const { scrollLeft, clientWidth } = scrollRef.current;
@@ -77,14 +55,12 @@ const FestivalMap = ({ title, images, onClick }: FestivalMapProps) => {
         <div
           ref={scrollRef}
           onScroll={handleScroll}
-          className="flex snap-x snap-mandatory overflow-x-auto rounded-[8px] border-2 border-ink [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain rounded-[8px] border-2 border-ink [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {images.map((img, index) => (
             <div
               key={index}
-              className="flex-none w-full snap-center cursor-pointer active:opacity-95 transition-opacity select-none"
-              onTouchStart={handleTouchStart}
-              onTouchEnd={(e) => handleTouchEnd(e, img.src)}
+              className="flex-none w-full snap-center snap-always cursor-pointer active:opacity-95 transition-opacity select-none"
               onClick={() => onClick(img.src)}
             >
               <img

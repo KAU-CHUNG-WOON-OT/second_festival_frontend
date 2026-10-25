@@ -24,6 +24,8 @@ const REDESIGNED_PATHS = [
   /^\/stores(\/\d+)?$/,
   // 관리자 화면(숨은 입구, 사이드바에는 없음)도 같은 레트로 화면으로
   /^\/admin(\/login)?$/,
+  // 카카오 로그인에서 돌아오는 잠깐의 화면
+  /^\/oauth\/callback\/[^/]+$/,
 ];
 
 interface LayoutProps {
