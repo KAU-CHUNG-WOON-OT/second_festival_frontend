@@ -50,7 +50,9 @@ const StoreDetailPage = () => {
 
       {/* 행사 없이 안내만 있는 가게(두꺼비하우스 등)는 '축제 행사' 카드 대신 사진 밑에 글자만 작게 */}
       {!hasStoreDeals(store) && store.note && (
-        <p className="-mt-3 px-1 font-body-kr text-[13px] leading-5 text-paper/80">{isEng ? store.note_en : store.note}</p>
+        <p className="-mt-3 px-1 text-right font-body-kr text-[13px] leading-5 text-paper/80">
+          {isEng ? store.note_en : store.note}
+        </p>
       )}
 
       {/* 실시간 혼잡도: 지금 단계와 바뀐 시각 (30초마다 새로 받음) */}
