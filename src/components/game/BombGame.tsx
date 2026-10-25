@@ -57,14 +57,14 @@ const BombGame = () => {
         <ol className="list-decimal pt-3 pl-5 font-body-kr text-[14px] leading-6 opacity-80">
           {isEng ? (
             <>
-              <li>Pick a topic together (e.g. fruits, subway stations).</li>
+              <li>Pick a topic together <span className="whitespace-nowrap">(e.g. fruits,</span> subway stations).</li>
               <li>Say one word for the topic and pass the phone.</li>
               <li>The bomb goes off at a random moment between 5 and 20 seconds.</li>
               <li>Whoever is holding the phone when it explodes gets the penalty.</li>
             </>
           ) : (
             <>
-              <li>다 같이 주제를 정해요. (예: 과일, 지하철역)</li>
+              <li>다 같이 주제를 정해요. <span className="whitespace-nowrap">(예: 과일, 지하철역)</span></li>
               <li>주제에 맞는 단어를 하나 말하고 옆 사람에게 폰을 넘겨요.</li>
               <li>폭탄은 5~20초 사이 아무 때나 터져요.</li>
               <li>터지는 순간 폰을 들고 있는 사람이 벌칙!</li>

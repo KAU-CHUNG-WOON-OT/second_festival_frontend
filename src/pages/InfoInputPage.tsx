@@ -172,7 +172,7 @@ const InfoInputPage = () => {
           />
           {showEmailError && (
             <p id="email-error" role="alert" className="pl-5 pt-[6px] font-body-kr text-[13px] font-bold text-rust">
-              올바른 이메일 형식이 아닙니다 (예: name@kau.kr)
+              올바른 이메일 형식이 아닙니다 <span className="whitespace-nowrap">(예: name@kau.kr)</span>
             </p>
           )}
         </div>
