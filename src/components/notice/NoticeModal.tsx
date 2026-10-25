@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
+import { FiBell } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "../../contexts/LanguageContext";
 import type { NoticeData } from "../../data/noticeData";
@@ -104,7 +105,10 @@ const NoticeModal = ({ notice, onClose }: NoticeModalProps) => {
             <img src={closeIcon} alt="" width={12} height={12} />
           </button>
 
-          <p className="font-body-kr text-[60px] leading-[60px]">⚠️</p>
+          {/* 이모지(⚠️)는 기기마다 모양이 달라 테마 아이콘 상자로 */}
+          <span className="flex size-14 items-center justify-center rounded-[12px] border-2 border-ink bg-mustard shadow-[3px_3px_0px_0px_var(--color-ink)]">
+            <FiBell size={26} aria-hidden />
+          </span>
           <div className="flex gap-2 pt-4">
             {notice.isNew && (
               <span className="rounded-full border border-ink bg-rust px-3 py-[2px] font-typewriter text-[12px] font-bold leading-4 text-paper">
