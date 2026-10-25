@@ -42,8 +42,20 @@ export const HANGMENTLE_EVENT_ROUNDS: HangmentleEventRound[] = [
   },
 ];
 
+// 실제 이벤트 전에 흐름을 시험해 보는 숨은 회차 (정답은 서버에만). 첫 화면 카드·자동 이동에는 넣지 않고
+// 주소(/game/hangmentle?round=9)로만 들어간다. 이벤트 전에 백엔드 9회차와 함께 지운다
+export const HANGMENTLE_TEST_ROUND: HangmentleEventRound = {
+  round: 9,
+  label: '테스트',
+  labelEn: 'Test',
+  title: '테스트 문제',
+  titleEn: 'Test Puzzle',
+  scheduledAt: '2026-10-25T00:00:00',
+};
+
 export const findEventRound = (round: number) =>
-  HANGMENTLE_EVENT_ROUNDS.find((event) => event.round === round) ?? null;
+  HANGMENTLE_EVENT_ROUNDS.find((event) => event.round === round) ??
+  (round === HANGMENTLE_TEST_ROUND.round ? HANGMENTLE_TEST_ROUND : null);
 
 // 랭킹에 오르는 사람 수 (이 안이면 'n등', 밖이면 'n번째')
 export const HANGMENTLE_RANKING_SIZE = 10;

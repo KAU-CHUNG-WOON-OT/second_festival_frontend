@@ -2,7 +2,23 @@
   "github": {
     "silent": true
   },
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "second-festival-frontend.vercel.app"
+        }
+      ],
+      "destination": "https://www.chungwoon-festival.com/:path*",
+      "permanent": false
+    }
+  ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }
