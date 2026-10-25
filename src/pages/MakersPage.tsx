@@ -60,7 +60,7 @@ const Makers = () => {
     <div className="flex flex-col px-5 pb-16 pt-5 text-ink">
       <RetroPageHeader title={isEng ? 'Makers' : '만든이'} showMenu />
 
-      <section className="mt-6 flex flex-col items-center rounded-[16px] border-2 border-ink bg-paper px-5 py-8 text-center drop-shadow-[6px_6px_0px_var(--color-ink)]">
+      <section className="mt-6 flex flex-col items-center rounded-[16px] border-2 border-ink bg-paper px-5 py-8 text-center shadow-[6px_6px_0px_0px_var(--color-ink)]">
         <img src={cheongunLogoLarge} alt="청운" width={160} height={108} />
         <h2 className="pt-5 font-display text-[24px] leading-[33px]">
           {isEng ? (
@@ -78,10 +78,10 @@ const Makers = () => {
         </p>
       </section>
 
-      <div className="mt-8 flex flex-col gap-7 rounded-[16px] border-2 border-ink bg-paper px-5 py-7 drop-shadow-[5px_5px_0px_var(--color-ink)]">
+      <div className="mt-8 flex flex-col gap-7 rounded-[16px] border-2 border-ink bg-paper px-5 py-7 shadow-[5px_5px_0px_0px_var(--color-ink)]">
         {SECTIONS.map((section) => (
           <section key={section.title} className="flex flex-col items-center">
-            <span className="rounded-full border border-ink bg-ink px-5 py-1 font-body-kr text-[15px] font-semibold leading-[22.5px] text-paper drop-shadow-[3px_3px_0px_var(--color-mustard)]">
+            <span className="rounded-full border border-ink bg-ink px-5 py-1 font-body-kr text-[15px] font-semibold leading-[22.5px] text-paper shadow-[3px_3px_0px_0px_var(--color-mustard)]">
               {isEng ? section.title_en : section.title}
             </span>
             <ul className="grid w-full max-w-[320px] grid-cols-2 gap-x-6 gap-y-4 pt-4 text-center font-body-kr">
@@ -109,7 +109,7 @@ const Makers = () => {
               href={link.href}
               target="_blank"
               rel="noreferrer"
-              className="rounded-full border border-ink bg-ink py-[10px] text-center font-body-kr text-[13px] font-semibold leading-[19.5px] text-paper drop-shadow-[3px_3px_0px_var(--color-rust)]"
+              className="rounded-full border border-ink bg-ink py-[10px] text-center font-body-kr text-[13px] font-semibold leading-[19.5px] text-paper shadow-[3px_3px_0px_0px_var(--color-rust)]"
             >
               {isEng ? link.label_en : link.label}
             </a>

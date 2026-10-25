@@ -374,7 +374,7 @@ const HangmentleEvent = ({ event, onShowHub }: HangmentleEventProps) => {
         initialInput={draft}
         onInputChange={setDraft}
         solvedCard={
-          <section className="rounded-[16px] border-2 border-ink bg-rust p-5 text-center text-paper drop-shadow-[5px_5px_0px_var(--color-ink)]">
+          <section className="rounded-[16px] border-2 border-ink bg-rust p-5 text-center text-paper shadow-[5px_5px_0px_0px_var(--color-ink)]">
             <p className="font-typewriter text-[12px] leading-4 opacity-80">
               {isEng ? 'YOU GOT IT!' : '정답!'}
             </p>

@@ -41,7 +41,7 @@ const HomeQuickMenuGrid = ({ items }: HomeQuickMenuGridProps) => {
         <Link
           key={item.path}
           to={item.path}
-          className={`flex min-h-36 flex-col justify-between rounded-[8px] border border-ink p-4 drop-shadow-[4px_4px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px] ${item.colorClass}`}
+          className={`flex min-h-36 flex-col justify-between rounded-[8px] border border-ink p-4 shadow-[4px_4px_0px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px] ${item.colorClass}`}
         >
           <div className="flex h-4 items-center justify-end">
             <FiPlay size={12} fill="currentColor" aria-hidden className="opacity-70" />

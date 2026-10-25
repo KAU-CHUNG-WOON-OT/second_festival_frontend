@@ -111,8 +111,8 @@ const LiarGame = () => {
           <section
             className={`flex min-h-72 flex-col items-center justify-center rounded-[16px] border-2 border-ink p-5 text-center ${
               isLiar
-                ? 'bg-ink text-paper drop-shadow-[5px_5px_0px_var(--color-mustard)]'
-                : 'bg-paper drop-shadow-[5px_5px_0px_var(--color-ink)]'
+                ? 'bg-ink text-paper shadow-[5px_5px_0px_0px_var(--color-mustard)]'
+                : 'bg-paper shadow-[5px_5px_0px_0px_var(--color-ink)]'
             }`}
           >
             <p className="font-typewriter text-[12px] leading-4 opacity-60">{playerLabel(currentPlayer)}</p>
@@ -132,7 +132,7 @@ const LiarGame = () => {
           <button
             type="button"
             onClick={() => setIsRevealed(true)}
-            className="flex min-h-72 flex-col items-center justify-center rounded-[16px] border-2 border-dashed border-ink bg-mustard p-5 text-center drop-shadow-[5px_5px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px]"
+            className="flex min-h-72 flex-col items-center justify-center rounded-[16px] border-2 border-dashed border-ink bg-mustard p-5 text-center shadow-[5px_5px_0px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px]"
           >
             <p className="font-typewriter text-[12px] leading-4 opacity-60">{playerLabel(currentPlayer)}</p>
             <p className="pt-3 font-display text-[32px] leading-10">
@@ -184,7 +184,7 @@ const LiarGame = () => {
 
   return (
     <div className="flex flex-col gap-6">
-      <section className="rounded-[16px] border-2 border-ink bg-ink p-5 text-center text-paper drop-shadow-[5px_5px_0px_var(--color-mustard)]">
+      <section className="rounded-[16px] border-2 border-ink bg-ink p-5 text-center text-paper shadow-[5px_5px_0px_0px_var(--color-mustard)]">
         <p className="font-typewriter text-[12px] leading-4 opacity-60">THE LIAR WAS</p>
         <p className="pt-2 font-display text-[40px] leading-[48px] text-mustard">
           {isEng ? `Player ${round.liarIndex + 1}` : `${round.liarIndex + 1}번 플레이어`}

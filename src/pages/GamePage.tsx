@@ -25,7 +25,7 @@ const GamePage = () => {
           <Link
             key={game.id}
             to={`/game/${game.id}`}
-            className={`flex items-center gap-4 rounded-[16px] border-2 border-ink p-5 drop-shadow-[5px_5px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px] ${game.colorClass}`}
+            className={`flex items-center gap-4 rounded-[16px] border-2 border-ink p-5 shadow-[5px_5px_0px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px] ${game.colorClass}`}
           >
             <span className="rounded-[4px] border border-current px-[6px] font-typewriter text-[12px] leading-4">
               {game.special ? 'SPECIAL' : String(REGULAR_GAMES.indexOf(game) + 1).padStart(2, '0')}

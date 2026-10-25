@@ -60,7 +60,7 @@ const FingerGame = () => {
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
         onContextMenu={(event) => event.preventDefault()}
-        className="relative h-[460px] touch-none select-none overflow-hidden rounded-[24px] border-2 border-ink bg-paper drop-shadow-[5px_5px_0px_var(--color-ink)] [-webkit-touch-callout:none]"
+        className="relative h-[460px] touch-none select-none overflow-hidden rounded-[24px] border-2 border-ink bg-paper shadow-[5px_5px_0px_0px_var(--color-ink)] [-webkit-touch-callout:none]"
       >
         <p
           className={`pointer-events-none absolute inset-x-5 top-1/2 -translate-y-1/2 text-center font-display ${

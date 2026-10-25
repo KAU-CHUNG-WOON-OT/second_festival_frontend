@@ -15,10 +15,10 @@ import { FestivalPill } from '@/components/common/RetroPageTitle';
 
 // 로그인 버튼: 다른 화면의 큰 버튼(gameStyles)과 같은 알약 모양
 const LOGIN_BUTTON =
-  'flex h-14 w-full items-center justify-center gap-3 rounded-full border-2 border-ink font-body-kr text-[16px] font-bold leading-6 drop-shadow-[4px_4px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px]';
+  'flex h-14 w-full items-center justify-center gap-3 rounded-full border-2 border-ink font-body-kr text-[16px] font-bold leading-6 shadow-[4px_4px_0px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px]';
 // 안내 창 안의 작은 버튼
 const NOTICE_BUTTON =
-  'h-12 flex-1 rounded-full border-2 border-ink font-body-kr text-[15px] font-bold drop-shadow-[3px_3px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px]';
+  'h-12 flex-1 rounded-full border-2 border-ink font-body-kr text-[15px] font-bold shadow-[3px_3px_0px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px]';
 
 const OnboardingPage = () => {
   const navigate = useNavigate();
@@ -67,7 +67,7 @@ const OnboardingPage = () => {
 
         <div className="relative flex flex-1 items-center justify-center px-5">
           <div className="w-full max-w-[363px] -rotate-1">
-            <div className="rounded-[26px] border-2 border-ink bg-rust p-3 drop-shadow-[8px_8px_0px_var(--color-ink)]">
+            <div className="rounded-[26px] border-2 border-ink bg-rust p-3 shadow-[8px_8px_0px_0px_var(--color-ink)]">
               <div className="rounded-[12px] border-2 border-ink bg-cream p-4">
                 {/* 좁은 폰(390px 미만)에서는 글자 간격을 줄여 두 줄로 나뉘지 않게 */}
                 <p className="font-typewriter text-[11px] font-bold leading-[16.5px] tracking-[2.2px] text-rust min-[390px]:tracking-[3.3px]">
@@ -142,7 +142,7 @@ const OnboardingPage = () => {
           onClick={() => setIsGuestNoticeOpen(false)}
         >
           <div
-            className="relative w-full max-w-[340px] rounded-[24px] border-2 border-ink bg-paper px-5 pb-5 pt-5 drop-shadow-[6px_6px_0px_var(--color-mustard)] onboarding-modal-in"
+            className="relative w-full max-w-[340px] rounded-[24px] border-2 border-ink bg-paper px-5 pb-5 pt-5 shadow-[6px_6px_0px_0px_var(--color-mustard)] onboarding-modal-in"
             role="dialog"
             aria-modal="true"
             aria-labelledby="guest-notice-title"

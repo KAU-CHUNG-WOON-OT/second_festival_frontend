@@ -22,7 +22,7 @@ const BombGame = () => {
   if (phase === 'ticking') {
     return (
       <div className="flex flex-col gap-6">
-        <section className="flex min-h-80 flex-col items-center justify-center rounded-[16px] border-2 border-ink bg-mustard p-5 text-center drop-shadow-[5px_5px_0px_var(--color-ink)]">
+        <section className="flex min-h-80 flex-col items-center justify-center rounded-[16px] border-2 border-ink bg-mustard p-5 text-center shadow-[5px_5px_0px_0px_var(--color-ink)]">
           <span className="animate-[bomb-shake_0.3s_ease-in-out_infinite] text-[96px] leading-none">💣</span>
           <p className="pt-6 font-display text-[32px] leading-10">{isEng ? 'Pass it on!' : '옆 사람에게 넘겨!'}</p>
           <p className="pt-2 font-body-kr text-[14px] leading-5 opacity-80">
@@ -36,7 +36,7 @@ const BombGame = () => {
   if (phase === 'boom') {
     return (
       <div className="flex flex-col gap-6">
-        <section className="flex min-h-80 flex-col items-center justify-center rounded-[16px] border-2 border-ink bg-rust p-5 text-center text-paper drop-shadow-[5px_5px_0px_var(--color-ink)]">
+        <section className="flex min-h-80 flex-col items-center justify-center rounded-[16px] border-2 border-ink bg-rust p-5 text-center text-paper shadow-[5px_5px_0px_0px_var(--color-ink)]">
           <span className="text-[96px] leading-none">💥</span>
           <p className="pt-6 font-condensed text-[64px] font-bold leading-[64px]">BOOM!</p>
           <p className="pt-2 font-display text-[24px] leading-8">

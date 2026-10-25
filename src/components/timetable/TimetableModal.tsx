@@ -96,7 +96,7 @@ const TimetableModal = ({ event, onClose, trackNo, done = false }: TimetableModa
               <FiX size={18} />
             </button>
             <div className="relative mx-auto h-[273px] w-[288px]">
-              <div className="absolute left-[87px] top-0 size-[273px] rounded-full border border-cream/30 bg-ink drop-shadow-[0px_10px_15px_rgba(0,0,0,0.5)]">
+              <div className="absolute left-[87px] top-0 size-[273px] rounded-full border border-cream/30 bg-ink shadow-[0px_10px_15px_0px_rgba(0,0,0,0.5)]">
                 <div className="absolute left-[84px] top-[84px] flex size-[103px] flex-col items-center justify-center rounded-full border border-ink bg-mustard">
                   {trackNo && (
                     <span className="font-typewriter text-[9px] font-bold leading-[13.5px] tracking-[0.9px]">
@@ -107,7 +107,7 @@ const TimetableModal = ({ event, onClose, trackNo, done = false }: TimetableModa
                   <span className="font-body-kr text-[16px] leading-4 text-rust">{TYPE_ICON[event.type] ?? "✈"}</span>
                 </div>
               </div>
-              <div className="absolute left-0 top-0 h-[273px] w-[104px] rounded-l-[6px] border-2 border-ink bg-rust drop-shadow-[4px_0px_6px_rgba(0,0,0,0.35)]">
+              <div className="absolute left-0 top-0 h-[273px] w-[104px] rounded-l-[6px] border-2 border-ink bg-rust shadow-[4px_0px_6px_0px_rgba(0,0,0,0.35)]">
                 <div className="absolute left-0 top-8 h-3 w-full bg-retro-stripe" />
                 <p className="absolute bottom-4 left-2 font-typewriter text-[10px] font-bold leading-[12.5px] text-paper">
                   KAU

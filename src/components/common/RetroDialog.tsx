@@ -29,7 +29,7 @@ const RetroDialog = ({ title, onClose, children }: RetroDialogProps) => {
         aria-modal="true"
         aria-label={title}
         onClick={(e) => e.stopPropagation()}
-        className="flex max-h-full w-full max-w-[371px] flex-col rounded-[16px] border-2 border-ink bg-paper p-3 text-ink drop-shadow-[6px_6px_0px_var(--color-mustard)]"
+        className="flex max-h-full w-full max-w-[371px] flex-col rounded-[16px] border-2 border-ink bg-paper p-3 text-ink shadow-[6px_6px_0px_0px_var(--color-mustard)]"
       >
         <div className="flex items-center justify-between pb-2">
           <p className="pl-1 font-typewriter text-[14px] font-bold leading-5">{title}</p>

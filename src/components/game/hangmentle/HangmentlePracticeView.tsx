@@ -27,7 +27,7 @@ const RoundOpenBanner = ({ event, onJoin, onClose }: RoundOpenBannerProps) => {
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-5 pb-[max(20px,env(safe-area-inset-bottom))]">
       <div
         role="status"
-        className="pointer-events-auto flex w-full max-w-[390px] items-center gap-3 rounded-[16px] border-2 border-ink bg-mustard py-3 pl-4 pr-2 text-ink drop-shadow-[5px_5px_0px_var(--color-ink)]"
+        className="pointer-events-auto flex w-full max-w-[390px] items-center gap-3 rounded-[16px] border-2 border-ink bg-mustard py-3 pl-4 pr-2 text-ink shadow-[5px_5px_0px_0px_var(--color-ink)]"
       >
         <div className="min-w-0 flex-1">
           <p className="font-typewriter text-[11px] leading-4 opacity-70">EVENT OPEN</p>
@@ -38,7 +38,7 @@ const RoundOpenBanner = ({ event, onJoin, onClose }: RoundOpenBannerProps) => {
         <button
           type="button"
           onClick={onJoin}
-          className="h-10 shrink-0 rounded-full border-2 border-ink bg-rust px-4 font-display text-[15px] text-paper drop-shadow-[3px_3px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px]"
+          className="h-10 shrink-0 rounded-full border-2 border-ink bg-rust px-4 font-display text-[15px] text-paper shadow-[3px_3px_0px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px]"
         >
           {isEng ? 'Join' : '참여하기'}
         </button>

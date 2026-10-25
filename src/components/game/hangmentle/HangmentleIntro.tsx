@@ -220,7 +220,7 @@ const HangmentleIntro = () => {
   };
 
   const stepButton =
-    'flex size-10 shrink-0 items-center justify-center rounded-full border-2 border-ink drop-shadow-[2px_2px_0px_var(--color-ink)] transition-transform active:translate-x-[1px] active:translate-y-[1px] disabled:opacity-30 disabled:drop-shadow-none';
+    'flex size-10 shrink-0 items-center justify-center rounded-full border-2 border-ink shadow-[2px_2px_0px_0px_var(--color-ink)] transition-transform active:translate-x-[1px] active:translate-y-[1px] disabled:opacity-30 disabled:shadow-none';
 
   return (
     <section

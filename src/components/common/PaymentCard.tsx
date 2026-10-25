@@ -42,7 +42,7 @@ const PaymentCard = ({ account, qrCode }: PaymentCardProps) => {
         .toast-out { animation: slideDown 0.2s ease-in forwards; }
       `}</style>
 
-      <section className="rounded-[16px] border-2 border-ink bg-paper p-5 text-ink drop-shadow-[5px_5px_0px_var(--color-ink)]">
+      <section className="rounded-[16px] border-2 border-ink bg-paper p-5 text-ink shadow-[5px_5px_0px_0px_var(--color-ink)]">
         <h2 className="font-typewriter text-[12px] font-bold leading-4 tracking-[1.2px]">{t('payment.title')}</h2>
 
         {hasQr && (

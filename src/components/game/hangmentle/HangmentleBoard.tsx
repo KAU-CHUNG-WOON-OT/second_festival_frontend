@@ -318,7 +318,7 @@ const HangmentleBoard = ({
                   type="submit"
                   disabled={busy || !input.trim()}
                   aria-busy={busy}
-                  className="h-12 shrink-0 rounded-full border-2 border-ink bg-rust px-5 font-display text-[16px] text-paper drop-shadow-[3px_3px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px] disabled:opacity-40"
+                  className="h-12 shrink-0 rounded-full border-2 border-ink bg-rust px-5 font-display text-[16px] text-paper shadow-[3px_3px_0px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px] disabled:opacity-40"
                 >
                   {isEng ? 'Guess' : '추측'}
                 </button>

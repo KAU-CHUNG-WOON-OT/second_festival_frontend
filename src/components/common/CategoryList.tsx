@@ -32,7 +32,7 @@ const CategoryList = ({ categories, selectedCategory, onSelect }: CategoryListPr
           type="button"
           onClick={() => onSelect(category)}
           aria-pressed={selectedCategory === category}
-          className={`h-9 shrink-0 whitespace-nowrap rounded-full border-2 border-ink px-4 font-body-kr text-[14px] font-semibold leading-5 drop-shadow-[2px_2px_0px_var(--color-ink)] transition-transform active:translate-x-[1px] active:translate-y-[1px] ${
+          className={`h-9 shrink-0 whitespace-nowrap rounded-full border-2 border-ink px-4 font-body-kr text-[14px] font-semibold leading-5 shadow-[2px_2px_0px_0px_var(--color-ink)] transition-transform active:translate-x-[1px] active:translate-y-[1px] ${
             selectedCategory === category ? 'bg-ink text-paper' : 'bg-paper text-ink'
           }`}
         >

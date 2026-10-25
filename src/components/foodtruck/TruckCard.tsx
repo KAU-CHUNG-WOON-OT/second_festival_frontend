@@ -16,7 +16,7 @@ const TruckCard = ({ truck, onClick }: TruckCardProps) => {
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full items-center gap-3 rounded-[16px] border-2 border-ink bg-paper px-4 py-[14px] text-left text-ink drop-shadow-[4px_4px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px]"
+      className="flex w-full items-center gap-3 rounded-[16px] border-2 border-ink bg-paper px-4 py-[14px] text-left text-ink shadow-[4px_4px_0px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px]"
     >
       <img
         src={truck.logo_img || logoImg}

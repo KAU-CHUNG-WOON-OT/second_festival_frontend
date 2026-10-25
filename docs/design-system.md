@@ -55,7 +55,7 @@
 거의 모든 카드가 이 조합이다.
 
 ```tsx
-<div className="rounded-[16px] border-2 border-ink bg-paper p-5 drop-shadow-[5px_5px_0px_var(--color-ink)]">
+<div className="rounded-[16px] border-2 border-ink bg-paper p-5 shadow-[5px_5px_0px_0px_var(--color-ink)]">
 ```
 
 | 요소 | 규칙 |
@@ -66,7 +66,8 @@
 | 눌림 | 누를 수 있는 카드는 `transition-transform active:translate-x-[2px] active:translate-y-[2px]` |
 
 - 그림자 색은 기본 `ink`, 진한 배경 위 모달은 `mustard`, 강조 버튼은 `rust`로 바꿔도 된다.
-- `drop-shadow-[...]`를 기본으로 쓴다(자식 모양을 따라감). `overflow-clip` 카드처럼 박스 그림자가 필요하면 `shadow-[6px_6px_0px_0px_var(--color-ink)]`.
+- 그림자는 `shadow-[5px_5px_0px_0px_var(--color-ink)]`(box-shadow)로 쓴다. `drop-shadow-[...]`(filter)는 아이폰(사파리·아이폰 크롬)에서 스크롤할 때 그림자가 출렁거려서 쓰지 않는다.
+  카드·버튼·알약은 모두 모서리가 둥근 상자라 box-shadow와 모양이 같다. 투명 이미지처럼 모양을 따라가야 하는 그림자가 꼭 필요할 때만 예외로 검토한다.
 
 ### 컨트롤 (칩 · 검색창 · 아이콘)
 

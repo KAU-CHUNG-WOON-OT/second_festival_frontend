@@ -89,7 +89,7 @@ const NoticeModal = ({ notice, onClose }: NoticeModalProps) => {
       >
         <div
           ref={sheetRef}
-          className={`relative w-full max-w-[430px] rounded-t-[32px] border-2 border-ink bg-paper px-6 pb-5 pt-6 text-ink drop-shadow-[0px_-6px_0px_var(--color-mustard)] ${closing ? "notice-slide-down" : "notice-slide-up"}`}
+          className={`relative w-full max-w-[430px] rounded-t-[32px] border-2 border-ink bg-paper px-6 pb-5 pt-6 text-ink shadow-[0px_-6px_0px_0px_var(--color-mustard)] ${closing ? "notice-slide-down" : "notice-slide-up"}`}
           onClick={(e) => e.stopPropagation()}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
@@ -136,7 +136,7 @@ const NoticeModal = ({ notice, onClose }: NoticeModalProps) => {
           <button
             type="button"
             onClick={handleClose}
-            className="mt-5 h-14 w-full rounded-full border-2 border-ink bg-rust font-display text-[18px] leading-7 text-paper drop-shadow-[4px_4px_0px_var(--color-ink)]"
+            className="mt-5 h-14 w-full rounded-full border-2 border-ink bg-rust font-display text-[18px] leading-7 text-paper shadow-[4px_4px_0px_0px_var(--color-ink)]"
           >
             {isEng ? "Close" : "닫기"}
           </button>
