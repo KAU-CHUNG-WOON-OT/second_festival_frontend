@@ -27,7 +27,8 @@ const HangmentleRanking = ({ round, label, myRank, live }: HangmentleRankingProp
     queryFn: () => fetchHangmentleRankings(round),
     refetchInterval: live ? RANKING_REFRESH_MS : false,
   });
-  const entries = rankingQuery.data;
+  // 서버가 더 보내도 화면에는 HANGMENTLE_RANKING_SIZE 명까지만
+  const entries = rankingQuery.data?.slice(0, HANGMENTLE_RANKING_SIZE);
 
   const status = (text: string) => (
     <p className="py-4 text-center font-body-kr text-[14px] font-semibold opacity-60">{text}</p>

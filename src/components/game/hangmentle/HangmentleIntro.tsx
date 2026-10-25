@@ -11,7 +11,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useIsLogin } from '@/hooks/useIsLogin';
 import { GAME_CARD } from '../gameStyles';
 import { KakaoLoginButton } from './HangmentleLogin';
-import { HANGMENTLE_EVENT_ROUNDS, formatKstTime } from '@/data/hangmentleEvent';
+import { HANGMENTLE_EVENT_ROUNDS, HANGMENTLE_RANKING_SIZE, formatKstTime } from '@/data/hangmentleEvent';
 
 // 이만큼 움직여야 가로·세로 중 어느 쪽으로 끄는지 정한다
 const AXIS_LOCK_PX = 8;
@@ -103,8 +103,8 @@ const HangmentleIntro = () => {
     {
       title: isEng ? '10 PM & 11 PM events' : '밤 10시·11시 이벤트',
       body: isEng
-        ? 'New puzzles open at 10 PM and 11 PM on Oct 28. The first 10 to solve each one make the ranking.'
-        : '10월 28일 밤 10시와 11시에 새 문제가 열립니다. 먼저 맞힌 10명이 랭킹에 올라요.',
+        ? `New puzzles open at 10 PM and 11 PM on Oct 28. The first ${HANGMENTLE_RANKING_SIZE} to solve each one make the ranking.`
+        : `10월 28일 밤 10시와 11시에 새 문제가 열립니다. 먼저 맞힌 ${HANGMENTLE_RANKING_SIZE}명이 랭킹에 올라요.`,
       visual: (
         <div aria-hidden className="grid grid-cols-2 gap-2">
           {HANGMENTLE_EVENT_ROUNDS.map((event) => (
