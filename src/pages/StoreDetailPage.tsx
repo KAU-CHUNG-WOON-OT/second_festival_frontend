@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { FiMapPin } from 'react-icons/fi';
+import { FiInfo, FiMapPin } from 'react-icons/fi';
 import RetroPageHeader from '../components/common/RetroPageHeader';
 import EmptyState from '../components/common/EmptyState';
 import StoreDeals from '../components/stores/StoreDeals';
 import StoreLiveStatus from '../components/stores/StoreLiveStatus';
 import { useLanguage } from '../contexts/LanguageContext';
-import { hasStoreDeals, storeEvents } from '../data/storeEventData';
+import { storeEvents } from '../data/storeEventData';
 import { track } from '@/lib/mixpanel';
 
 const CARD = 'rounded-[16px] border-2 border-ink bg-paper p-5 text-ink shadow-[5px_5px_0px_0px_var(--color-ink)]';
@@ -19,6 +19,8 @@ const StoreDetailPage = () => {
   const isEng = language === 'ENG';
 
   const store = storeEvents.find((s) => s.id === Number(id));
+  // 행사 항목 없이 안내만 있는 가게(두꺼비하우스 등)는 '축제 행사' 카드 대신 사진 밑에 작게
+  const hasDealItems = Boolean(store?.deals?.length || store?.groups?.length);
 
   useEffect(() => {
     if (id) track('store_detail_viewed', { store_id: Number(id) });
@@ -46,6 +48,13 @@ const StoreDetailPage = () => {
           alt={isEng ? `${store.name} storefront` : `${store.name} 가게 사진`}
           className="aspect-video w-full rounded-[16px] border-2 border-ink object-cover shadow-[5px_5px_0px_0px_var(--color-ink)]"
         />
+      )}
+
+      {!hasDealItems && store.note && (
+        <p className="-mt-3 flex items-start gap-2 rounded-[8px] bg-cream px-3 py-2 font-body-kr text-[13px] leading-5 text-ink/80">
+          <FiInfo size={14} aria-hidden className="mt-[3px] shrink-0" />
+          {isEng ? store.note_en : store.note}
+        </p>
       )}
 
       {/* 실시간 혼잡도: 지금 단계와 바뀐 시각 (30초마다 새로 받음) */}
@@ -88,7 +97,7 @@ const StoreDetailPage = () => {
         </section>
       )}
 
-      {hasStoreDeals(store) && (
+      {hasDealItems && (
         <section className={CARD}>
           <p className="font-typewriter text-[12px] leading-4 opacity-60">FESTIVAL DEALS</p>
           <h2 className="pb-4 pt-2 font-display text-[22px] leading-7">{isEng ? 'Festival deals' : '축제 행사'}</h2>
