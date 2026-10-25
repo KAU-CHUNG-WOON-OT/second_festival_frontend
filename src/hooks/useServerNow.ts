@@ -73,6 +73,23 @@ const useNowAt = (targets: readonly (number | null)[], clock: () => number) => {
 // 서버 시각(ms). targets(열리는 시각 등)를 지나는 순간에만 새 값으로 다시 그린다
 export const useServerNowAt = (targets: readonly (number | null)[]) => useNowAt(targets, serverNow);
 
+// 서버 시각(ms). intervalMs마다 새 값으로 다시 그린다 ('3분 전 업데이트' 같은 상대 시각)
+export const useServerNowEvery = (intervalMs: number) => {
+  const [now, setNow] = useState(serverNow);
+
+  useEffect(() => {
+    const update = () => setNow(serverNow());
+    const timer = window.setInterval(update, intervalMs);
+    const unsubscribe = subscribeRefresh(update);
+    return () => {
+      window.clearInterval(timer);
+      unsubscribe();
+    };
+  }, [intervalMs]);
+
+  return now;
+};
+
 const deviceNow = () => Date.now();
 
 // 기기 시각(ms). 서버 시계를 맞추기 전, 언제부터 서버에 물을지 정할 때 쓴다

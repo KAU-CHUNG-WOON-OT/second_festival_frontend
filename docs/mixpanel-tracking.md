@@ -71,6 +71,7 @@ Mixpanel의 Simplified ID Merge 기능이 로그인 이전의 익명 이벤트�
 | `/game/:gameId` | Game Play |
 | `/info` | Info Input |
 | `/info-guide` | Info Guide |
+| `/admin`, `/admin/login` | Admin (운영진 화면, 둘을 묶어 하나로) |
 
 ---
 

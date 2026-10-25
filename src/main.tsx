@@ -32,6 +32,7 @@ import InfoInputPage from './pages/InfoInputPage';
 import OAuthRedirectPage from './pages/OAuthRedirectPage';
 import InfoGuidePage from './pages/InfoGuidePage';
 import AdminPage from './pages/AdminPage';
+import AdminLoginPage from './pages/AdminLoginPage';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -62,6 +63,7 @@ createRoot(document.getElementById('root')!).render(
               <Route path="/oauth/callback/:dest" element={<OAuthRedirectPage />} />
               <Route path="/info-guide" element={<InfoGuidePage />} />
               <Route path="/admin" element={<AdminPage />} />
+              <Route path="/admin/login" element={<AdminLoginPage />} />
             </Routes>
             </Layout>
           </AuthBootGate>

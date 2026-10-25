@@ -17,6 +17,9 @@ const PAGE_NAMES: Record<string, string> = {
   '/game': 'Game',
   '/info': 'Info Input',
   '/info-guide': 'Info Guide',
+  // 관리자 화면은 로그인·관리 화면을 묶어 하나로 센다
+  '/admin': 'Admin',
+  '/admin/login': 'Admin',
 };
 
 export const usePageTracking = () => {

@@ -1,5 +1,4 @@
-import { useRef } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useIsLogin } from '../hooks/useIsLogin';
 import { getKakaoLoginUrl } from '../lib/kakaoLogin';
@@ -20,11 +19,8 @@ interface MenuItem {
 
 const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const { pathname } = useLocation();
   const isLogin = useIsLogin();
-  const logoTapCount = useRef(0);
-  const logoTapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // TODO: 시안의 '실시간 좌석'은 아직 페이지가 없어 제외
   const menuItems: MenuItem[] = [
@@ -45,21 +41,6 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     // 로그인하고 나면 지금 보던 페이지로 돌아온다
     saveLoginReturnPath();
     window.location.href = loginUrl;
-  };
-
-  // 로고 3번 탭 → 관리자 페이지
-  const handleLogoTap = () => {
-    logoTapCount.current += 1;
-    if (logoTapTimer.current) clearTimeout(logoTapTimer.current);
-    if (logoTapCount.current >= 3) {
-      logoTapCount.current = 0;
-      onClose();
-      navigate('/admin');
-      return;
-    }
-    logoTapTimer.current = setTimeout(() => {
-      logoTapCount.current = 0;
-    }, 2000);
   };
 
   return (
@@ -113,7 +94,6 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         )}
 
         <p
-          onClick={handleLogoTap}
           className={`whitespace-nowrap px-[31px] pb-10 font-display text-[36px] leading-9 text-rust ${isLogin ? 'mt-auto' : 'mt-6'}`}
         >
           활주로 <span className="font-typewriter text-[14px] tracking-[1.4px]">festival</span>

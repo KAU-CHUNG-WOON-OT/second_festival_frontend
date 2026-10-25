@@ -22,6 +22,8 @@ const REDESIGNED_PATHS = [
   /^\/pub(\/\d+)?$/,
   /^\/foodtruck(\/\d+)?$/,
   /^\/stores(\/\d+)?$/,
+  // 관리자 화면(숨은 입구, 사이드바에는 없음)도 같은 레트로 화면으로
+  /^\/admin(\/login)?$/,
 ];
 
 interface LayoutProps {

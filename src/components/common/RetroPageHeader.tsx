@@ -1,7 +1,9 @@
+import type { MouseEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FiChevronLeft } from 'react-icons/fi';
 import { useSidebar } from '../../contexts/SidebarContext';
 import { fallbackPath } from '@/util/backFallback';
+import { registerAdminLogoTap } from '@/lib/adminTap';
 import SkyDots from './SkyDots';
 import { skyBackground } from './retroLayout';
 import cheongunLogo from '../../assets/cheongun_logo.svg';
@@ -21,6 +23,12 @@ const RetroPageHeader = ({ title, showMenu = false }: RetroPageHeaderProps) => {
   const navigate = useNavigate();
   const { pathname, search } = useLocation();
   const { openSidebar } = useSidebar();
+
+  const handleLogoTap = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (!registerAdminLogoTap()) return;
+    event.preventDefault();
+    navigate('/admin/login');
+  };
 
   const goBack = () => {
     // BrowserRouter가 기록마다 매기는 순번. 0이면 앱에서 처음 연 화면이라 navigate(-1)은 앱 밖으로 나간다
@@ -67,9 +75,22 @@ const RetroPageHeader = ({ title, showMenu = false }: RetroPageHeaderProps) => {
             {title}
           </h1>
         )}
-        {/* 탭 영역만 44px 높이로 넓히고 음수 여백으로 로고 자리는 그대로 둔다 */}
-        <Link to="/home" aria-label="홈으로 이동" className="-mr-2 flex h-11 items-center px-2">
-          <img src={cheongunLogo} alt="청운" width={46} height={32} className="brightness-0 invert" />
+        {/* 탭 영역만 44px 높이로 넓히고 음수 여백으로 로고 자리는 그대로 둔다.
+            누르면 홈. 홈 로고와 같은 자리라서 빠르게 이어 누르면 관리자 입구 탭으로 같이 센다 (lib/adminTap) */}
+        <Link
+          to="/home"
+          onClick={handleLogoTap}
+          aria-label="홈으로 이동"
+          className="-mr-2 flex h-11 touch-manipulation select-none items-center px-2"
+        >
+          <img
+            src={cheongunLogo}
+            alt="청운"
+            width={46}
+            height={32}
+            draggable={false}
+            className="brightness-0 invert"
+          />
         </Link>
       </div>
     </div>
