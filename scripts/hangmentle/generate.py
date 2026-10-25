@@ -1,16 +1,17 @@
 """항멘틀 데이터 생성기.
 
-fastText 한국어 벡터(cc.ko.300.vec)에서 자주 쓰는 일반 명사만 골라 단어 목록을 만들고,
+fastText 한국어 벡터(cc.ko.300.vec)에서 자주 쓰는 명사(일반·고유명사, 대명사, 수사)만 골라 단어 목록을 만들고,
 answers.txt의 정답 단어마다 모든 단어와의 코사인 유사도를 미리 계산해 public/hangmentle/에 저장한다.
+blocklist.txt의 욕설·비하·선정적인 말은 단어 목록에서 뺀다.
 
 준비:
   python3 -m venv .venv && .venv/bin/pip install numpy kiwipiepy
-  # 벡터는 빈도순으로 정렬돼 있으므로 앞부분만 받아도 된다 (약 450MB)
+  # 벡터는 빈도순으로 정렬돼 있으므로 앞부분만 받아도 된다 (약 680MB)
   curl -sL https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.ko.300.vec.gz \
-    | gunzip -c | head -n 200001 > cc.ko.200k.vec
+    | gunzip -c | head -n 300001 > cc.ko.300k.vec
 
 실행:
-  .venv/bin/python scripts/hangmentle/generate.py --vec cc.ko.200k.vec
+  .venv/bin/python scripts/hangmentle/generate.py --vec cc.ko.300k.vec
 
 출력:
   public/hangmentle/vocab.json        단어 목록 (빈도순)
@@ -43,7 +44,44 @@ def is_common_noun(kiwi: Kiwi, word: str) -> bool:
     return False
 
 
-def load_nouns(vec_path: Path, vocab_size: int, required: list[str]):
+# 단어 하나로 읽힐 때 받는 품사: 일반명사, 고유명사(서울·바다), 대명사(우리·여기), 수사(하나·둘)
+WHOLE_WORD_TAGS = {"NNG", "NNP", "NP", "NR"}
+# 감탄사·부사로 먼저 읽혀도 다음 후보로 이 품사가 나오면 받는다 (아이, 오늘, 지금)
+ALTERNATIVE_TAGS = {"NNG", "NP", "NR"}
+# 다음 후보는 가장 그럴듯한 분석과 점수가 이만큼 안에 있을 때만 본다
+ALTERNATIVE_MARGIN = 6.0
+
+
+def is_guessable_word(kiwi: Kiwi, word: str) -> bool:
+    candidates = kiwi.analyze(word, top_n=4)
+    tokens, best_score = candidates[0]
+    # 조사·어미가 붙어 여러 형태소로 나뉘는 말(대한민국의, 아름다운)은 받지 않는다
+    if len(tokens) == 1 and tokens[0].form == word:
+        if tokens[0].tag in WHOLE_WORD_TAGS:
+            return True
+        for other, score in candidates[1:]:
+            if score < best_score - ALTERNATIVE_MARGIN:
+                break
+            if len(other) == 1 and other[0].form == word and other[0].tag in ALTERNATIVE_TAGS:
+                return True
+    return is_common_noun(kiwi, word)
+
+
+def load_blocklist(path: Path):
+    exact: set[str] = set()
+    contains: list[str] = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        entry = line.strip()
+        if not entry or entry.startswith("#"):
+            continue
+        if entry.startswith("*"):
+            contains.append(entry[1:])
+        else:
+            exact.add(entry)
+    return lambda word: word in exact or any(part in word for part in contains)
+
+
+def load_nouns(vec_path: Path, vocab_size: int, required: list[str], is_blocked):
     kiwi = Kiwi()
     words: list[str] = []
     vectors: list[np.ndarray] = []
@@ -61,7 +99,7 @@ def load_nouns(vec_path: Path, vocab_size: int, required: list[str]):
                 if not pending_required:
                     break
                 continue
-            if not is_required and not is_common_noun(kiwi, word):
+            if not is_required and (is_blocked(word) or not is_guessable_word(kiwi, word)):
                 continue
             vector = np.asarray(rest.split(" "), dtype=np.float32)
             # 크기가 0인 벡터는 유사도를 계산할 수 없다
@@ -85,11 +123,12 @@ def main():
     parser.add_argument("--vec", type=Path, required=True)
     parser.add_argument("--answers", type=Path, default=Path(__file__).with_name("answers.txt"))
     parser.add_argument("--out", type=Path, default=ROOT / "public" / "hangmentle")
-    parser.add_argument("--vocab-size", type=int, default=30000)
+    parser.add_argument("--blocklist", type=Path, default=Path(__file__).with_name("blocklist.txt"))
+    parser.add_argument("--vocab-size", type=int, default=40000)
     args = parser.parse_args()
 
     answers = [w.strip() for w in args.answers.read_text(encoding="utf-8").splitlines() if w.strip() and not w.startswith("#")]
-    words, matrix = load_nouns(args.vec, args.vocab_size, answers)
+    words, matrix = load_nouns(args.vec, args.vocab_size, answers, load_blocklist(args.blocklist))
     index = {w: i for i, w in enumerate(words)}
 
     puzzles_dir = args.out / "puzzles"
