@@ -32,7 +32,7 @@ const RoundOpenBanner = ({ event, onJoin, onClose }: RoundOpenBannerProps) => {
         <div className="min-w-0 flex-1">
           <p className="font-typewriter text-[11px] leading-4 opacity-70">EVENT OPEN</p>
           <p className="font-display text-[18px] leading-6">
-            {isEng ? `The ${event.titleEn} is open!` : `${event.title}가 열렸습니다`}
+            {isEng ? `The ${event.titleEn} is open!` : `${event.title}가 열렸습니다!`}
           </p>
         </div>
         <button

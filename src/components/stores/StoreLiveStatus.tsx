@@ -75,7 +75,7 @@ const StoreLiveStatus = ({ storeId, isEng }: { storeId: number; isEng: boolean }
   } else if (!level) {
     body = (
       <p className="pt-2 font-body-kr text-[14px] leading-[22px] text-ink/70">
-        {isEng ? 'No live status has been posted yet.' : '아직 등록된 현황이 없습니다.'}
+        {isEng ? 'No live status has been posted yet.' : '아직 등록된 현황 없음.'}
       </p>
     );
   } else {

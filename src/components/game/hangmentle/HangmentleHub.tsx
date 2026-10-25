@@ -50,7 +50,7 @@ const EventRoundCard = ({ event, info, phase, loaded, isLogin, onOpen, onNeedLog
 
   const status = () => {
     if (info && !info.open && opensAtMs === null) {
-      return note(isEng ? 'Time to be announced' : '시간을 준비하고 있습니다.');
+      return note(isEng ? 'Time to be announced' : '시간 준비 중.');
     }
     if ((phase === 'countdown' || phase === null) && waiting) {
       return (
@@ -83,7 +83,7 @@ const EventRoundCard = ({ event, info, phase, loaded, isLogin, onOpen, onNeedLog
     }
     if (phase === 'opening' || phase === null) return note(isEng ? 'Opening soon…' : '곧 열려요.');
     if (phase === 'notReady') {
-      return note(isEng ? 'The puzzle is being prepared' : '문제를 준비하고 있습니다.');
+      return note(isEng ? 'The puzzle is being prepared' : '문제 준비 중.');
     }
     return note(isEng ? 'Not open yet' : '아직 열리지 않았습니다.');
   };
@@ -186,7 +186,7 @@ const HangmentleHub = ({ overview, onOpenRound, onPractice }: HangmentleHubProps
         <RetroDialog title={isEng ? 'LOGIN' : '로그인'} onClose={() => setLoginFor(null)}>
           <div className="px-1 pb-1 pt-2 text-center">
             <p className="font-display text-[20px] leading-7">
-              {isEng ? 'Please log in first' : '로그인이 필요합니다'}
+              {isEng ? 'Please log in first' : '로그인이 필요합니다.'}
             </p>
             <p className="pb-4 pt-2 font-body-kr text-[14px] leading-5 opacity-70">
               {isEng

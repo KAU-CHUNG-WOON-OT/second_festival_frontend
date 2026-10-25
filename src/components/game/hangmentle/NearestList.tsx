@@ -92,7 +92,7 @@ const NearestList = ({
         </button>
       )}
       <p className="pt-3 font-body-kr text-[12px] leading-4 opacity-60">
-        {isEng ? 'Highlighted words are ones you guessed.' : '노란 줄은 내가 입력한 단어예요.'}
+        {isEng ? 'Highlighted words are ones you guessed.' : '노란 줄은 내가 입력한 단어.'}
       </p>
     </section>
   );

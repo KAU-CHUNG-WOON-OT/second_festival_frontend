@@ -44,7 +44,7 @@ const NowPlayingEmpty = () => {
         STAND BY
       </span>
       <p className="truncate font-body-kr text-[14px] font-semibold opacity-70">
-        {language === 'ENG' ? 'Nothing on stage right now' : '현재 진행 중인 공연이 없습니다.'}
+        {language === 'ENG' ? 'Nothing on stage right now' : '현재 진행 중인 공연 없음.'}
       </p>
     </section>
   );
