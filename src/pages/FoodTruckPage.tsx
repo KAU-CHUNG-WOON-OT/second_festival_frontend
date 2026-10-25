@@ -37,7 +37,7 @@ const FoodTruckPage = () => {
           <p className="font-typewriter text-[12px] leading-4 tracking-[3.6px] opacity-60">COMING SOON</p>
           <p className="pt-3 font-display text-[26px] leading-8">{isEng ? 'Coming soon' : '추후 공개 예정'}</p>
           <p className="pt-2 font-body-kr text-[14px] leading-5 opacity-70">
-            {isEng ? 'Food truck info will be announced soon.' : '푸드트럭 정보는 곧 공개돼요.'}
+            {isEng ? 'Food truck info will be announced soon.' : '푸드트럭 정보는 곧 공개됩니다.'}
           </p>
         </section>
       </div>
