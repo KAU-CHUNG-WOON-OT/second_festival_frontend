@@ -5,6 +5,8 @@
 export const HANGMENTLE_PUZZLE_COUNT = 2;
 // 이 순위 안에 들면 몇 위인지 알려 준다 (그 밖은 '1000위 밖')
 export const HANGMENTLE_TOP_RANK = 1000;
+// 정답을 맞힌 뒤 보여 주는 유사도 순위를 몇 개씩 늘릴지
+export const HANGMENTLE_NEAREST_PAGE = 50;
 
 export const hangmentleVocabUrl = '/hangmentle/vocab.json';
 export const hangmentlePuzzleUrl = (puzzleNo: number) => `/hangmentle/puzzles/${puzzleNo}.json`;
