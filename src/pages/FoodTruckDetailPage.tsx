@@ -29,7 +29,13 @@ const FoodTruckDetailPage = () => {
       <div className="flex flex-col gap-6 px-5 pb-16 pt-5">
         <RetroPageHeader />
         <EmptyState
-          message={t('common.truckNotFound')}
+          message={
+            dummyTrucks.length === 0
+              ? isEng
+                ? 'Food truck info will be announced soon.'
+                : '푸드트럭 정보는 추후 공개 예정이에요.'
+              : t('common.truckNotFound')
+          }
           action={{ label: t('common.backToList'), onClick: () => navigate('/foodtruck') }}
         />
       </div>

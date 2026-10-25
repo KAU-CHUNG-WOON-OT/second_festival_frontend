@@ -10,6 +10,7 @@ import StickyBar from '../components/common/StickyBar';
 import MapModal from '../components/common/MapModal';
 import TruckList from '../components/foodtruck/TruckList';
 import { useUrlFilters } from '../hooks/useUrlFilters';
+import { useLanguage } from '../contexts/LanguageContext';
 import day13Food from '../assets/day1,3_food.jpg';
 import { TRUCK_CATEGORIES, dummyTrucks } from '../data/foodTruckData';
 
@@ -21,8 +22,27 @@ const FILTER_DEFAULTS = { category: '전체', q: '' };
 const FoodTruckPage = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { language } = useLanguage();
+  const isEng = language === 'ENG';
   const { filters, setFilter, resetFilters } = useUrlFilters(FILTER_DEFAULTS);
   const [mapImageSrc, setMapImageSrc] = useState<string | null>(null);
+
+  // 공개 전 (data/foodTruckData의 목록이 비어 있음): 제목 아래 '추후 공개 예정'만
+  if (dummyTrucks.length === 0) {
+    return (
+      <div className="flex flex-col px-5 pb-16 pt-5 text-ink">
+        <RetroPageHeader showMenu />
+        <RetroPageTitle title={t('nav.foodtruck')} />
+        <section className="mt-6 flex flex-col items-center rounded-[16px] border-2 border-ink bg-paper px-5 py-10 text-center shadow-[5px_5px_0px_0px_var(--color-ink)]">
+          <p className="font-typewriter text-[12px] leading-4 tracking-[3.6px] opacity-60">COMING SOON</p>
+          <p className="pt-3 font-display text-[26px] leading-8">{isEng ? 'Coming soon' : '추후 공개 예정'}</p>
+          <p className="pt-2 font-body-kr text-[14px] leading-5 opacity-70">
+            {isEng ? 'Food truck info will be announced soon.' : '푸드트럭 정보는 곧 공개돼요.'}
+          </p>
+        </section>
+      </div>
+    );
+  }
 
   const query = filters.q.trim().toLowerCase();
   const filteredTrucks = dummyTrucks.filter((truck) => {
