@@ -35,7 +35,7 @@ export const dummyNotices: NoticeData[] = [
       '52nd Student Council x Central Steering Committee',
     date: '2026.10.26',
     isNew: true,
-    isImportant: true,
+    isImportant: false,
     category: '행사',
     category_en: 'Event',
   },
