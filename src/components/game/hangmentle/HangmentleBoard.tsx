@@ -221,6 +221,7 @@ const HangmentleBoard = ({
           ? `"${result.word}" is not in the word list`
           : `'${result.word}'은(는) 모르는 단어입니다.`,
       );
+      setInput((current) => (current === submitted ? '' : current));
       return;
     }
     if (result.kind === 'duplicate') {
