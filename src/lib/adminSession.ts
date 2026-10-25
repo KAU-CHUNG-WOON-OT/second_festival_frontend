@@ -47,15 +47,18 @@ export const saveAdminSession = (session: AdminSession) => {
   }
 };
 
-// 넣어 둔 토큰. 없거나, 모양이 이상하거나, 만료 시각이 지났으면 지우고 null
-export const getAdminSession = (now: number = serverNow()): AdminSession | null => {
+// 넣어 둔 토큰. 없거나, 모양이 이상하거나, 만료 시각이 지났으면 지우고 session은 null.
+// expiredOnLoad: 토큰이 있었는데 만료 시각이 지나 지웠으면 true (로그인 화면에 만료 안내를 띄울 때 씀)
+export const readAdminSession = (
+  now: number = serverNow(),
+): { session: AdminSession | null; expiredOnLoad: boolean } => {
   let raw: string | null | undefined;
   try {
     raw = storage()?.getItem(ADMIN_SESSION_KEY);
   } catch {
-    return null;
+    return { session: null, expiredOnLoad: false };
   }
-  if (!raw) return null;
+  if (!raw) return { session: null, expiredOnLoad: false };
 
   let parsed: unknown;
   try {
@@ -67,7 +70,9 @@ export const getAdminSession = (now: number = serverNow()): AdminSession | null 
   const expiresMs = session ? adminSessionExpiresMs(session) : null;
   if (!session || expiresMs === null || expiresMs <= now) {
     clearAdminSession();
-    return null;
+    return { session: null, expiredOnLoad: session !== null && expiresMs !== null };
   }
-  return session;
+  return { session, expiredOnLoad: false };
 };
+
+export const getAdminSession = (now: number = serverNow()): AdminSession | null => readAdminSession(now).session;

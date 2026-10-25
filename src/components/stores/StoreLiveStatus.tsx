@@ -89,7 +89,11 @@ const StoreLiveStatus = ({ storeId, isEng }: { storeId: number; isEng: boolean }
   }
 
   return (
-    <section className={CARD} aria-live="polite">
+    <section className={CARD}>
+      {/* 화면 읽기 프로그램에는 단계가 바뀔 때만 알린다 ('N분 전'은 계속 바뀌므로 알리지 않음) */}
+      <span className="sr-only" aria-live="polite">
+        {level ? `${isEng ? 'Now' : '지금'} ${congestionLabel(level, isEng)}` : ''}
+      </span>
       <div className="flex items-center justify-between gap-3">
         <p className="font-typewriter text-[12px] leading-4 opacity-60">LIVE STATUS</p>
         {level && (

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { clearAdminSession, getAdminSession, saveAdminSession } from './adminSession';
+import { clearAdminSession, getAdminSession, readAdminSession, saveAdminSession } from './adminSession';
 import { parseServerTime } from '@/data/hangmentleClock';
 
 const KEY = 'cwf_admin_session_v1';
@@ -39,6 +39,15 @@ describe('관리자 토큰 보관', () => {
     expect(getAdminSession(at('2026-10-28T22:59:59'))).toEqual(session);
     expect(getAdminSession(at('2026-10-28T23:00:00'))).toBeNull();
     expect(sessionStore.has(KEY)).toBe(false);
+  });
+
+  it('만료돼 지운 경우와 처음부터 없던 경우를 구분한다 (로그인 화면의 만료 안내용)', () => {
+    expect(readAdminSession(at('2026-10-28T22:00:00'))).toEqual({ session: null, expiredOnLoad: false });
+    saveAdminSession(session);
+    expect(readAdminSession(at('2026-10-28T22:00:00'))).toEqual({ session, expiredOnLoad: false });
+    expect(readAdminSession(at('2026-10-28T23:30:00'))).toEqual({ session: null, expiredOnLoad: true });
+    // 한 번 지운 뒤에는 다시 '없던 것'으로 본다
+    expect(readAdminSession(at('2026-10-28T23:30:00'))).toEqual({ session: null, expiredOnLoad: false });
   });
 
   it('만료 시각은 서울 시각으로 읽는다 (기기 시간대와 상관없이)', () => {

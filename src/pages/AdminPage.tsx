@@ -12,7 +12,7 @@ import { ApiError } from '../lib/apiClient';
 import {
   adminSessionExpiresMs,
   clearAdminSession,
-  getAdminSession,
+  readAdminSession,
   type AdminSession,
 } from '../lib/adminSession';
 import {
@@ -136,13 +136,17 @@ const StoreAdminCard = ({
         <span className="absolute -left-[10px] -top-[10px] size-5 rounded-full border border-ink bg-cream" />
         <span className="absolute -right-[10px] -top-[10px] size-5 rounded-full border border-ink bg-cream" />
 
-        <p className="font-typewriter text-[12px] leading-4 opacity-70" aria-live="polite">
+        <p className="font-typewriter text-[12px] leading-4 opacity-70">
           {mutation.isPending
             ? '저장 중…'
             : updatedMs !== null
               ? `${formatUpdatedAgo(updatedMs, now, false)} · ${formatSeoulClock(updatedMs)}`
               : '아직 현황이 등록되지 않았어요'}
         </p>
+        {/* 화면 읽기 프로그램에는 저장 중·저장 결과만 알린다 (지난 시간 표시는 계속 바뀌므로 알리지 않음) */}
+        <span className="sr-only" aria-live="polite">
+          {mutation.isPending ? '저장 중' : mutation.isSuccess ? `${store.name} 저장했어요` : ''}
+        </span>
 
         <div
           className="grid grid-cols-4 gap-2 pt-3"
@@ -201,7 +205,7 @@ const AdminConsole = ({
   onLogout: () => void;
   onExpired: () => void;
 }) => {
-  const { data, isError, refetch, isFetching } = useStoreCongestion({ poll: false });
+  const { data, isError, refetch, isFetching, isFetchedAfterMount } = useStoreCongestion({ poll: false });
   const now = useServerNowEvery(15_000);
   const expiresMs = adminSessionExpiresMs(session);
 
@@ -225,7 +229,7 @@ const AdminConsole = ({
       </div>
 
       <div className="flex items-center justify-between gap-3 pt-6 text-ink">
-        <p className="font-typewriter text-[12px] leading-4 tracking-[3.6px]">STORES</p>
+        <p className="font-typewriter text-[12px] leading-4 tracking-[3.6px] text-paper/80">STORES</p>
         <button
           type="button"
           onClick={() => refetch()}
@@ -257,7 +261,8 @@ const AdminConsole = ({
             store={store}
             index={index}
             entry={congestionOf(data, store.id)}
-            ready={Boolean(data)}
+            // 다른 화면에서 받아 둔 옛 값이 아니라 이 화면을 연 뒤 새로 받은 값을 보고 바꾸게 한다
+            ready={Boolean(data) && isFetchedAfterMount}
             token={session.token}
             now={now}
             onExpired={onExpired}
@@ -278,8 +283,9 @@ const AdminConsole = ({
 const AdminPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  // 처음 그릴 때 한 번 읽는다 (로그아웃·만료 때는 아래에서 지우고 로그인으로 보냄)
-  const [session] = useState(() => getAdminSession());
+  // 처음 그릴 때 한 번 읽는다 (로그아웃·만료 때는 아래에서 지우고 로그인으로 보냄).
+  // 넣어 둔 토큰이 이미 만료돼 지워졌어도 로그인 화면에 만료 안내를 띄우도록 그 사실을 기억한다
+  const [{ session, expiredOnLoad }] = useState(() => readAdminSession());
   const expiresMs = session ? adminSessionExpiresMs(session) : null;
   // 만료 시각을 지나는 순간 다시 그린다
   const now = useServerNowAt([expiresMs]);
@@ -303,7 +309,9 @@ const AdminPage = () => {
     !session || expiresMs === null || now >= expiresMs || isUnauthorized(sessionQuery.error);
   if (expired) {
     clearAdminSession();
-    return <Navigate to="/admin/login" replace state={session ? EXPIRED_NOTICE : undefined} />;
+    return (
+      <Navigate to="/admin/login" replace state={session || expiredOnLoad ? EXPIRED_NOTICE : undefined} />
+    );
   }
 
   return (

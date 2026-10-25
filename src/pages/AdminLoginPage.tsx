@@ -14,6 +14,7 @@ export interface AdminLoginState {
 const loginErrorMessage = (error: unknown) => {
   if (error instanceof ApiError) {
     if (error.status === 401) return '비밀번호가 맞지 않아요';
+    if (error.status === 400) return '비밀번호를 입력해 주세요';
     if (error.status === 429) return error.message || '잠시 후 다시 시도해 주세요';
     return '로그인하지 못했어요. 잠시 후 다시 시도해 주세요.';
   }
@@ -37,7 +38,7 @@ const AdminLoginPage = () => {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!password || isSubmitting) return;
+    if (!password.trim() || isSubmitting) return;
     setIsSubmitting(true);
     setErrorMessage(null);
     try {
@@ -112,7 +113,7 @@ const AdminLoginPage = () => {
             className={`h-14 w-full rounded-full border-2 bg-cream px-5 font-body-kr text-[18px] tracking-[0.3em] outline-none placeholder:tracking-normal placeholder:text-ink/40 ${
               errorMessage ? 'border-rust' : 'border-ink'
             }`}
-            placeholder="숫자 비밀번호"
+            placeholder="비밀번호"
           />
 
           {errorMessage && (
@@ -127,7 +128,7 @@ const AdminLoginPage = () => {
 
           <button
             type="submit"
-            disabled={!password || isSubmitting}
+            disabled={!password.trim() || isSubmitting}
             className="mt-2 h-16 w-full rounded-[16px] border-2 border-ink bg-rust font-display text-[20px] leading-7 text-paper drop-shadow-[4px_4px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isSubmitting ? '확인 중…' : '들어가기'}
