@@ -54,7 +54,8 @@ const HangmentleIntro = () => {
       title: isEng ? 'Find the secret word' : '정답 단어를 찾는 게임이에요',
       body: isEng
         ? 'Type a word and we tell you how close its meaning is to the answer, as a similarity score (%).'
-        : '단어를 입력하면 정답과 뜻이 얼마나 가까운지 유사도(%)로 알려 줘요.',
+        : // \u2060(단어 잇기): '유사도(%)로'가 중간에서 줄이 바뀌지 않게
+          '단어를 입력하면 정답과 뜻이 얼마나 가까운지 유사도\u2060(%)\u2060로 알려 줘요.',
       visual: (
         <div aria-hidden className="flex gap-2">
           <span className="flex h-10 min-w-0 flex-1 items-center rounded-full border border-ink/20 bg-cream px-4 font-body-kr text-[14px] text-ink/50">

@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { FiMaximize2 } from "react-icons/fi";
+import { useLanguage } from "../../contexts/LanguageContext";
 
 interface MapImage {
   src: string;
@@ -15,6 +16,7 @@ interface FestivalMapProps {
 
 // 배치도 이미지 카드. 부스 정보의 배치도 카드(YardPage)와 같은 모양: 제목 · '탭하면 확대' 줄 + 테두리 두른 지도
 const FestivalMap = ({ title, images, onClick }: FestivalMapProps) => {
+  const { language } = useLanguage();
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef(0);
@@ -68,7 +70,7 @@ const FestivalMap = ({ title, images, onClick }: FestivalMapProps) => {
       <p className="flex justify-between font-typewriter text-[12px] font-bold leading-4">
         <span>{title}</span>
         <span className="flex items-center gap-1 opacity-60">
-          탭하면 확대 <FiMaximize2 size={12} aria-hidden />
+          {language === "ENG" ? "Tap to zoom" : "탭하면 확대"} <FiMaximize2 size={12} aria-hidden />
         </span>
       </p>
       <div className="relative mt-2">

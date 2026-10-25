@@ -45,9 +45,18 @@ const AdminLoginPage = () => {
   const [lockedUntil, setLockedUntil] = useState<number | null>(null);
   const [lockSeconds, setLockSeconds] = useState(0);
   const isLocked = lockedUntil !== null;
+  // 막혔다 풀렸는지 (풀린 뒤 입력창이 다시 켜지면 포커스)
+  const wasLocked = useRef(false);
+  // 나가기를 누른 뒤 늦게 온 로그인 결과는 무시
+  const hasLeft = useRef(false);
 
   useEffect(() => {
-    if (lockedUntil === null) return;
+    if (lockedUntil === null) {
+      if (wasLocked.current) inputRef.current?.focus();
+      wasLocked.current = false;
+      return;
+    }
+    wasLocked.current = true;
     const timer = window.setInterval(() => {
       const left = Math.ceil((lockedUntil - Date.now()) / 1000);
       if (left > 0) {
@@ -56,8 +65,6 @@ const AdminLoginPage = () => {
       }
       setLockedUntil(null);
       setErrorMessage(null);
-      // 풀리면 바로 다시 입력할 수 있게
-      requestAnimationFrame(() => inputRef.current?.focus());
     }, 250);
     return () => window.clearInterval(timer);
   }, [lockedUntil]);
@@ -71,6 +78,7 @@ const AdminLoginPage = () => {
     setErrorMessage(null);
     try {
       const result = await loginAdmin(password);
+      if (hasLeft.current) return;
       saveAdminSession({ token: result.token, expiresAt: result.expiresAt });
       navigate('/admin', { replace: true });
     } catch (error) {
@@ -103,7 +111,7 @@ const AdminLoginPage = () => {
           <p className="font-typewriter text-[12px] leading-4 tracking-[3.6px] opacity-60">
             ADMIN PASS
           </p>
-          <h2 className="pt-2 font-display text-[24px] leading-[30px]">운영진 로그인</h2>
+          <h1 className="pt-2 font-display text-[24px] leading-[30px]">운영진 로그인</h1>
         </header>
 
         <div className="relative flex flex-col gap-[14px] border-t border-dashed border-ink/50 px-6 pb-6 pt-5">
@@ -174,7 +182,10 @@ const AdminLoginPage = () => {
           <p className="text-balance font-body-kr text-[14px] leading-5 text-ink/70">운영진이 아니라면 나가기를 눌러 주세요</p>
           <button
             type="button"
-            onClick={() => navigate('/home', { replace: true })}
+            onClick={() => {
+              hasLeft.current = true;
+              navigate('/home', { replace: true });
+            }}
             className="h-10 shrink-0 rounded-full border-2 border-ink bg-cream px-5 font-body-kr text-[14px] font-bold drop-shadow-[3px_3px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px]"
           >
             나가기

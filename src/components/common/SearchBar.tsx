@@ -11,8 +11,8 @@ const SearchBar = ({ value, onChange, placeholder = "검색어를 입력해주�
   const { t } = useTranslation();
 
   return (
-    // 카드처럼 진한 테두리 + 흐림 없는 그림자. 포커스는 안쪽 배경을 cream으로 바꿔 보여 준다
-    <label className="flex h-12 items-center gap-2 rounded-full border-2 border-ink bg-paper pl-5 pr-2 text-ink drop-shadow-[3px_3px_0px_var(--color-ink)] transition-colors focus-within:bg-cream">
+    // 카드처럼 진한 테두리 + 흐림 없는 그림자. 포커스는 바깥 흰 테두리 + 안쪽 cream 배경
+    <label className="flex h-12 items-center gap-2 rounded-full border-2 border-ink bg-paper pl-5 pr-1 text-ink outline-2 outline-offset-2 outline-transparent drop-shadow-[3px_3px_0px_var(--color-ink)] transition-colors focus-within:bg-cream focus-within:outline-paper">
       <input
         type="text"
         inputMode="search"
@@ -31,12 +31,12 @@ const SearchBar = ({ value, onChange, placeholder = "검색어를 입력해주�
           type="button"
           onClick={() => onChange('')}
           aria-label={t('search.clear')}
-          className="flex size-8 shrink-0 items-center justify-center rounded-full bg-ink text-paper active:opacity-80"
+          className="flex size-9 shrink-0 items-center justify-center rounded-full bg-ink text-paper active:opacity-80"
         >
           <FiX size={16} />
         </button>
       ) : (
-        <span className="flex size-8 shrink-0 items-center justify-center text-ink">
+        <span className="flex size-9 shrink-0 items-center justify-center text-ink">
           <FiSearch size={20} aria-hidden />
         </span>
       )}

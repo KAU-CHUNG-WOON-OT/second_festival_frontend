@@ -16,7 +16,7 @@ const HomeGameSection = ({ to }: HomeGameSectionProps) => {
   return (
     <Link
       to={to}
-      className="relative flex w-full items-center gap-3 overflow-clip rounded-[16px] border-2 border-ink bg-rust py-3 pl-6 pr-5 text-paper shadow-[5px_5px_0px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px]"
+      className="relative flex w-full items-center gap-3 overflow-hidden rounded-[16px] border-2 border-ink bg-rust py-3 pl-6 pr-5 text-paper shadow-[5px_5px_0px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px]"
     >
       <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-paper font-body-kr text-[20px] leading-7">
         🎲
