@@ -68,13 +68,13 @@
   },
   "home": {
     "boothInfo": "부스 정보",
-    "yardEvent": "교내 학과 · 동아리 부스",
+    "yardEvent": "교내 동아리 부스",
     "foodTruck": "푸드 트럭",
     "foodLocations": "먹거리 위치",
     "performance": "공연 정보",
     "clubsEvents": "동아리 및 행사",
-    "pubGuide": "주점 안내",
-    "deptYard": "학과 부스 & 마당사업",
+    "storeInfo": "가게 정보",
+    "localStores": "지역상생 참여 가게",
     "noticeBanner": "활공제 기간 중 교내 차량 통제 안내"
   },
   "notice": {

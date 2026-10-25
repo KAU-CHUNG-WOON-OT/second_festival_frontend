@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatDealPrice, storeEvents, type StoreDeal } from './storeEventData';
+import { formatDealPrice, hasStoreDeals, storeEvents, type StoreDeal } from './storeEventData';
 
 const allDeals = (): StoreDeal[] =>
   storeEvents.flatMap((store) => [...(store.deals ?? []), ...(store.groups ?? []).flatMap((g) => g.deals)]);
@@ -10,10 +10,11 @@ describe('storeEvents', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('가게마다 보여 줄 내용이 있다 (행사·묶음·안내 중 하나 이상)', () => {
+  it('행사가 없는 가게는 행사 칸을 빈 배열이 아니라 아예 비워 둔다', () => {
     for (const store of storeEvents) {
-      const dealCount = (store.deals?.length ?? 0) + (store.groups ?? []).reduce((n, g) => n + g.deals.length, 0);
-      expect(dealCount > 0 || Boolean(store.note), store.name).toBe(true);
+      if (hasStoreDeals(store)) continue;
+      expect(store.deals, store.name).toBeUndefined();
+      expect(store.groups, store.name).toBeUndefined();
     }
   });
 
@@ -23,6 +24,10 @@ describe('storeEvents', () => {
     }
     for (const store of storeEvents) {
       expect(Boolean(store.note), store.name).toBe(Boolean(store.note_en));
+      expect(Boolean(store.intro), store.name).toBe(Boolean(store.intro_en));
+      for (const section of store.about ?? []) {
+        expect([section.label_en, section.title_en, section.body_en].every((t) => t.trim() !== ''), section.title).toBe(true);
+      }
       for (const group of store.groups ?? []) {
         expect(group.label_en.trim(), group.label).not.toBe('');
         expect(group.deals.length, group.label).toBeGreaterThan(0);
