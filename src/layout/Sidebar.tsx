@@ -28,6 +28,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   // TODO: 시안의 '가게 정보', '실시간 좌석'은 아직 페이지가 없어 제외
   const menuItems: MenuItem[] = [
     { label: t('nav.home'), path: '/home' },
+    { label: t('nav.notice'), path: '/notice' },
     { label: t('nav.yard'), path: '/yard' },
     { label: t('nav.foodtruck'), path: '/foodtruck' },
     { label: t('nav.performance'), path: '/performance' },
@@ -85,8 +86,9 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
               key={item.path}
               to={item.path}
               onClick={onClose}
-              className={`py-[9.5px] font-body-kr text-[20px] font-medium leading-[22px] text-black ${
-                pathname === item.path ? 'underline' : ''
+              aria-current={pathname === item.path ? 'page' : undefined}
+              className={`py-[9.5px] font-body-kr text-[20px] leading-[22px] text-black ${
+                pathname === item.path ? 'font-bold' : 'font-medium'
               }`}
             >
               {item.label}
