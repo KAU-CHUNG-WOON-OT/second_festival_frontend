@@ -5,35 +5,16 @@ import { FiMaximize2 } from 'react-icons/fi';
 import RetroPageHeader from '../components/common/RetroPageHeader';
 import RetroPageTitle from '../components/common/RetroPageTitle';
 import MapModal from '../components/common/MapModal';
-import CategoryList from '../components/common/CategoryList';
-import SearchBar from '../components/common/SearchBar';
-import StickyBar from '../components/common/StickyBar';
 import BoothGrid from '../components/yard/BoothGrid';
 import BoothMap from '../components/yard/BoothMap';
-import { CATEGORIES, dummyBooths } from '../data/boothData';
-import { useUrlFilters } from '../hooks/useUrlFilters';
+import { dummyBooths } from '../data/boothData';
 
-const FILTER_DEFAULTS = { category: '전체', q: '' };
-
+// 부스 정보: 배치도 아래에 부스 목록 (분류·검색 없이 전체)
 const YardPage = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const { filters, setFilter, resetFilters } = useUrlFilters(FILTER_DEFAULTS);
   const [isMapZoomOpen, setIsMapZoomOpen] = useState(false);
-
-  const query = filters.q.trim().toLowerCase();
-  const filteredBooths = dummyBooths.filter((booth) => {
-    const matchesCategory = filters.category === '전체' || booth.category === filters.category;
-    const matchesSearch =
-      query === '' ||
-      booth.name.toLowerCase().includes(query) ||
-      booth.name_en.toLowerCase().includes(query) ||
-      booth.booth.toLowerCase().includes(query) ||
-      booth.category.includes(query);
-
-    return matchesCategory && matchesSearch;
-  });
 
   return (
     <div className="flex flex-col px-5 pb-16 pt-5 text-ink">
@@ -58,27 +39,8 @@ const YardPage = () => {
         </span>
       </button>
 
-      {/* 스크롤해도 분류·검색창은 상단바 아래에 붙어 있다 */}
-      <StickyBar>
-        <CategoryList
-          categories={CATEGORIES}
-          selectedCategory={filters.category}
-          onSelect={(category) => setFilter('category', category)}
-        />
-        <div className="pt-4">
-          <SearchBar
-            value={filters.q}
-            onChange={(q) => setFilter('q', q)}
-            placeholder={t('search.boothPlaceholder')}
-          />
-        </div>
-      </StickyBar>
-      <div className="pt-5">
-        <BoothGrid
-          booths={filteredBooths}
-          onBoothClick={(booth) => navigate(`/yard/${booth.id}`)}
-          onReset={resetFilters}
-        />
+      <div className="pt-6">
+        <BoothGrid booths={dummyBooths} onBoothClick={(booth) => navigate(`/yard/${booth.id}`)} />
       </div>
 
       <MapModal isOpen={isMapZoomOpen} onClose={() => setIsMapZoomOpen(false)}>

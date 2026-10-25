@@ -1,8 +1,8 @@
-import { useRef } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useIsLogin } from '../hooks/useIsLogin';
 import { getKakaoLoginUrl } from '../lib/kakaoLogin';
+import { saveLoginReturnPath } from '../lib/loginReturn';
 import { track } from '@/lib/mixpanel';
 import closeIcon from '../assets/sidebar_close.svg';
 import kakaoIcon from '../assets/kakao_icon.svg';
@@ -19,17 +19,16 @@ interface MenuItem {
 
 const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const { pathname } = useLocation();
   const isLogin = useIsLogin();
-  const logoTapCount = useRef(0);
-  const logoTapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // TODO: 시안의 '가게 정보', '실시간 좌석'은 아직 페이지가 없어 제외
+  // TODO: 시안의 '실시간 좌석'은 아직 페이지가 없어 제외
   const menuItems: MenuItem[] = [
     { label: t('nav.home'), path: '/home' },
+    { label: t('nav.notice'), path: '/notice' },
     { label: t('nav.yard'), path: '/yard' },
     { label: t('nav.foodtruck'), path: '/foodtruck' },
+    { label: t('nav.stores'), path: '/stores' },
     { label: t('nav.performance'), path: '/performance' },
     { label: t('nav.game'), path: '/game' },
     { label: t('nav.makers'), path: '/makers' },
@@ -39,22 +38,9 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     const loginUrl = getKakaoLoginUrl();
     if (!loginUrl) return;
     track('sidebar_kakao_login_clicked');
+    // 로그인하고 나면 지금 보던 페이지로 돌아온다
+    saveLoginReturnPath();
     window.location.href = loginUrl;
-  };
-
-  // 로고 3번 탭 → 관리자 페이지
-  const handleLogoTap = () => {
-    logoTapCount.current += 1;
-    if (logoTapTimer.current) clearTimeout(logoTapTimer.current);
-    if (logoTapCount.current >= 3) {
-      logoTapCount.current = 0;
-      onClose();
-      navigate('/admin');
-      return;
-    }
-    logoTapTimer.current = setTimeout(() => {
-      logoTapCount.current = 0;
-    }, 2000);
   };
 
   return (
@@ -85,8 +71,9 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
               key={item.path}
               to={item.path}
               onClick={onClose}
-              className={`py-[9.5px] font-body-kr text-[20px] font-medium leading-[22px] text-black ${
-                pathname === item.path ? 'underline' : ''
+              aria-current={pathname === item.path ? 'page' : undefined}
+              className={`py-[8px] font-body-kr text-[20px] leading-[22px] text-black ${
+                pathname === item.path ? 'font-bold' : 'font-medium'
               }`}
             >
               {item.label}
@@ -99,7 +86,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           <button
             type="button"
             onClick={handleLogin}
-            className="mx-5 mt-auto flex h-11 items-center justify-center gap-2 rounded-full bg-[#fee500] font-body-kr text-[15px] font-bold text-black"
+            className="mx-5 mt-auto flex h-11 items-center justify-center gap-2 rounded-full border-2 border-ink bg-[#fee500] font-body-kr text-[15px] font-bold text-ink drop-shadow-[3px_3px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px]"
           >
             <img src={kakaoIcon} alt="" width={18} height={17} />
             {t('sidebar.login')}
@@ -107,10 +94,9 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         )}
 
         <p
-          onClick={handleLogoTap}
-          className={`px-[31px] pb-10 font-display text-[36px] leading-9 text-rust ${isLogin ? 'mt-auto' : 'mt-6'}`}
+          className={`whitespace-nowrap px-[31px] pb-10 font-display text-[36px] leading-9 text-rust ${isLogin ? 'mt-auto' : 'mt-6'}`}
         >
-          활주로
+          활주로 <span className="font-typewriter text-[14px] tracking-[1.4px]">festival</span>
         </p>
       </aside>
     </div>

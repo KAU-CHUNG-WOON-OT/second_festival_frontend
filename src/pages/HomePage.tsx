@@ -16,7 +16,7 @@ const HomePage = () => {
     .filter((n) => n.isImportant)
     .sort((a, b) => b.date.localeCompare(a.date))[0];
 
-  // 시안의 '가게 정보'·'실시간 좌석' 자리는 해당 페이지가 아직 없어 부스 정보·주점 안내로 연결
+  // 시안의 '가게 정보'·'실시간 좌석' 자리는 부스 정보·주점 안내로 연결 ('가게 정보'는 사이드바에서 /stores로 연결, '실시간 좌석'은 아직 페이지가 없음)
   const QUICK_MENUS: HomeQuickMenuItem[] = [
     { title: t('home.boothInfo'), sub: t('home.yardEvent'), path: '/yard', colorClass: 'bg-mustard text-ink' },
     { title: t('home.foodTruck'), sub: t('home.foodLocations'), path: '/foodtruck', colorClass: 'bg-rust text-paper' },

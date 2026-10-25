@@ -1,6 +1,9 @@
+import type { MouseEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FiChevronLeft } from 'react-icons/fi';
 import { useSidebar } from '../../contexts/SidebarContext';
+import { fallbackPath } from '@/util/backFallback';
+import { registerAdminLogoTap } from '@/lib/adminTap';
 import SkyDots from './SkyDots';
 import { skyBackground } from './retroLayout';
 import cheongunLogo from '../../assets/cheongun_logo.svg';
@@ -12,26 +15,26 @@ interface RetroPageHeaderProps {
   showMenu?: boolean;
 }
 
-// 앱 안에 이전 기록이 없을 때(공유 링크로 바로 들어온 경우) 뒤로가기로 갈 곳: 상세는 그 목록, 나머지는 홈
-const fallbackPath = (pathname: string) => {
-  const list = pathname.match(/^\/(yard|pub|foodtruck|game)\/[^/]+$/)?.[1];
-  return list ? `/${list}` : '/home';
-};
-
 // 노을 배경 위 흰 아이콘 헤더: 메뉴 또는 뒤로가기 · (선택) 가운데 제목 · 청운 로고(홈 링크)
 // 스크롤해도 화면 맨 위에 고정된다. 뒤에 하늘·별을 똑같이 깔고 아래 12px을 흐리게 해 내용이 자연스럽게 밑으로 들어간다.
 // 상단바 전체가 탭을 받아 밑에 가려진 카드가 눌리지 않는다.
 // 페이지 위 여백(pt-5)과 좌우 여백(px-5)을 음수 여백으로 덮어 처음부터 화면 맨 위·양끝에 맞춘다
 const RetroPageHeader = ({ title, showMenu = false }: RetroPageHeaderProps) => {
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const { openSidebar } = useSidebar();
+
+  const handleLogoTap = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (!registerAdminLogoTap()) return;
+    event.preventDefault();
+    navigate('/admin/login');
+  };
 
   const goBack = () => {
     // BrowserRouter가 기록마다 매기는 순번. 0이면 앱에서 처음 연 화면이라 navigate(-1)은 앱 밖으로 나간다
     const idx = (window.history.state as { idx?: number } | null)?.idx ?? 0;
     if (idx > 0) navigate(-1);
-    else navigate(fallbackPath(pathname), { replace: true });
+    else navigate(fallbackPath(pathname, search), { replace: true });
   };
 
   return (
@@ -72,9 +75,22 @@ const RetroPageHeader = ({ title, showMenu = false }: RetroPageHeaderProps) => {
             {title}
           </h1>
         )}
-        {/* 탭 영역만 44px 높이로 넓히고 음수 여백으로 로고 자리는 그대로 둔다 */}
-        <Link to="/home" aria-label="홈으로 이동" className="-mr-2 flex h-11 items-center px-2">
-          <img src={cheongunLogo} alt="청운" width={46} height={32} className="brightness-0 invert" />
+        {/* 탭 영역만 44px 높이로 넓히고 음수 여백으로 로고 자리는 그대로 둔다.
+            누르면 홈. 홈 로고와 같은 자리라서 빠르게 이어 누르면 관리자 입구 탭으로 같이 센다 (lib/adminTap) */}
+        <Link
+          to="/home"
+          onClick={handleLogoTap}
+          aria-label="홈으로 이동"
+          className="-mr-2 flex h-11 touch-manipulation select-none items-center px-2"
+        >
+          <img
+            src={cheongunLogo}
+            alt="청운"
+            width={46}
+            height={32}
+            draggable={false}
+            className="brightness-0 invert"
+          />
         </Link>
       </div>
     </div>

@@ -1,0 +1,96 @@
+import { useEffect, useState } from 'react';
+import { serverNow, subscribeServerClock } from '@/lib/serverClock';
+
+// 초가 바뀌는 순간보다 조금 늦게 깨워 같은 초를 두 번 그리지 않게 한다
+const WAKE_SLACK_MS = 15;
+// 브라우저 타이머 한도(약 24일)를 넘지 않게, 먼 시각은 한 시간마다 다시 계산한다
+const MAX_WAIT_MS = 60 * 60_000;
+
+// 다시 계산해야 할 때: 서버 시계 차이가 바뀜, 화면이 다시 보임(숨어 있는 동안 타이머가 늦어진다)
+const subscribeRefresh = (refresh: () => void) => {
+  const unsubscribe = subscribeServerClock(refresh);
+  const onVisibility = () => {
+    if (document.visibilityState === 'visible') refresh();
+  };
+  document.addEventListener('visibilitychange', onVisibility);
+  return () => {
+    unsubscribe();
+    document.removeEventListener('visibilitychange', onVisibility);
+  };
+};
+
+// 서버 시각(ms). 서버 시계의 초가 바뀔 때마다 새 값으로 다시 그린다 (카운트다운 숫자)
+export const useServerNow = () => {
+  const [now, setNow] = useState(serverNow);
+
+  useEffect(() => {
+    let timer = 0;
+    const tick = () => {
+      window.clearTimeout(timer);
+      const t = serverNow();
+      setNow(t);
+      timer = window.setTimeout(tick, 1000 - (t % 1000) + WAKE_SLACK_MS);
+    };
+    timer = window.setTimeout(tick, 0);
+    const unsubscribe = subscribeRefresh(tick);
+    return () => {
+      window.clearTimeout(timer);
+      unsubscribe();
+    };
+  }, []);
+
+  return now;
+};
+
+// clock으로 잰 지금 시각(ms). 매초가 아니라 targets를 지나는 순간에만 새 값으로 다시 그린다
+const useNowAt = (targets: readonly (number | null)[], clock: () => number) => {
+  const [now, setNow] = useState(clock);
+  const key = targets.filter((target): target is number => target !== null).join(',');
+
+  useEffect(() => {
+    const list = key ? key.split(',').map(Number) : [];
+    let timer = 0;
+    const update = () => {
+      window.clearTimeout(timer);
+      const t = clock();
+      setNow(t);
+      const upcoming = list.filter((target) => target > t);
+      if (upcoming.length === 0) return;
+      const wait = Math.min(...upcoming) - t + WAKE_SLACK_MS;
+      timer = window.setTimeout(update, Math.min(wait, MAX_WAIT_MS));
+    };
+    timer = window.setTimeout(update, 0);
+    const unsubscribe = subscribeRefresh(update);
+    return () => {
+      window.clearTimeout(timer);
+      unsubscribe();
+    };
+  }, [key, clock]);
+
+  return now;
+};
+
+// 서버 시각(ms). targets(열리는 시각 등)를 지나는 순간에만 새 값으로 다시 그린다
+export const useServerNowAt = (targets: readonly (number | null)[]) => useNowAt(targets, serverNow);
+
+// 서버 시각(ms). intervalMs마다 새 값으로 다시 그린다 ('3분 전 업데이트' 같은 상대 시각)
+export const useServerNowEvery = (intervalMs: number) => {
+  const [now, setNow] = useState(serverNow);
+
+  useEffect(() => {
+    const update = () => setNow(serverNow());
+    const timer = window.setInterval(update, intervalMs);
+    const unsubscribe = subscribeRefresh(update);
+    return () => {
+      window.clearInterval(timer);
+      unsubscribe();
+    };
+  }, [intervalMs]);
+
+  return now;
+};
+
+const deviceNow = () => Date.now();
+
+// 기기 시각(ms). 서버 시계를 맞추기 전, 언제부터 서버에 물을지 정할 때 쓴다
+export const useDeviceNowAt = (targets: readonly (number | null)[]) => useNowAt(targets, deviceNow);

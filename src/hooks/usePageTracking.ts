@@ -10,12 +10,16 @@ const PAGE_NAMES: Record<string, string> = {
   '/timetable': 'Timetable',
   '/performance': 'Performance',
   '/foodtruck': 'FoodTruck List',
+  '/stores': 'Store Deals',
   '/yard': 'Yard List',
   '/pub': 'Pub List',
   '/makers': 'Makers',
   '/game': 'Game',
   '/info': 'Info Input',
   '/info-guide': 'Info Guide',
+  // 관리자 화면은 로그인·관리 화면을 묶어 하나로 센다
+  '/admin': 'Admin',
+  '/admin/login': 'Admin',
 };
 
 export const usePageTracking = () => {
@@ -30,9 +34,11 @@ export const usePageTracking = () => {
           ? 'Booth Detail'
           : location.pathname.startsWith('/pub/')
             ? 'Pub Detail'
-            : location.pathname.startsWith('/game/')
-              ? 'Game Play'
-              : location.pathname);
+            : location.pathname.startsWith('/stores/')
+              ? 'Store Detail'
+              : location.pathname.startsWith('/game/')
+                ? 'Game Play'
+                : location.pathname);
 
     track('page_viewed', { path: location.pathname, page_name: pageName });
   }, [location.pathname]);

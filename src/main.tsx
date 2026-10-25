@@ -18,6 +18,8 @@ import TimetablePage from './pages/TimetablePage';
 import PerformancePage from './pages/PerformancePage';
 import FoodTruckPage from './pages/FoodTruckPage';
 import FoodTruckDetailPage from './pages/FoodTruckDetailPage';
+import StoreEventPage from './pages/StoreEventPage';
+import StoreDetailPage from './pages/StoreDetailPage';
 import YardPage from './pages/YardPage';
 import BoothDetailPage from './pages/BoothDetailPage';
 import PubPage from './pages/PubPage';
@@ -30,6 +32,7 @@ import InfoInputPage from './pages/InfoInputPage';
 import OAuthRedirectPage from './pages/OAuthRedirectPage';
 import InfoGuidePage from './pages/InfoGuidePage';
 import AdminPage from './pages/AdminPage';
+import AdminLoginPage from './pages/AdminLoginPage';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -47,6 +50,8 @@ createRoot(document.getElementById('root')!).render(
               <Route path="/performance" element={<PerformancePage />} />
               <Route path="/foodtruck" element={<FoodTruckPage />} />
               <Route path="/foodtruck/:id" element={<FoodTruckDetailPage />} />
+              <Route path="/stores" element={<StoreEventPage />} />
+              <Route path="/stores/:id" element={<StoreDetailPage />} />
               <Route path="/yard" element={<YardPage />} />
               <Route path="/yard/:id" element={<BoothDetailPage />} />
               <Route path="/pub" element={<PubPage />} />
@@ -58,6 +63,7 @@ createRoot(document.getElementById('root')!).render(
               <Route path="/oauth/callback/:dest" element={<OAuthRedirectPage />} />
               <Route path="/info-guide" element={<InfoGuidePage />} />
               <Route path="/admin" element={<AdminPage />} />
+              <Route path="/admin/login" element={<AdminLoginPage />} />
             </Routes>
             </Layout>
           </AuthBootGate>

@@ -60,15 +60,18 @@ Mixpanel의 Simplified ID Merge 기능이 로그인 이전의 익명 이벤트�
 | `/performance` | Performance |
 | `/foodtruck` | FoodTruck List |
 | `/foodtruck/:id` | FoodTruck Detail |
+| `/stores` | Store Deals |
 | `/yard` | Yard List |
 | `/yard/:id` | Booth Detail |
 | `/pub` | Pub List |
 | `/pub/:id` | Pub Detail |
+| `/stores/:id` | Store Detail |
 | `/makers` | Makers |
 | `/game` | Game |
 | `/game/:gameId` | Game Play |
 | `/info` | Info Input |
 | `/info-guide` | Info Guide |
+| `/admin`, `/admin/login` | Admin (운영진 화면, 둘을 묶어 하나로) |
 
 ---
 
@@ -202,6 +205,18 @@ OAuth 리다이렉트가 완료될 때 (카카오 로그인 완료 시) 발송�
 | 속성 | 타입 | 설명 |
 |------|------|------|
 | `pub_id` | number | 주점 ID |
+
+---
+
+### `store_detail_viewed`
+
+가게 정보에서 가게를 눌러 가게 화면(실시간 현황·행사 내용)에 진입했을 때 발송됩니다.
+
+**파일:** `src/pages/StoreDetailPage.tsx`
+
+| 속성 | 타입 | 설명 |
+|------|------|------|
+| `store_id` | number | 가게 ID (`src/data/storeEventData.ts`) |
 
 ---
 

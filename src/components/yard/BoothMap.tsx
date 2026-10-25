@@ -1,58 +1,38 @@
-// 시안의 캠퍼스 부스 배치도. 좌표는 확대 보기 기준(342×219) 값을 비율로 사용
-const MAP_W = 342;
-const MAP_H = 219;
-
-type Tone = 'mustard' | 'sage' | 'maroon' | 'stone' | 'coral' | 'ink';
+// 부스 배치도. 운영진이 준 배치도 그림의 칸 위치를 비율 그대로 옮겼다 (좌표 단위는 그림 기준 1460×915)
+const MAP_W = 1460;
+const MAP_H = 915;
 
 interface MapSpot {
+  // 줄바꿈(\n)은 그대로 보인다 (긴 이름은 그림처럼 두 줄)
   label: string;
   x: number;
   y: number;
-  w?: number;
-  h?: number;
-  tone: Tone;
+  w: number;
+  h: number;
 }
 
-const TONE_CLASS: Record<Tone, string> = {
-  mustard: 'border border-ink bg-mustard text-ink',
-  sage: 'border border-ink bg-[#b4c47a] text-ink',
-  maroon: 'border border-ink bg-maroon text-paper',
-  stone: 'border border-ink bg-[#c9bfa7] text-ink',
-  coral: 'border border-ink bg-[#e9775a] text-ink',
-  ink: 'bg-ink text-paper',
-};
+const ROW_W = 265;
+const ROW_H = 142;
+const COL_W = 166;
+const COL_H = 242;
 
-// TODO: 실제 부스 배치 확정 시 교체 (현재 시안 기준)
 const SPOTS: MapSpot[] = [
-  { label: '재징유', x: 40.35, y: 6.78, tone: 'mustard' },
-  { label: '우리부모', x: 77.47, y: 6.78, tone: 'mustard' },
-  { label: '광대와끼', x: 114.61, y: 6.78, tone: 'mustard' },
-  { label: '울뮤', x: 151.75, y: 6.78, tone: 'mustard' },
-  { label: 'ESC', x: 188.88, y: 6.78, tone: 'sage' },
-  { label: '픽쳐', x: 226.02, y: 6.78, tone: 'sage' },
-  { label: '라튜타', x: 40.35, y: 46.99, tone: 'maroon' },
-  { label: 'SRS', x: 40.35, y: 73.79, tone: 'maroon' },
-  { label: 'MAC', x: 40.35, y: 100.6, tone: 'maroon' },
-  { label: '학생활동회', x: 40.35, y: 127.4, tone: 'maroon' },
-  { label: '항체연', x: 40.35, y: 154.21, tone: 'maroon' },
-  { label: '도스', x: 128.11, y: 114, tone: 'mustard' },
-  { label: '랩플레인', x: 128.11, y: 140.81, tone: 'mustard' },
-  { label: '에어락', x: 128.11, y: 167.61, tone: 'mustard' },
-  { label: '학군단', x: 175.38, y: 114, tone: 'stone' },
-  { label: '방송국', x: 175.38, y: 140.81, tone: 'stone' },
-  { label: '날틀', x: 175.38, y: 167.61, tone: 'stone' },
-  { label: 'AVIATORS', x: 276.54, y: 33.59, w: 41, tone: 'coral' },
-  { label: '보잉', x: 276.54, y: 60.39, w: 41, tone: 'coral' },
-  { label: '태권도부', x: 276.54, y: 87.2, w: 41, tone: 'coral' },
-  { label: '에어윙즈', x: 276.54, y: 114, w: 41, tone: 'coral' },
-  { label: '줄울림', x: 40.35, y: 184.36, tone: 'mustard' },
-  { label: '알피네', x: 77.47, y: 184.36, tone: 'mustard' },
-  { label: 'SEED', x: 175.38, y: 190.9, h: 17, tone: 'stone' },
-  { label: 'IKAU', x: 215.89, y: 190.9, h: 17, tone: 'sage' },
-  { label: 'PTPI', x: 256.4, y: 190.9, h: 17, tone: 'sage' },
-  { label: '무대', x: 6.83, y: 42.81, w: 20, h: 86, tone: 'ink' },
-  { label: '입구', x: 323.79, y: 128.49, w: 14, h: 39, tone: 'ink' },
-  { label: '출구', x: 121.25, y: 193.18, w: 41, h: 19, tone: 'ink' },
+  // 위쪽 줄 (왼쪽부터)
+  { label: '육군모집홍보', x: 368, y: 28, w: ROW_W, h: ROW_H },
+  { label: '경기북부병무청', x: 633, y: 28, w: ROW_W, h: ROW_H },
+  { label: '대학일자리\n플러스센터', x: 898, y: 28, w: ROW_W, h: ROW_H },
+  { label: '재학생맞춤형\n고용서비스', x: 1163, y: 28, w: ROW_W, h: ROW_H },
+  // 왼쪽 줄 (위부터)
+  { label: '밀리패스', x: 24, y: 160, w: COL_W, h: COL_H },
+  { label: '총학', x: 24, y: 402, w: COL_W, h: COL_H },
+  { label: '학복', x: 24, y: 644, w: COL_W, h: COL_H },
+  // 오른쪽 줄 (위부터)
+  { label: '카운셀러', x: 1262, y: 198, w: COL_W, h: COL_H },
+  // 아래쪽 줄 (왼쪽부터)
+  { label: '세인영', x: 368, y: 730, w: ROW_W, h: ROW_H },
+  { label: '우리부모', x: 633, y: 730, w: ROW_W, h: ROW_H },
+  { label: '이웃사촌부', x: 898, y: 730, w: ROW_W, h: ROW_H },
+  { label: '스키&클라이밍', x: 1163, y: 730, w: ROW_W, h: ROW_H },
 ];
 
 const pct = (value: number, total: number) => `${(value / total) * 100}%`;
@@ -67,14 +47,14 @@ const BoothMap = () => {
       {SPOTS.map((spot) => (
         <span
           key={spot.label}
-          className={`absolute flex items-center justify-center overflow-hidden rounded-[3px] px-px text-center font-display break-all ${TONE_CLASS[spot.tone]}`}
+          className="absolute flex items-center justify-center overflow-hidden whitespace-pre-line break-keep border border-ink bg-[#2f5f7f] text-center font-display text-paper"
           style={{
             left: pct(spot.x, MAP_W),
             top: pct(spot.y, MAP_H),
-            width: pct(spot.w ?? 34, MAP_W),
-            height: pct(spot.h ?? 20, MAP_H),
-            fontSize: spot.tone === 'ink' ? '2.5cqw' : '2.2cqw',
-            lineHeight: 1,
+            width: pct(spot.w, MAP_W),
+            height: pct(spot.h, MAP_H),
+            fontSize: '2.3cqw',
+            lineHeight: 1.15,
           }}
         >
           {spot.label}

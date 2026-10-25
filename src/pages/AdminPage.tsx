@@ -1,152 +1,345 @@
 import { useState } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { updateClubStatus, type ClubStatusUpdate } from '@/lib/api/club';
-import { fetchMyProfile } from '@/lib/api/user';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { FiLogOut, FiRefreshCw } from 'react-icons/fi';
+import RetroPageHeader from '../components/common/RetroPageHeader';
+import RetroPageTitle from '../components/common/RetroPageTitle';
+import EmptyState from '../components/common/EmptyState';
+import CongestionBadge from '../components/stores/CongestionBadge';
+import { useServerNowAt, useServerNowEvery } from '../hooks/useServerNow';
+import { useStoreCongestion } from '../hooks/useStoreCongestion';
+import { ApiError } from '../lib/apiClient';
+import {
+  adminSessionExpiresMs,
+  clearAdminSession,
+  readAdminSession,
+  type AdminSession,
+} from '../lib/adminSession';
+import {
+  fetchAdminSession,
+  storeCongestionKey,
+  updateStoreCongestion,
+} from '../lib/api/storeCongestion';
+import { parseServerTime } from '../data/hangmentleClock';
+import { storeEvents, type StoreEvent } from '../data/storeEventData';
+import {
+  CONGESTION_INFO,
+  CONGESTION_LEVELS,
+  congestionOf,
+  formatSeoulClock,
+  formatUpdatedAgo,
+  patchStoreCongestion,
+  type CongestionLevel,
+  type StoreCongestion,
+  type StoreCongestionOverview,
+} from '../data/storeCongestion';
+import type { AdminLoginState } from './AdminLoginPage';
 
-const CLUBS = [
-  { clubId: 1, clubName: '활주로' },
-  { clubId: 2, clubName: '올뮤' },
-  { clubId: 3, clubName: '에어락' },
-  { clubId: 4, clubName: '재징유' },
-  { clubId: 5, clubName: '우리부모' },
-  { clubId: 6, clubName: '줄울림' },
-  { clubId: 7, clubName: '나상현씨밴드' },
-  { clubId: 8, clubName: '창모' },
-  { clubId: 9, clubName: '비비' },
-  { clubId: 10, clubName: '광대와끼' },
-  { clubId: 11, clubName: '알피네' },
-  { clubId: 12, clubName: '랩플레인' },
-  { clubId: 13, clubName: '도스' },
-  { clubId: 14, clubName: '카더가든' },
-  { clubId: 15, clubName: '에이핑크' },
-  { clubId: 16, clubName: '에어비트' },
-];
+const EXPIRED_NOTICE: AdminLoginState = { notice: '로그인이 만료됐어요. 다시 로그인해 주세요.' };
+const isUnauthorized = (error: unknown) => error instanceof ApiError && error.status === 401;
 
-const CLUB_STATUS_OPTIONS: { value: ClubStatusUpdate; label: string; description: string }[] = [
-  { value: 'LIVE', label: 'LIVE', description: '공연 진행 중' },
-  { value: 'END', label: 'END', description: '공연 종료' },
-];
+const updateErrorMessage = (error: unknown) => {
+  if (error instanceof ApiError) {
+    if (error.status === 404) return '등록되지 않은 가게예요. 서버 설정을 확인해 주세요.';
+    if (error.status === 400) return '잘못된 값이에요. 다시 눌러 주세요.';
+    return '바꾸지 못했어요. 다시 눌러 주세요.';
+  }
+  return '연결이 불안정해 바꾸지 못했어요. 다시 눌러 주세요.';
+};
 
+interface StoreAdminCardProps {
+  store: StoreEvent;
+  index: number;
+  entry: StoreCongestion | null;
+  ready: boolean;
+  token: string;
+  now: number;
+  onExpired: () => void;
+}
+
+// 가게 하나: 지금 단계 · 마지막 변경 시각 · 단계 버튼(여유/보통/혼잡/만석) · 현황 지우기.
+// 누르는 즉시 화면에 반영하고(낙관적 갱신), 서버가 거절하면 이 가게 값만 되돌린다
+const StoreAdminCard = ({
+  store,
+  index,
+  entry,
+  ready,
+  token,
+  now,
+  onExpired,
+}: StoreAdminCardProps) => {
+  const queryClient = useQueryClient();
+  const [error, setError] = useState<string | null>(null);
+  const level = entry?.level ?? null;
+  const updatedMs = parseServerTime(entry?.updatedAt);
+
+  const mutation = useMutation({
+    mutationFn: (next: CongestionLevel | null) => updateStoreCongestion(token, store.id, next),
+    onMutate: async (next) => {
+      setError(null);
+      // 받아 오던 목록이 낙관적 값을 덮어쓰지 않게 멈춘다
+      await queryClient.cancelQueries({ queryKey: storeCongestionKey });
+      const overview = queryClient.getQueryData<StoreCongestionOverview>(storeCongestionKey);
+      const previous = congestionOf(overview, store.id) ?? {
+        storeId: store.id,
+        level: null,
+        updatedAt: null,
+      };
+      queryClient.setQueryData<StoreCongestionOverview>(storeCongestionKey, (old) =>
+        patchStoreCongestion(old, { ...previous, level: next }),
+      );
+      return { previous };
+    },
+    onSuccess: (saved) => {
+      queryClient.setQueryData<StoreCongestionOverview>(storeCongestionKey, (old) =>
+        patchStoreCongestion(old, saved),
+      );
+    },
+    onError: (err, _next, context) => {
+      // 다른 가게를 바꾸는 중일 수 있으니 이 가게 값만 되돌린다
+      if (context) {
+        queryClient.setQueryData<StoreCongestionOverview>(storeCongestionKey, (old) =>
+          patchStoreCongestion(old, context.previous),
+        );
+      }
+      if (isUnauthorized(err)) {
+        onExpired();
+        return;
+      }
+      setError(updateErrorMessage(err));
+    },
+  });
+
+  const disabled = !ready || mutation.isPending;
+
+  return (
+    <article className="relative overflow-clip rounded-[16px] border-2 border-ink bg-paper text-ink shadow-[5px_5px_0px_0px_var(--color-ink)]">
+      <header className="flex items-start justify-between gap-3 px-5 pb-4 pt-4">
+        <div className="min-w-0">
+          <p className="font-typewriter text-[12px] leading-4 opacity-60">
+            STORE {String(index + 1).padStart(2, '0')} · #{store.id}
+          </p>
+          <h2 className="pt-1 font-display text-[24px] leading-[30px]">{store.name}</h2>
+        </div>
+        {level ? (
+          <span className="pt-[2px]">
+            <CongestionBadge level={level} isEng={false} />
+          </span>
+        ) : (
+          <span className="mt-[2px] shrink-0 rounded-full border border-dashed border-ink/50 px-3 py-[3px] font-body-kr text-[13px] font-bold leading-4 text-ink/50">
+            미등록
+          </span>
+        )}
+      </header>
+
+      <div className="relative border-t border-dashed border-ink/50 px-5 pb-5 pt-4">
+        <span className="absolute -left-[10px] -top-[10px] size-5 rounded-full border border-ink bg-cream" />
+        <span className="absolute -right-[10px] -top-[10px] size-5 rounded-full border border-ink bg-cream" />
+
+        <p className="font-typewriter text-[12px] leading-4 opacity-70">
+          {mutation.isPending
+            ? '저장 중…'
+            : updatedMs !== null
+              ? `${formatUpdatedAgo(updatedMs, now, false)} · ${formatSeoulClock(updatedMs)}`
+              : '아직 현황이 등록되지 않았어요'}
+        </p>
+        {/* 화면 읽기 프로그램에는 저장 중·저장 결과만 알린다 (지난 시간 표시는 계속 바뀌므로 알리지 않음) */}
+        <span className="sr-only" aria-live="polite">
+          {mutation.isPending ? '저장 중' : mutation.isSuccess ? `${store.name} 저장했어요` : ''}
+        </span>
+
+        <div
+          className="grid grid-cols-4 gap-2 pt-3"
+          role="group"
+          aria-label={`${store.name} 혼잡도`}
+        >
+          {CONGESTION_LEVELS.map((item) => {
+            const selected = item === level;
+            return (
+              <button
+                key={item}
+                type="button"
+                disabled={disabled}
+                aria-pressed={selected}
+                onClick={() => {
+                  if (!selected) mutation.mutate(item);
+                }}
+                className={`h-12 rounded-[12px] border-2 border-ink font-display text-[17px] leading-6 transition-transform disabled:cursor-not-allowed ${
+                  selected
+                    ? `${CONGESTION_INFO[item].colorClass} translate-x-[2px] translate-y-[2px]`
+                    : 'bg-cream text-ink drop-shadow-[3px_3px_0px_var(--color-ink)] active:translate-x-[2px] active:translate-y-[2px] disabled:opacity-50'
+                }`}
+              >
+                {CONGESTION_INFO[item].label}
+              </button>
+            );
+          })}
+        </div>
+
+        <button
+          type="button"
+          disabled={disabled || level === null}
+          onClick={() => mutation.mutate(null)}
+          className="mt-3 h-10 w-full rounded-full border border-dashed border-ink/60 font-body-kr text-[13px] font-semibold text-ink/80 active:bg-cream disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          현황 지우기
+        </button>
+
+        {error && (
+          <p role="alert" className="pt-3 font-body-kr text-[13px] font-bold leading-5 text-rust">
+            {error}
+          </p>
+        )}
+      </div>
+    </article>
+  );
+};
+
+// 로그인을 확인한 뒤의 관리 화면
+const AdminConsole = ({
+  session,
+  onLogout,
+  onExpired,
+}: {
+  session: AdminSession;
+  onLogout: () => void;
+  onExpired: () => void;
+}) => {
+  const { data, isError, refetch, isFetching, isFetchedAfterMount } = useStoreCongestion({ poll: false });
+  const now = useServerNowEvery(15_000);
+  const expiresMs = adminSessionExpiresMs(session);
+
+  return (
+    <>
+      <div className="mt-5 flex items-center justify-between gap-3 rounded-[16px] border-2 border-ink bg-paper px-4 py-3 text-ink drop-shadow-[4px_4px_0px_var(--color-ink)]">
+        <div className="min-w-0">
+          <p className="font-typewriter text-[11px] leading-4 opacity-60">SESSION</p>
+          <p className="font-body-kr text-[14px] font-semibold leading-5">
+            {expiresMs !== null ? `${formatSeoulClock(expiresMs)}까지 로그인 유지` : '로그인됨'}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={onLogout}
+          className="flex h-10 shrink-0 items-center gap-2 rounded-full border-2 border-ink bg-ink px-4 font-body-kr text-[14px] font-semibold text-paper active:opacity-80"
+        >
+          <FiLogOut size={15} aria-hidden />
+          로그아웃
+        </button>
+      </div>
+
+      <div className="flex items-center justify-between gap-3 pt-6 text-ink">
+        <p className="font-typewriter text-[12px] leading-4 tracking-[3.6px] text-paper/80">STORES</p>
+        <button
+          type="button"
+          onClick={() => refetch()}
+          disabled={isFetching}
+          className="flex h-9 items-center gap-[6px] rounded-full bg-paper px-4 font-body-kr text-[13px] font-semibold text-ink/80 active:opacity-80 disabled:opacity-50"
+        >
+          <FiRefreshCw
+            size={14}
+            aria-hidden
+            className={isFetching ? 'animate-spin motion-reduce:animate-none' : ''}
+          />
+          새로고침
+        </button>
+      </div>
+
+      {!data && isError && (
+        <div className="pt-4">
+          <EmptyState
+            message="지금 현황을 불러오지 못했어요."
+            action={{ label: '다시 불러오기', onClick: () => refetch() }}
+          />
+        </div>
+      )}
+
+      <div className="flex flex-col gap-5 pt-4">
+        {storeEvents.map((store, index) => (
+          <StoreAdminCard
+            key={store.id}
+            store={store}
+            index={index}
+            entry={congestionOf(data, store.id)}
+            // 다른 화면에서 받아 둔 옛 값이 아니라 이 화면을 연 뒤 새로 받은 값을 보고 바꾸게 한다
+            ready={Boolean(data) && isFetchedAfterMount}
+            token={session.token}
+            now={now}
+            onExpired={onExpired}
+          />
+        ))}
+      </div>
+
+      <p className="pt-6 font-body-kr text-[13px] leading-5 text-ink/70">
+        손님 화면(가게 정보)은 30초마다 새로 받아요. 바꾼 뒤 손님 화면에 보이기까지 최대 30초 걸릴
+        수 있어요.
+      </p>
+    </>
+  );
+};
+
+// 관리자 화면: 가게별 실시간 혼잡도 바꾸기. 토큰이 없거나 만료됐거나 서버가 401이면 로그인으로.
+// 예전 공연 상태(동아리) 관리 화면은 백엔드가 없어 이 화면으로 바꿨다
 const AdminPage = () => {
-  const { data: profile, isLoading: profileLoading } = useQuery({
-    queryKey: ['user', 'me'],
-    queryFn: fetchMyProfile,
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  // 처음 그릴 때 한 번 읽는다 (로그아웃·만료 때는 아래에서 지우고 로그인으로 보냄).
+  // 넣어 둔 토큰이 이미 만료돼 지워졌어도 로그인 화면에 만료 안내를 띄우도록 그 사실을 기억한다
+  const [{ session, expiredOnLoad }] = useState(() => readAdminSession());
+  const expiresMs = session ? adminSessionExpiresMs(session) : null;
+  // 만료 시각을 지나는 순간 다시 그린다
+  const now = useServerNowAt([expiresMs]);
+
+  const sessionQuery = useQuery({
+    queryKey: ['admin', 'session'],
+    queryFn: () => fetchAdminSession(session!.token),
+    enabled: session !== null,
+    retry: (count, error) => !isUnauthorized(error) && count < 1,
+    staleTime: 0,
+    gcTime: 0,
   });
 
-  // 클럽 상태
-  const [selectedClubId, setSelectedClubId] = useState<number | null>(null);
-  const [selectedClubStatus, setSelectedClubStatus] = useState<ClubStatusUpdate | null>(null);
-  const [clubSuccessMsg, setClubSuccessMsg] = useState<string | null>(null);
-
-  const clubMutation = useMutation({
-    mutationFn: ({ clubId, clubStatus }: { clubId: number; clubStatus: ClubStatusUpdate }) =>
-      updateClubStatus(clubId, clubStatus),
-    onSuccess: () => {
-      const clubName = CLUBS.find((c) => c.clubId === selectedClubId)?.clubName;
-      setClubSuccessMsg(`"${clubName}" 상태가 "${selectedClubStatus}"로 변경되었습니다.`);
-    },
-    onError: (error: Error) => {
-      setClubSuccessMsg(null);
-      window.alert(`변경 실패: ${error.message}`);
-    },
-  });
-
-  const handleClubConfirm = () => {
-    if (!selectedClubId || !selectedClubStatus) return;
-    setClubSuccessMsg(null);
-    clubMutation.mutate({ clubId: selectedClubId, clubStatus: selectedClubStatus });
+  const leave = (state?: AdminLoginState) => {
+    clearAdminSession();
+    queryClient.removeQueries({ queryKey: ['admin'] });
+    navigate('/admin/login', { replace: true, state });
   };
 
-  if (profileLoading) {
+  const expired =
+    !session || expiresMs === null || now >= expiresMs || isUnauthorized(sessionQuery.error);
+  if (expired) {
+    clearAdminSession();
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="text-[14px] text-gray-400">확인 중...</p>
-      </div>
-    );
-  }
-
-  if (profile?.role !== 'ROLE_ADMIN') {
-    return (
-      <div className="flex min-h-screen items-center justify-center px-4">
-        <div className="text-center">
-          <p className="text-[18px] font-bold text-[#1e2235]">접근 권한이 없습니다</p>
-          <p className="mt-2 text-[14px] text-gray-500">관리자 계정으로 로그인해주세요.</p>
-        </div>
-      </div>
+      <Navigate to="/admin/login" replace state={session || expiredOnLoad ? EXPIRED_NOTICE : undefined} />
     );
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center px-4 py-12">
-      <div className="w-full max-w-[400px] flex flex-col gap-6">
+    <div className="flex flex-col px-5 pb-16 pt-5 text-ink">
+      <RetroPageHeader />
+      <RetroPageTitle title="관리자" caption="LIVE STATUS · STAFF" />
+      <p className="pt-3 font-body-kr text-[14px] leading-5 text-paper/80">
+        버튼을 누르면 가게 정보 화면의 실시간 현황이 바뀌어요.
+      </p>
 
-        {/* 공연 상태 변경 */}
-        <section className="rounded-[20px] bg-white px-6 py-6 shadow-sm">
-          <h2 className="mb-1 text-[20px] font-bold text-[#1e2235]">공연 상태 변경</h2>
-          <p className="mb-5 text-[13px] text-gray-500">특정 동아리의 공연 상태를 변경합니다.</p>
-
-          {/* 동아리 드롭다운 */}
-          <div className="mb-4">
-            <label className="mb-1.5 block text-[13px] font-semibold text-gray-600">동아리 선택</label>
-            <select
-              value={selectedClubId ?? ''}
-              onChange={(e) => setSelectedClubId(Number(e.target.value) || null)}
-              className="w-full rounded-[12px] border-2 border-gray-200 bg-white px-4 py-3 text-[15px] text-[#1e2235] focus:border-[#4362d0] focus:outline-none"
-            >
-              <option value="">선택해주세요</option>
-              {CLUBS.map((club) => (
-                <option key={club.clubId} value={club.clubId}>
-                  {club.clubName}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* 상태 버튼 */}
-          <div className="mb-4 flex gap-3">
-            {CLUB_STATUS_OPTIONS.map((option) => {
-              const isSelected = selectedClubStatus === option.value;
-              return (
-                <button
-                  key={option.value}
-                  onClick={() => setSelectedClubStatus(option.value)}
-                  className={`flex flex-1 items-center justify-between rounded-[14px] border-2 px-5 py-4 text-left transition-colors ${
-                    isSelected
-                      ? 'border-[#4362d0] bg-[#4362d0]/5'
-                      : 'border-gray-200 bg-white hover:border-gray-300'
-                  }`}
-                >
-                  <div>
-                    <p className={`text-[15px] font-bold ${isSelected ? 'text-[#4362d0]' : 'text-[#1e2235]'}`}>
-                      {option.label}
-                    </p>
-                    <p className="text-[12px] text-gray-500">{option.description}</p>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-
-          <button
-            onClick={handleClubConfirm}
-            disabled={!selectedClubId || !selectedClubStatus || clubMutation.isPending}
-            className={`w-full rounded-[14px] py-[14px] text-[15px] font-bold text-white transition-opacity ${
-              selectedClubId && selectedClubStatus && !clubMutation.isPending
-                ? 'bg-[#4362d0] active:opacity-80'
-                : 'cursor-not-allowed bg-gray-300'
-            }`}
-          >
-            {clubMutation.isPending ? '변경 중...' : '확인'}
-          </button>
-
-          {clubSuccessMsg && (
-            <div className="mt-3 rounded-[12px] bg-green-50 px-4 py-3 text-[13px] font-medium text-green-700">
-              ✓ {clubSuccessMsg}
-            </div>
-          )}
-        </section>
-
-      </div>
+      {sessionQuery.isPending ? (
+        <div className="mt-6 rounded-[16px] border-2 border-ink bg-paper px-5 py-8 text-center font-body-kr text-[15px] font-semibold text-ink/70 drop-shadow-[5px_5px_0px_var(--color-ink)]">
+          로그인을 확인하고 있어요…
+        </div>
+      ) : sessionQuery.isError ? (
+        <div className="pt-6">
+          <EmptyState
+            message="로그인을 확인하지 못했어요. 연결을 확인해 주세요."
+            action={{ label: '다시 시도', onClick: () => sessionQuery.refetch() }}
+          />
+        </div>
+      ) : (
+        <AdminConsole
+          session={session}
+          onLogout={() => leave()}
+          onExpired={() => leave(EXPIRED_NOTICE)}
+        />
+      )}
     </div>
   );
 };
