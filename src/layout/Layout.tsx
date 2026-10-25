@@ -21,7 +21,7 @@ const REDESIGNED_PATHS = [
   /^\/yard(\/\d+)?$/,
   /^\/pub(\/\d+)?$/,
   /^\/foodtruck(\/\d+)?$/,
-  /^\/stores$/,
+  /^\/stores(\/\d+)?$/,
 ];
 
 interface LayoutProps {

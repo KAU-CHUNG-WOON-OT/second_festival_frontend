@@ -7,6 +7,6 @@ export const fallbackPath = (pathname: string, search: string) => {
   if (/^\/game\/[^/]+$/.test(pathname) && hasHangmentleViewKey(new URLSearchParams(search))) {
     return pathname;
   }
-  const list = pathname.match(/^\/(yard|pub|foodtruck|game)\/[^/]+$/)?.[1];
+  const list = pathname.match(/^\/(yard|pub|foodtruck|stores|game)\/[^/]+$/)?.[1];
   return list ? `/${list}` : '/home';
 };

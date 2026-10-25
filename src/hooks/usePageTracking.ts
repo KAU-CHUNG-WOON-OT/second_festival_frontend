@@ -31,9 +31,11 @@ export const usePageTracking = () => {
           ? 'Booth Detail'
           : location.pathname.startsWith('/pub/')
             ? 'Pub Detail'
-            : location.pathname.startsWith('/game/')
-              ? 'Game Play'
-              : location.pathname);
+            : location.pathname.startsWith('/stores/')
+              ? 'Store Detail'
+              : location.pathname.startsWith('/game/')
+                ? 'Game Play'
+                : location.pathname);
 
     track('page_viewed', { path: location.pathname, page_name: pageName });
   }, [location.pathname]);

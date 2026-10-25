@@ -20,6 +20,7 @@ describe('fallbackPath', () => {
     expect(fallbackPath('/yard/3', '')).toBe('/yard');
     expect(fallbackPath('/pub/12', '?utm_source=x')).toBe('/pub');
     expect(fallbackPath('/foodtruck/1', '')).toBe('/foodtruck');
+    expect(fallbackPath('/stores/401', '')).toBe('/stores');
     expect(fallbackPath('/game/bomb', '')).toBe('/game');
     expect(fallbackPath('/notice', '?round=1')).toBe('/home');
     expect(fallbackPath('/info', '')).toBe('/home');
