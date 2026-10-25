@@ -7,8 +7,8 @@ import type { BoothData } from '../../data/boothData';
 interface BoothGridProps {
   booths: BoothData[];
   onBoothClick: (booth: BoothData) => void;
-  // 결과가 없을 때 필터·검색어 초기화
-  onReset: () => void;
+  // 결과가 없을 때 필터·검색어 초기화 (필터가 있는 화면에서만)
+  onReset?: () => void;
 }
 
 const BoothGrid = ({ booths, onBoothClick, onReset }: BoothGridProps) => {
@@ -19,7 +19,7 @@ const BoothGrid = ({ booths, onBoothClick, onReset }: BoothGridProps) => {
       <EmptyState
         icon={<FiSearch size={32} />}
         message={t('search.noResults')}
-        action={{ label: t('search.reset'), onClick: onReset }}
+        action={onReset ? { label: t('search.reset'), onClick: onReset } : undefined}
       />
     );
   }
