@@ -10,6 +10,7 @@ const PAGE_NAMES: Record<string, string> = {
   '/timetable': 'Timetable',
   '/performance': 'Performance',
   '/foodtruck': 'FoodTruck List',
+  '/stores': 'Store Deals',
   '/yard': 'Yard List',
   '/pub': 'Pub List',
   '/makers': 'Makers',

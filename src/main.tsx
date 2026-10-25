@@ -18,6 +18,7 @@ import TimetablePage from './pages/TimetablePage';
 import PerformancePage from './pages/PerformancePage';
 import FoodTruckPage from './pages/FoodTruckPage';
 import FoodTruckDetailPage from './pages/FoodTruckDetailPage';
+import StoreEventPage from './pages/StoreEventPage';
 import YardPage from './pages/YardPage';
 import BoothDetailPage from './pages/BoothDetailPage';
 import PubPage from './pages/PubPage';
@@ -47,6 +48,7 @@ createRoot(document.getElementById('root')!).render(
               <Route path="/performance" element={<PerformancePage />} />
               <Route path="/foodtruck" element={<FoodTruckPage />} />
               <Route path="/foodtruck/:id" element={<FoodTruckDetailPage />} />
+              <Route path="/stores" element={<StoreEventPage />} />
               <Route path="/yard" element={<YardPage />} />
               <Route path="/yard/:id" element={<BoothDetailPage />} />
               <Route path="/pub" element={<PubPage />} />

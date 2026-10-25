@@ -26,12 +26,13 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const logoTapCount = useRef(0);
   const logoTapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // TODO: 시안의 '가게 정보', '실시간 좌석'은 아직 페이지가 없어 제외
+  // TODO: 시안의 '실시간 좌석'은 아직 페이지가 없어 제외
   const menuItems: MenuItem[] = [
     { label: t('nav.home'), path: '/home' },
     { label: t('nav.notice'), path: '/notice' },
     { label: t('nav.yard'), path: '/yard' },
     { label: t('nav.foodtruck'), path: '/foodtruck' },
+    { label: t('nav.stores'), path: '/stores' },
     { label: t('nav.performance'), path: '/performance' },
     { label: t('nav.game'), path: '/game' },
     { label: t('nav.makers'), path: '/makers' },
@@ -90,7 +91,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
               to={item.path}
               onClick={onClose}
               aria-current={pathname === item.path ? 'page' : undefined}
-              className={`py-[9.5px] font-body-kr text-[20px] leading-[22px] text-black ${
+              className={`py-[8px] font-body-kr text-[20px] leading-[22px] text-black ${
                 pathname === item.path ? 'font-bold' : 'font-medium'
               }`}
             >
