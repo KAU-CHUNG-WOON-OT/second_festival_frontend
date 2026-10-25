@@ -23,16 +23,17 @@ const CategoryList = ({ categories, selectedCategory, onSelect }: CategoryListPr
   };
 
   return (
-    // 페이지 여백(px-5)까지 스크롤 영역을 넓혀 첫 칩이 가장자리에서 잘리지 않게 함
-    <div className="-mx-5 flex gap-2 overflow-x-auto px-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    // 페이지 여백(px-5)까지 스크롤 영역을 넓혀 첫 칩이 가장자리에서 잘리지 않게 함.
+    // 스크롤 영역은 아래로 넘치는 그림자도 자르므로 그림자만큼 아래 여백을 두고 같은 크기의 음수 여백으로 상쇄
+    <div className="-mx-5 -mb-[3px] flex gap-2 overflow-x-auto px-5 pb-[3px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {categories.map((category) => (
         <button
           key={category}
           type="button"
           onClick={() => onSelect(category)}
           aria-pressed={selectedCategory === category}
-          className={`h-9 shrink-0 whitespace-nowrap rounded-full px-4 font-body-kr text-[14px] font-semibold leading-5 transition-colors active:opacity-80 ${
-            selectedCategory === category ? 'bg-ink text-paper' : 'bg-paper text-ink/70'
+          className={`h-9 shrink-0 whitespace-nowrap rounded-full border-2 border-ink px-4 font-body-kr text-[14px] font-semibold leading-5 drop-shadow-[2px_2px_0px_var(--color-ink)] transition-transform active:translate-x-[1px] active:translate-y-[1px] ${
+            selectedCategory === category ? 'bg-ink text-paper' : 'bg-paper text-ink'
           }`}
         >
           {getCategoryLabel(category)}

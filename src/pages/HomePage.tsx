@@ -36,13 +36,14 @@ const HomePage = () => {
         />
       )}
 
-      <section className="px-5 pb-10 pt-8">
+      {/* 게임(행사)을 맨 위에 얇게 */}
+      <section className="flex flex-col gap-6 px-5 pb-10 pt-6">
+        <HomeGameSection to="/game" />
         <HomeQuickMenuGrid items={QUICK_MENUS} />
       </section>
 
-      <section className="flex flex-col gap-8 px-5 pb-12">
+      <section className="px-5 pb-12">
         <HomeLineupCard />
-        <HomeGameSection to="/game" />
       </section>
     </div>
   );

@@ -71,9 +71,7 @@ const StoreEventPage = () => {
       <RetroPageHeader showMenu />
       <RetroPageTitle title={t('nav.stores')} caption="FESTIVAL DEALS" />
       <p className="pt-3 font-body-kr text-[14px] leading-5 text-paper/80">
-        {isEng
-          ? 'During the festival, these shops near campus are running special deals.'
-          : '축제 기간에 학교 앞 가게에서 이런 행사를 해요.'}
+        {isEng ? 'Special deals just for KAU students!' : '항대인들을 위한 행사입니다!'}
       </p>
 
       <div className="flex flex-col gap-5 pt-6">
