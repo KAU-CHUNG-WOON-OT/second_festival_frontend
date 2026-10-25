@@ -45,7 +45,7 @@ export const LoginCard = ({ round }: { round: number }) => {
   return (
     <section className={`${GAME_CARD} text-center`}>
       <p className="font-display text-[20px] leading-7">
-        {isEng ? 'Log in to join the event' : '로그인하면 참여할 수 있어요'}
+        {isEng ? 'Log in to join the event' : '로그인하면 참여할 수 있어요!'}
       </p>
       <p className="pb-4 pt-2 font-body-kr text-[14px] leading-5 opacity-70">
         {isEng

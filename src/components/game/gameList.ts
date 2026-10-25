@@ -71,7 +71,7 @@ export const GAMES: GameEntry[] = [
     id: 'stop',
     title: '10초 멈추기',
     title_en: '10-Second Stop',
-    sub: '정확히 10.00초에 멈춰라',
+    sub: '정확히 10.00초에 멈추기',
     sub_en: 'Stop at exactly 10.00 seconds',
     caption: 'TRACK B-04 · 10 SEC',
     colorClass: 'bg-olive text-paper',

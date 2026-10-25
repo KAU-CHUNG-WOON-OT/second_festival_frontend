@@ -63,7 +63,7 @@ const HangmentleIntro = () => {
 
   const slides: Slide[] = [
     {
-      title: isEng ? 'Find the secret word' : '정답 단어를 찾는 게임이에요',
+      title: isEng ? 'Find the secret word' : '정답 단어를 찾는 게임이에요.',
       body: isEng
         ? 'Type a word and we tell you how close its meaning is to the answer, as a similarity score (%).'
         : // \u2060(단어 잇기): '유사도(%)로'가 중간에서 줄이 바뀌지 않게
@@ -80,7 +80,7 @@ const HangmentleIntro = () => {
       ),
     },
     {
-      title: isEng ? 'Similarity is your clue' : '유사도가 힌트예요',
+      title: isEng ? 'Similarity is your clue' : '유사도가 힌트예요!',
       body: isEng
         ? 'The closer the meaning, the nearer to 100%. Words in the top 1000 also show their rank.'
         : '정답과 가까울수록 100%에 가까워져요. 1000위 안에 들면 순위도 나와요.',
@@ -121,14 +121,14 @@ const HangmentleIntro = () => {
       ),
     },
     {
-      title: isEng ? 'Log in to join' : '로그인하고 참여하세요',
+      title: isEng ? 'Log in to join' : '로그인하고 참여하세요!',
       body: isEng
         ? 'Only players logged in with Kakao can join the events. Anyone can play the practice puzzles.'
-        : '이벤트는 카카오 로그인 후 참여할 수 있습니다. 연습 문제는 누구나 풀 수 있어요.',
+        : '이벤트는 카카오 로그인 후 참여할 수 있습니다. 연습\u00a0문제는 누구나 풀 수 있어요.',
       visual: isLogin ? (
         <p className="flex h-11 items-center justify-center gap-2 rounded-full border border-ink bg-cream font-body-kr text-[14px] font-semibold">
           <FiCheck aria-hidden size={16} />
-          {isEng ? 'You are logged in' : '로그인되어 있어요'}
+          {isEng ? 'You are logged in' : '로그인되어 있어요.'}
         </p>
       ) : (
         <KakaoLoginButton source="hub" />

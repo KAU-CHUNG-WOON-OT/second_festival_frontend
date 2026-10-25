@@ -141,7 +141,7 @@ const StoreAdminCard = ({
             ? '저장 중…'
             : updatedMs !== null
               ? `${formatUpdatedAgo(updatedMs, now, false)} · ${formatSeoulClock(updatedMs)}`
-              : '아직 등록된 현황이 없습니다.'}
+              : '아직 등록된 현황 없음.'}
         </p>
         {/* 화면 읽기 프로그램에는 저장 중·저장 결과만 알린다 (지난 시간 표시는 계속 바뀌므로 알리지 않음) */}
         <span className="sr-only" aria-live="polite">
@@ -271,8 +271,7 @@ const AdminConsole = ({
       </div>
 
       <p className="pt-6 font-body-kr text-[13px] leading-5 text-ink/70">
-        손님 화면(가게 정보)&#8288;은 30초마다 갱신됩니다. 바꾼 뒤 손님 화면에 보이기까지 최대 30초가
-        걸릴 수 있어요.
+        손님 화면(가게 정보)&#8288;은 30초마다 갱신. 반영까지 최대 30초 소요.
       </p>
     </>
   );
