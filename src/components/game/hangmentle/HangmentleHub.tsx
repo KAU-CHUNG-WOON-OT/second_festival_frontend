@@ -104,16 +104,10 @@ const EventRoundCard = ({ event, info, phase, loaded, isLogin, onOpen, onNeedLog
           <span className="block font-display text-[24px] leading-[30px]">
             {isEng ? event.titleEn : event.title}
           </span>
-          {event.test ? (
+          {!event.test && opensAtMs !== null && (
             <span className="block pt-1 font-body-kr text-[14px] leading-5 opacity-70">
-              {isEng ? 'Try the event flow in advance' : '이벤트 흐름을 미리 해 보는 문제예요'}
+              {formatOpensAt(opensAtMs, isEng)}
             </span>
-          ) : (
-            opensAtMs !== null && (
-              <span className="block pt-1 font-body-kr text-[14px] leading-5 opacity-70">
-                {formatOpensAt(opensAtMs, isEng)}
-              </span>
-            )
           )}
         </span>
         {action && <FiChevronRight size={20} aria-hidden className="shrink-0 opacity-60" />}
@@ -145,7 +139,7 @@ interface HangmentleHubProps {
   onPractice: () => void;
 }
 
-// 항멘틀 첫 화면(이벤트 안내): 설명 카드 · 연습하러 가기 · 10시·11시 문제 카드 · 테스트 문제 카드
+// 항멘틀 첫 화면(이벤트 안내): 테스트 문제 카드 · 설명 카드 · 연습하러 가기 · 10시·11시 문제 카드
 const HangmentleHub = ({ overview, onOpenRound, onPractice }: HangmentleHubProps) => {
   const { language } = useLanguage();
   const isEng = language === 'ENG';
@@ -160,8 +154,24 @@ const HangmentleHub = ({ overview, onOpenRound, onPractice }: HangmentleHubProps
     if (openedHere !== null) onOpenRound(openedHere, true);
   }, [openedHere, onOpenRound]);
 
+  const card = (event: HangmentleEventRound, i: number) => (
+    <EventRoundCard
+      key={event.round}
+      event={event}
+      info={phases[i].info}
+      phase={phases[i].phase}
+      loaded={!!overview}
+      isLogin={isLogin}
+      onOpen={() => onOpenRound(event.round, false)}
+      onNeedLogin={() => setLoginFor(event)}
+    />
+  );
+
   return (
     <>
+      {/* 테스트 문제는 화면 맨 위에 */}
+      {HANGMENTLE_HUB_ROUNDS.map((event, i) => event.test && card(event, i))}
+
       <HangmentleIntro />
 
       <button type="button" onClick={onPractice} className={SECONDARY_BUTTON}>
@@ -169,18 +179,7 @@ const HangmentleHub = ({ overview, onOpenRound, onPractice }: HangmentleHubProps
       </button>
 
       <div className="flex flex-col gap-4">
-        {HANGMENTLE_HUB_ROUNDS.map((event, i) => (
-          <EventRoundCard
-            key={event.round}
-            event={event}
-            info={phases[i].info}
-            phase={phases[i].phase}
-            loaded={!!overview}
-            isLogin={isLogin}
-            onOpen={() => onOpenRound(event.round, false)}
-            onNeedLogin={() => setLoginFor(event)}
-          />
-        ))}
+        {HANGMENTLE_HUB_ROUNDS.map((event, i) => !event.test && card(event, i))}
       </div>
 
       {loginFor && (
