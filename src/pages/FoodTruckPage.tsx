@@ -45,7 +45,7 @@ const FoodTruckPage = () => {
       <RetroPageTitle title={t('nav.foodtruck')} />
 
       <div className="pt-6">
-        <FestivalMap images={TRUCK_MAP_IMAGES} onClick={setMapImageSrc} />
+        <FestivalMap title="FOOD TRUCK MAP" images={TRUCK_MAP_IMAGES} onClick={setMapImageSrc} />
       </div>
       {/* 스크롤해도 분류·검색창은 상단바 아래에 붙어 있다 */}
       <StickyBar>

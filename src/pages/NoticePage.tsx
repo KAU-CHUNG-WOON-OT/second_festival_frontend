@@ -27,7 +27,7 @@ const NoticePage = () => {
 
   return (
     <div className="flex flex-col px-5 pb-16 pt-5 text-ink">
-      <RetroPageHeader />
+      <RetroPageHeader showMenu />
 
       <RetroPageTitle title={t("nav.notice")} />
 

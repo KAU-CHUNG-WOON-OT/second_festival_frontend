@@ -58,7 +58,7 @@ const Makers = () => {
 
   return (
     <div className="flex flex-col px-5 pb-16 pt-5 text-ink">
-      <RetroPageHeader title={isEng ? 'Makers' : '만든이'} />
+      <RetroPageHeader title={isEng ? 'Makers' : '만든이'} showMenu />
 
       <section className="mt-6 flex flex-col items-center rounded-[16px] border-2 border-ink bg-paper px-5 py-8 text-center drop-shadow-[6px_6px_0px_var(--color-ink)]">
         <img src={cheongunLogoLarge} alt="청운" width={160} height={108} />

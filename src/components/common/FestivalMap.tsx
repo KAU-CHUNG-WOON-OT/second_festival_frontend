@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { FiMaximize2 } from "react-icons/fi";
 
 interface MapImage {
   src: string;
@@ -6,11 +7,14 @@ interface MapImage {
 }
 
 interface FestivalMapProps {
+  // 카드 위 타자기 제목 (예: 'FOOD TRUCK MAP')
+  title: string;
   images: MapImage[];
   onClick: (imageSrc: string) => void;
 }
 
-const FestivalMap = ({ images, onClick }: FestivalMapProps) => {
+// 배치도 이미지 카드. 부스 정보의 배치도 카드(YardPage)와 같은 모양: 제목 · '탭하면 확대' 줄 + 테두리 두른 지도
+const FestivalMap = ({ title, images, onClick }: FestivalMapProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef(0);
@@ -60,8 +64,14 @@ const FestivalMap = ({ images, onClick }: FestivalMapProps) => {
   };
 
   return (
-    <div className="group rounded-[16px] border-2 border-ink bg-paper p-4 drop-shadow-[5px_5px_0px_var(--color-ink)]">
-      <div className="relative">
+    <div className="group rounded-[16px] border-2 border-ink bg-paper p-5 text-ink drop-shadow-[5px_5px_0px_var(--color-ink)]">
+      <p className="flex justify-between font-typewriter text-[12px] font-bold leading-4">
+        <span>{title}</span>
+        <span className="flex items-center gap-1 opacity-60">
+          탭하면 확대 <FiMaximize2 size={12} aria-hidden />
+        </span>
+      </p>
+      <div className="relative mt-2">
         <div
           ref={scrollRef}
           onScroll={handleScroll}
