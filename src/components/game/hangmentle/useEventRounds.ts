@@ -12,6 +12,7 @@ import {
   roundPhase,
   roundPollInterval,
   watchClosedRounds,
+  type HangmentleEventRound,
   type RoundPhaseEntry,
 } from '@/data/hangmentleEvent';
 import {
@@ -69,13 +70,14 @@ export const useEventRoundsOverview = (practice: boolean) => {
 export const roundInfoOf = (overview: HangmentleRoundsOverview | undefined, round: number) =>
   overview?.rounds.find((info) => info.round === round) ?? null;
 
-// 회차마다 지금 상태. 열리는 시각을 지나는 순간 다시 계산된다
+// 회차마다 지금 상태. 열리는 시각을 지나는 순간 다시 계산된다 (rounds: 기본은 실제 이벤트 회차만)
 export const useEventRoundPhases = (
   overview: HangmentleRoundsOverview | undefined,
+  rounds: readonly HangmentleEventRound[] = HANGMENTLE_EVENT_ROUNDS,
 ): (RoundPhaseEntry & { info: HangmentleRoundInfo | null })[] => {
-  const infos = HANGMENTLE_EVENT_ROUNDS.map((event) => roundInfoOf(overview, event.round));
+  const infos = rounds.map((event) => roundInfoOf(overview, event.round));
   const now = useServerNowAt(infos.map((info) => parseServerTime(info?.opensAt)));
-  return HANGMENTLE_EVENT_ROUNDS.map((event, i) => {
+  return rounds.map((event, i) => {
     const info = infos[i];
     return { round: event.round, info, phase: info ? roundPhase(info, now) : null };
   });

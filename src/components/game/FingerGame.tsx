@@ -43,10 +43,10 @@ const FingerGame = () => {
       : fingerCount === 1
         ? isEng
           ? 'Need one more finger'
-          : '한 명 더 올려주세요'
+          : '한 명 더 올려 주세요.'
         : isEng
           ? 'Everyone, put a finger on the screen'
-          : '다 같이 화면에 손가락을 올려주세요';
+          : '다 같이 화면에 손가락을 올려 주세요.';
 
   return (
     <div className="flex flex-col gap-4">

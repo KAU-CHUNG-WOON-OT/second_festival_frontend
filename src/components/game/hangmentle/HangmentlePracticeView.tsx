@@ -33,7 +33,7 @@ const RoundOpenBanner = ({ event, onJoin, onClose }: RoundOpenBannerProps) => {
         <div className="min-w-0 flex-1">
           <p className="font-typewriter text-[11px] leading-4 opacity-70">EVENT OPEN</p>
           <p className="font-display text-[18px] leading-6">
-            {isEng ? `The ${event.titleEn} is open!` : `${event.title}가 열렸어요`}
+            {isEng ? `The ${event.titleEn} is open!` : `${event.title}가 열렸습니다!`}
           </p>
         </div>
         <button
@@ -93,7 +93,7 @@ const HangmentlePracticeView = ({
             <>
               로그인 없이 누구나 풀 수 있는 연습 문제예요.
               <br />
-              유사도가 높은 단어를 실마리 삼아 정답을 찾아보세요.
+              유사도가 높은 단어를 단서로 정답을 찾아보세요.
               <br />
               연습 문제는 매일 자정에 새 문제로 바뀌어요.
             </>

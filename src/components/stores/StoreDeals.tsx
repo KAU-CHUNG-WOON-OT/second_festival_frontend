@@ -12,14 +12,12 @@ const DealList = ({ deals, isEng }: { deals: StoreDeal[]; isEng: boolean }) => (
           {isEng ? deal.menu_en : deal.menu}
         </span>
         {deal.price !== undefined && (
-          <span className="flex shrink-0 items-center gap-[6px]">
-            {/* '할인 1,000원'처럼 할인 표시를 금액 앞에 둔다 */}
-            {deal.discount && (
-              <span className="rounded-[4px] bg-rust px-[6px] py-[2px] font-body-kr text-[12px] font-bold leading-4 text-paper">
-                {isEng ? 'OFF' : '할인'}
-              </span>
-            )}
+          <span className={`flex shrink-0 items-baseline gap-1 ${deal.discount ? 'text-rust' : ''}`}>
             <span className="font-typewriter text-[18px] font-bold leading-6">{formatDealPrice(deal.price, isEng)}</span>
+            {/* 할인은 '1,000원 할인'처럼 금액 뒤에 붙여 할인된 가격으로 읽히지 않게 한다 */}
+            {deal.discount && (
+              <span className="font-body-kr text-[14px] font-bold leading-5">{isEng ? 'off' : '할인'}</span>
+            )}
           </span>
         )}
       </li>

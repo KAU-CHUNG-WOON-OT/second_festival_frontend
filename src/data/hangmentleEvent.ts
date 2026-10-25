@@ -21,6 +21,8 @@ export interface HangmentleEventRound {
   titleEn: string;
   // 안내에 쓰는 예정 시각 (서울). 실제로 열리는 시각은 서버의 opensAt을 따른다
   scheduledAt: string;
+  // 흐름 점검용 테스트 회차 (카드에 TEST로 표시)
+  test?: boolean;
 }
 
 export const HANGMENTLE_EVENT_ROUNDS: HangmentleEventRound[] = [
@@ -42,8 +44,8 @@ export const HANGMENTLE_EVENT_ROUNDS: HangmentleEventRound[] = [
   },
 ];
 
-// 실제 이벤트 전에 흐름을 시험해 보는 숨은 회차 (정답은 서버에만). 첫 화면 카드·자동 이동에는 넣지 않고
-// 주소(/game/hangmentle?round=9)로만 들어간다. 이벤트 전에 백엔드 9회차와 함께 지운다
+// 실제 이벤트 전에 흐름을 시험해 보는 테스트 회차 (정답은 서버에만). 첫 화면에 10시·11시 카드 아래 TEST 카드로 보인다.
+// 이벤트 전에 백엔드 9회차와 함께 지운다
 export const HANGMENTLE_TEST_ROUND: HangmentleEventRound = {
   round: 9,
   label: '테스트',
@@ -51,7 +53,11 @@ export const HANGMENTLE_TEST_ROUND: HangmentleEventRound = {
   title: '테스트 문제',
   titleEn: 'Test Puzzle',
   scheduledAt: '2026-10-25T00:00:00',
+  test: true,
 };
+
+// 첫 화면에 카드로 보이는 회차 (실제 이벤트 + 테스트)
+export const HANGMENTLE_HUB_ROUNDS: HangmentleEventRound[] = [...HANGMENTLE_EVENT_ROUNDS, HANGMENTLE_TEST_ROUND];
 
 export const findEventRound = (round: number) =>
   HANGMENTLE_EVENT_ROUNDS.find((event) => event.round === round) ??
@@ -99,7 +105,7 @@ export const solveRankText = (rank: number, isEng: boolean) => {
   if (rank <= HANGMENTLE_RANKING_SIZE) {
     return isEng ? `You placed ${ordinal(rank)}!` : `${rank}등으로 맞혔어요!`;
   }
-  return isEng ? `You were the ${ordinal(rank)} to solve it` : `${rank}번째로 맞혔어요`;
+  return isEng ? `You were the ${ordinal(rank)} to solve it` : `${rank}번째로 맞혔어요.`;
 };
 
 // 서버 채점 결과를 추측 목록 한 줄로. 모르는 단어면 null
@@ -147,28 +153,28 @@ export const classifyGuessError = (error: unknown): GuessErrorKind => {
 export const guessErrorText = (kind: GuessErrorKind, isEng: boolean, serverMessage?: string) => {
   switch (kind) {
     case 'notOpen':
-      return isEng ? 'This round is not open yet.' : '아직 열리지 않은 문제예요';
+      return isEng ? 'This round is not open yet.' : '아직 열리지 않은 문제입니다.';
     case 'tooMany':
       if (isEng) return 'Too many guesses. Please wait a moment and try again.';
-      return serverMessage?.trim() || '너무 빨리 추측하고 있어요. 잠시 후 다시 시도해 주세요';
+      return serverMessage?.trim() || '너무 빨리 추측하고 있습니다. 잠시 후 다시 시도해 주세요.';
     case 'invalid':
       return isEng
         ? 'Please check the word (up to 50 characters).'
-        : '단어를 확인해 주세요 (50자까지 입력할 수 있어요)';
+        : '단어를 확인해 주세요. 50자까지 입력할 수 있습니다.';
     case 'notReady':
       return isEng
         ? 'The puzzle is being prepared. Please try again shortly.'
-        : '문제를 준비하고 있어요. 잠시 후 다시 시도해 주세요';
+        : '문제를 준비하고 있습니다. 잠시 후 다시 시도해 주세요.';
     case 'notFound':
-      return isEng ? 'This round does not exist.' : '없는 문제예요';
+      return isEng ? 'This round does not exist.' : '없는 문제입니다.';
     case 'auth':
-      return isEng ? 'Please log in again.' : '로그인이 풀렸어요. 다시 로그인해 주세요';
+      return isEng ? 'Please log in again.' : '로그인이 만료되었습니다. 다시 로그인해 주세요.';
     case 'network':
       return isEng
         ? 'Connection problem. Please try again.'
-        : '연결이 불안정해요. 다시 시도해 주세요';
+        : '연결이 불안정합니다. 다시 시도해 주세요.';
     default:
-      return isEng ? 'Something went wrong. Please try again.' : '잠시 후 다시 시도해 주세요';
+      return isEng ? 'Something went wrong. Please try again.' : '잠시 후 다시 시도해 주세요.';
   }
 };
 

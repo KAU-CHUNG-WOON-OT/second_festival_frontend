@@ -68,13 +68,13 @@
   },
   "home": {
     "boothInfo": "Booth Info",
-    "yardEvent": "Yard Event",
+    "yardEvent": "Campus Club Booths",
     "foodTruck": "Food Truck",
     "foodLocations": "Food Locations",
     "performance": "Live Shows",
     "clubsEvents": "Clubs & Events",
-    "pubGuide": "Pub Guide",
-    "deptYard": "Dept & Yard",
+    "storeInfo": "Store Deals",
+    "localStores": "Local Partner Stores",
     "noticeBanner": "Campus Traffic Control During Festival"
   },
   "notice": {

@@ -64,7 +64,7 @@ describe('solveRankText', () => {
   it('랭킹 안이면 n등, 밖이면 n번째', () => {
     expect(solveRankText(1, false)).toBe('1등으로 맞혔어요!');
     expect(solveRankText(10, false)).toBe('10등으로 맞혔어요!');
-    expect(solveRankText(11, false)).toBe('11번째로 맞혔어요');
+    expect(solveRankText(11, false)).toBe('11번째로 맞혔어요.');
   });
 
   it('영어는 서수로 쓴다', () => {
@@ -147,10 +147,10 @@ describe('classifyGuessError', () => {
   });
 
   it('오류마다 짧은 안내 문구가 있다', () => {
-    expect(guessErrorText('notOpen', false)).toBe('아직 열리지 않은 문제예요');
-    expect(guessErrorText('network', false)).toBe('연결이 불안정해요. 다시 시도해 주세요');
+    expect(guessErrorText('notOpen', false)).toBe('아직 열리지 않은 문제입니다.');
+    expect(guessErrorText('network', false)).toBe('연결이 불안정합니다. 다시 시도해 주세요.');
     expect(guessErrorText('server', true)).toBe('Something went wrong. Please try again.');
-    expect(guessErrorText('invalid', false)).toBe('단어를 확인해 주세요 (50자까지 입력할 수 있어요)');
+    expect(guessErrorText('invalid', false)).toBe('단어를 확인해 주세요. 50자까지 입력할 수 있습니다.');
   });
 
   it('429는 서버 문구를 그대로, 없으면 기본 문구', () => {
@@ -158,7 +158,7 @@ describe('classifyGuessError', () => {
       '1분에 30번까지 추측할 수 있어요',
     );
     expect(guessErrorText('tooMany', false, '  ')).toBe(
-      '너무 빨리 추측하고 있어요. 잠시 후 다시 시도해 주세요',
+      '너무 빨리 추측하고 있습니다. 잠시 후 다시 시도해 주세요.',
     );
     expect(guessErrorText('tooMany', true, '한국어 문구')).toBe(
       'Too many guesses. Please wait a moment and try again.',

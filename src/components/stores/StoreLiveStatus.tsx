@@ -3,6 +3,7 @@ import { useStoreCongestion } from '../../hooks/useStoreCongestion';
 import { parseServerTime } from '../../data/hangmentleClock';
 import {
   CONGESTION_INFO,
+  CONGESTION_SERVICE_START_MS,
   CONGESTION_LEVELS,
   congestionDescription,
   congestionLabel,
@@ -49,10 +50,18 @@ const StoreLiveStatus = ({ storeId, isEng }: { storeId: number; isEng: boolean }
   const updatedMs = parseServerTime(entry?.updatedAt);
 
   let body;
+  const beforeService = now < CONGESTION_SERVICE_START_MS;
   if (isPending) {
     body = (
       <p className="pt-2 font-body-kr text-[14px] leading-[22px] text-ink/60">
-        {isEng ? 'Loading…' : '불러오는 중이에요…'}
+        {isEng ? 'Loading…' : '불러오는 중입니다…'}
+      </p>
+    );
+  } else if (!level && beforeService) {
+    // 축제 전: 아직 등록 전이거나 불러오지 못해도 언제부터인지 알려 준다
+    body = (
+      <p className="pt-2 font-body-kr text-[14px] leading-[22px] text-ink/70">
+        {isEng ? 'Available on the festival day.' : '축제 당일에 서비스됩니다.'}
       </p>
     );
   } else if (!data && isError) {
@@ -60,13 +69,13 @@ const StoreLiveStatus = ({ storeId, isEng }: { storeId: number; isEng: boolean }
       <p className="pt-2 font-body-kr text-[14px] leading-[22px] text-ink/70">
         {isEng
           ? "Couldn't load the live status. We'll try again shortly."
-          : '현황을 불러오지 못했어요. 잠시 후 다시 불러올게요.'}
+          : '현황을 불러오지 못했습니다. 잠시 후 다시 불러올게요.'}
       </p>
     );
   } else if (!level) {
     body = (
       <p className="pt-2 font-body-kr text-[14px] leading-[22px] text-ink/70">
-        {isEng ? 'No live status has been posted yet.' : '아직 현황이 등록되지 않았어요'}
+        {isEng ? 'No live status has been posted yet.' : '아직 등록된 현황 없음.'}
       </p>
     );
   } else {
