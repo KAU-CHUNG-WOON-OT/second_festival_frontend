@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { FiMapPin } from 'react-icons/fi';
 import RetroPageHeader from '../components/common/RetroPageHeader';
 import EmptyState from '../components/common/EmptyState';
 import StoreDeals from '../components/stores/StoreDeals';
@@ -47,8 +48,29 @@ const StoreDetailPage = () => {
         />
       )}
 
+      {/* 행사 없이 안내만 있는 가게(두꺼비하우스 등)는 '축제 행사' 카드 대신 사진 밑에 글자만 작게 */}
+      {!hasStoreDeals(store) && store.note && (
+        <p className="-mt-3 px-1 text-right font-body-kr text-[13px] leading-5 text-paper/80">
+          {isEng ? store.note_en : store.note}
+        </p>
+      )}
+
       {/* 실시간 혼잡도: 지금 단계와 바뀐 시각 (30초마다 새로 받음) */}
       <StoreLiveStatus storeId={store.id} isEng={isEng} />
+
+      {/* 네이버 지도의 가게 페이지 (거기서 길찾기). 휴대폰에서는 네이버 지도 앱으로 이어진다 */}
+      {store.naverMapUrl && (
+        <a
+          href={store.naverMapUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => track('store_directions_clicked', { store_id: store.id })}
+          className="flex h-14 w-full items-center justify-center gap-2 rounded-full border-2 border-ink bg-paper font-display text-[18px] leading-7 text-ink shadow-[4px_4px_0px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px]"
+        >
+          <FiMapPin size={20} aria-hidden />
+          {isEng ? 'Directions on Naver Map' : '네이버 지도로 길찾기'}
+        </a>
+      )}
 
       {(store.intro || store.about) && (
         <section className={CARD}>

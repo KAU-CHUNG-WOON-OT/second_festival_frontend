@@ -3,6 +3,7 @@ import { useStoreCongestion } from '../../hooks/useStoreCongestion';
 import { parseServerTime } from '../../data/hangmentleClock';
 import {
   CONGESTION_INFO,
+  CONGESTION_SERVICE_START_MS,
   CONGESTION_LEVELS,
   congestionDescription,
   congestionLabel,
@@ -49,10 +50,18 @@ const StoreLiveStatus = ({ storeId, isEng }: { storeId: number; isEng: boolean }
   const updatedMs = parseServerTime(entry?.updatedAt);
 
   let body;
+  const beforeService = now < CONGESTION_SERVICE_START_MS;
   if (isPending) {
     body = (
       <p className="pt-2 font-body-kr text-[14px] leading-[22px] text-ink/60">
         {isEng ? 'Loading…' : '불러오는 중이에요…'}
+      </p>
+    );
+  } else if (!level && beforeService) {
+    // 축제 전: 아직 등록 전이거나 불러오지 못해도 언제부터인지 알려 준다
+    body = (
+      <p className="pt-2 font-body-kr text-[14px] leading-[22px] text-ink/70">
+        {isEng ? 'Available on the festival day.' : '축제날에 서비스됩니다.'}
       </p>
     );
   } else if (!data && isError) {

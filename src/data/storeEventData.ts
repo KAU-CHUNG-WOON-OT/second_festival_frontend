@@ -45,6 +45,8 @@ export interface StoreEvent {
   name: string;
   // 가게 화면 맨 위 가게 사진
   image?: string;
+  // 가게 화면의 '네이버 지도로 길찾기' (네이버 지도 앱 '공유 → 링크 복사'로 받은 가게 페이지)
+  naverMapUrl?: string;
   // 묶음 없이 바로 보이는 행사
   deals?: StoreDeal[];
   groups?: StoreDealGroup[];
@@ -61,6 +63,7 @@ export const storeEvents: StoreEvent[] = [
   {
     id: 401,
     name: '골뱅이2',
+    naverMapUrl: 'https://map.naver.com/p/entry/place/851724475',
     image: golbaengi2Image,
     deals: [
       { menu: '전 메뉴', menu_en: 'All menu items', price: 1000, discount: true },
@@ -70,6 +73,7 @@ export const storeEvents: StoreEvent[] = [
   {
     id: 402,
     name: '용두동 고흥 쭈꾸미',
+    naverMapUrl: 'https://map.naver.com/p/entry/place/31642054',
     image: jjukkumiImage,
     deals: [
       { menu: '쭈삼', menu_en: 'Jjusam (octopus & pork belly)', price: 2000, discount: true },
@@ -80,6 +84,7 @@ export const storeEvents: StoreEvent[] = [
   {
     id: 403,
     name: '꼬끼오꼬꼬',
+    naverMapUrl: 'https://map.naver.com/p/entry/place/1069358980',
     image: kkokkoImage,
     deals: [{ menu: '소주·병맥주', menu_en: 'Soju & bottled beer', price: 1000, discount: true }],
     groups: [
@@ -93,6 +98,7 @@ export const storeEvents: StoreEvent[] = [
   {
     id: 404,
     name: '카페161',
+    naverMapUrl: 'https://map.naver.com/p/entry/place/2053440858',
     image: cafe161Image,
     deals: [
       { menu: '삼겹살 바베큐', menu_en: 'Pork belly barbecue', price: 12000 },
@@ -131,13 +137,15 @@ export const storeEvents: StoreEvent[] = [
   {
     id: 405,
     name: '두꺼비하우스',
+    naverMapUrl: 'https://map.naver.com/p/entry/place/1787228709',
     image: dukkeobiImage,
+    note: '할인행사 없음',
+    note_en: 'No discount',
   },
 ];
 
-// 행사·묶음·안내가 하나도 없으면 false (두꺼비하우스처럼 실시간 현황만 보여 주는 가게)
-export const hasStoreDeals = (store: StoreEvent) =>
-  Boolean(store.deals?.length || store.groups?.length || store.note);
+// 행사·묶음이 하나도 없으면 false. 그런 가게(두꺼비하우스)는 목록에 행사 칸이 없고, 안내(note)는 가게 화면 사진 밑에 글자로만
+export const hasStoreDeals = (store: StoreEvent) => Boolean(store.deals?.length || store.groups?.length);
 
 // 1000 → '1,000원' / '₩1,000'
 export const formatDealPrice = (price: number, isEng: boolean) => {
