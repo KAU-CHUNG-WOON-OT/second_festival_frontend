@@ -17,7 +17,7 @@ const GamePage = () => {
       <RetroPageHeader showMenu />
       <RetroPageTitle title={isEng ? 'Games' : '게임'} caption="PARTY GAMES" />
       <p className="pt-3 font-body-kr text-[14px] leading-5 text-paper/80">
-        {isEng ? 'All games are played by passing one phone around.' : '모든 게임은 폰 하나로 돌려가며 해요.'}
+        {isEng ? 'All games are played by passing one phone around.' : '모든 게임은 폰 하나로 돌려 가며 해요.'}
       </p>
 
       <div className="flex flex-col gap-4 pt-6">

@@ -68,7 +68,7 @@ const HangmentlePractice = ({ puzzleNo }: HangmentlePracticeProps) => {
     return (
       <section className={`${GAME_CARD} text-center`}>
         <p className="font-body-kr text-[15px] font-semibold opacity-70">
-          {isEng ? 'Loading words…' : '단어를 불러오는 중이에요…'}
+          {isEng ? 'Loading words…' : '단어를 불러오는 중입니다…'}
         </p>
       </section>
     );
@@ -78,7 +78,7 @@ const HangmentlePractice = ({ puzzleNo }: HangmentlePracticeProps) => {
     return (
       <section className={`${GAME_CARD} text-center`}>
         <p className="font-body-kr text-[15px] font-semibold opacity-70">
-          {isEng ? 'Could not load the word list.' : '단어 데이터를 불러오지 못했어요.'}
+          {isEng ? 'Could not load the word list.' : '단어 데이터를 불러오지 못했습니다.'}
         </p>
         <button
           type="button"

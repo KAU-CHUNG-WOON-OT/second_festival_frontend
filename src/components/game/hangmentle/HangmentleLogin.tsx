@@ -50,7 +50,7 @@ export const LoginCard = ({ round }: { round: number }) => {
       <p className="pb-4 pt-2 font-body-kr text-[14px] leading-5 opacity-70">
         {isEng
           ? `Guests can only see the hints and the ranking. The first ${HANGMENTLE_RANKING_SIZE} to solve it make the ranking.`
-          : `비회원은 힌트와 랭킹만 볼 수 있어요. 먼저 맞힌 ${HANGMENTLE_RANKING_SIZE}명이 랭킹에 올라요.`}
+          : `비회원은 힌트와 랭킹만 볼 수 있습니다. 먼저 맞힌 ${HANGMENTLE_RANKING_SIZE}명이 랭킹에 올라요.`}
       </p>
       <KakaoLoginButton source="round" round={round} />
     </section>

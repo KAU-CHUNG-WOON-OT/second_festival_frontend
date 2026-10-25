@@ -139,7 +139,7 @@ export const storeEvents: StoreEvent[] = [
     name: '두꺼비하우스',
     naverMapUrl: 'https://map.naver.com/p/entry/place/1787228709',
     image: dukkeobiImage,
-    note: '할인행사 없음',
+    note: '할인 행사 없음',
     note_en: 'No discount',
   },
 ];

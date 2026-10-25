@@ -33,7 +33,7 @@ const OAuthRedirectPage = () => {
         className="animate-spin [animation-duration:2.4s] motion-reduce:animate-none"
       />
       <p role="status" className="font-body-kr text-[16px] font-semibold leading-6">
-        로그인하는 중이에요…
+        로그인하는 중입니다…
       </p>
     </section>
   );

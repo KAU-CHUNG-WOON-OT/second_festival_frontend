@@ -29,7 +29,7 @@ const StoreDetailPage = () => {
       <div className="flex flex-col gap-6 px-5 pb-16 pt-5">
         <RetroPageHeader />
         <EmptyState
-          message={isEng ? 'Store not found.' : '가게 정보를 찾을 수 없어요.'}
+          message={isEng ? 'Store not found.' : '가게 정보를 찾을 수 없습니다.'}
           action={{ label: isEng ? 'Back to list' : '목록으로', onClick: () => navigate('/stores') }}
         />
       </div>

@@ -7,7 +7,7 @@ interface SearchBarProps {
   placeholder?: string;
 }
 
-const SearchBar = ({ value, onChange, placeholder = "검색어를 입력해주세요" }: SearchBarProps) => {
+const SearchBar = ({ value, onChange, placeholder = "검색어를 입력해 주세요" }: SearchBarProps) => {
   const { t } = useTranslation();
 
   return (
