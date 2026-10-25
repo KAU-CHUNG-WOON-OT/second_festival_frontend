@@ -144,9 +144,8 @@ export const storeEvents: StoreEvent[] = [
   },
 ];
 
-// 행사·묶음·안내가 하나도 없으면 false (두꺼비하우스처럼 실시간 현황만 보여 주는 가게)
-export const hasStoreDeals = (store: StoreEvent) =>
-  Boolean(store.deals?.length || store.groups?.length || store.note);
+// 행사·묶음이 하나도 없으면 false. 그런 가게(두꺼비하우스)는 목록에 행사 칸이 없고, 안내(note)는 가게 화면 사진 밑에 글자로만
+export const hasStoreDeals = (store: StoreEvent) => Boolean(store.deals?.length || store.groups?.length);
 
 // 1000 → '1,000원' / '₩1,000'
 export const formatDealPrice = (price: number, isEng: boolean) => {
