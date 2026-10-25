@@ -108,9 +108,9 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
         <p
           onClick={handleLogoTap}
-          className={`px-[31px] pb-10 font-display text-[36px] leading-9 text-rust ${isLogin ? 'mt-auto' : 'mt-6'}`}
+          className={`whitespace-nowrap px-[31px] pb-10 font-display text-[36px] leading-9 text-rust ${isLogin ? 'mt-auto' : 'mt-6'}`}
         >
-          활주로
+          활주로 <span className="font-typewriter text-[14px] tracking-[1.4px]">festival</span>
         </p>
       </aside>
     </div>
