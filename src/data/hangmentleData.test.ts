@@ -5,6 +5,7 @@ import {
   HANGMENTLE_PUZZLE_COUNT,
   HANGMENTLE_TOP_RANK,
   createHangmentleRound,
+  practicePuzzleNos,
   createScoreScale,
   formatSimilarity,
   normalizeGuess,
@@ -102,9 +103,40 @@ describe('도우미 함수', () => {
   });
 });
 
+describe('practicePuzzleNos', () => {
+  // 한국 시간으로 적은 시각 → epoch ms
+  const kst = (iso: string) => new Date(`${iso}+09:00`).getTime();
+
+  it('10/25는 1·2번, 그다음 날부터 자정마다 두 문제씩', () => {
+    expect(practicePuzzleNos(kst('2026-10-25T12:00:00'))).toEqual([1, 2]);
+    expect(practicePuzzleNos(kst('2026-10-26T00:00:00'))).toEqual([3, 4]);
+    expect(practicePuzzleNos(kst('2026-10-27T23:59:59'))).toEqual([5, 6]);
+    expect(practicePuzzleNos(kst('2026-10-28T22:00:00'))).toEqual([7, 8]);
+  });
+
+  it('바뀌는 시점은 한국 시간 자정 (UTC 15:00)', () => {
+    expect(practicePuzzleNos(Date.parse('2026-10-25T14:59:59Z'))).toEqual([1, 2]);
+    expect(practicePuzzleNos(Date.parse('2026-10-25T15:00:00Z'))).toEqual([3, 4]);
+  });
+
+  it('끝까지 가면 처음부터 다시, 시작일 전은 첫날 문제', () => {
+    expect(practicePuzzleNos(kst('2026-10-29T09:00:00'))).toEqual([1, 2]);
+    expect(practicePuzzleNos(kst('2026-10-30T09:00:00'))).toEqual([3, 4]);
+    expect(practicePuzzleNos(kst('2026-10-20T09:00:00'))).toEqual([1, 2]);
+  });
+});
+
 describe('생성된 퍼즐 데이터', () => {
   const dir = path.resolve(__dirname, '../../public/hangmentle');
   const realVocab: string[] = JSON.parse(fs.readFileSync(path.join(dir, 'vocab.json'), 'utf8'));
+
+  it('answers.txt 정답 수와 HANGMENTLE_PUZZLE_COUNT가 같다', () => {
+    const answers = fs
+      .readFileSync(path.resolve(__dirname, '../../scripts/hangmentle/answers.txt'), 'utf8')
+      .split('\n')
+      .filter((line) => line.trim() && !line.startsWith('#'));
+    expect(answers).toHaveLength(HANGMENTLE_PUZZLE_COUNT);
+  });
 
   it('정답 수만큼 퍼즐 파일이 있고, 단어 목록과 길이가 같다', () => {
     for (let n = 1; n <= HANGMENTLE_PUZZLE_COUNT; n += 1) {

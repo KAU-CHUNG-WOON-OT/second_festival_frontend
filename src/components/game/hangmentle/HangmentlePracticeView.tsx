@@ -5,11 +5,12 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import CategoryList from '../../common/CategoryList';
 import HangmentlePractice from './HangmentlePractice';
 import { useEventRoundPhases, useRoundOpenedHere } from './useEventRounds';
-import { HANGMENTLE_PUZZLE_COUNT } from '@/data/hangmentleData';
+import { HANGMENTLE_PRACTICE_SLOTS, practicePuzzleNos } from '@/data/hangmentleData';
 import { findEventRound, type HangmentleEventRound } from '@/data/hangmentleEvent';
 import type { HangmentleRoundsOverview } from '@/lib/api/hangmentle';
 
-const PUZZLE_NOS = Array.from({ length: HANGMENTLE_PUZZLE_COUNT }, (_, i) => i + 1);
+// 화면의 '연습 1·2' 칸 (주소 ?puzzle= 도 이 칸 번호). 칸마다 오늘 날짜에 맞는 문제를 보여 준다
+const PUZZLE_NOS = Array.from({ length: HANGMENTLE_PRACTICE_SLOTS }, (_, i) => i + 1);
 
 interface RoundOpenBannerProps {
   event: HangmentleEventRound;
@@ -75,6 +76,10 @@ const HangmentlePracticeView = ({
   const isEng = language === 'ENG';
   const label = (no: number) => (isEng ? `Practice ${no}` : `연습 ${no}`);
 
+  // 오늘의 문제 번호. 화면을 연 동안 자정이 지나도 풀던 문제는 그대로 둔다 (다시 열면 새 문제)
+  const [todayNos] = useState(() => practicePuzzleNos(Date.now()));
+  const todayNo = todayNos[puzzleNo - 1] ?? todayNos[0];
+
   const [dismissed, setDismissed] = useState<number[]>([]);
   const openedHere = useRoundOpenedHere(useEventRoundPhases(overview), dismissed);
   const openedEvent = openedHere === null ? null : findEventRound(openedHere);
@@ -83,12 +88,14 @@ const HangmentlePracticeView = ({
     <>
       <p className="font-body-kr text-[14px] leading-5 text-paper/80">
         {isEng
-          ? 'Practice puzzles for anyone, no login needed. Each guess shows how close its meaning is — use the scores as clues.'
+          ? 'Practice puzzles for anyone, no login needed. Each guess shows how close its meaning is — use the scores as clues. New puzzles every day at midnight (KST).'
           : (
             <>
               로그인 없이 누구나 풀 수 있는 연습 문제예요.
               <br />
               유사도가 높은 단어를 실마리 삼아 정답을 찾아보세요.
+              <br />
+              연습 문제는 매일 자정에 새 문제로 바뀌어요.
             </>
           )}
       </p>
@@ -99,8 +106,8 @@ const HangmentlePracticeView = ({
         onSelect={(selected) => onSelectPuzzle(PUZZLE_NOS.find((no) => label(no) === selected) ?? 1)}
       />
 
-      {/* 문제마다 새로 그려 입력창·강조 줄이 다른 문제로 넘어가지 않게 한다 */}
-      <HangmentlePractice key={puzzleNo} puzzleNo={puzzleNo} />
+      {/* 문제마다 새로 그려 입력창·강조 줄이 다른 문제로 넘어가지 않게 한다 (풀던 기록도 문제 번호별) */}
+      <HangmentlePractice key={todayNo} puzzleNo={todayNo} />
 
       {openedEvent && (
         <RoundOpenBanner

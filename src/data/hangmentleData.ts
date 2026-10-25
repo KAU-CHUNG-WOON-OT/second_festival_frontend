@@ -1,8 +1,23 @@
 // 항멘틀: 정답 단어와 뜻이 얼마나 가까운지(단어 임베딩 유사도)를 실마리로 정답을 찾는 게임.
 // 유사도는 scripts/hangmentle/generate.py로 미리 계산해 public/hangmentle/에 둔다.
 
-// scripts/hangmentle/answers.txt의 정답 수와 맞춘다
-export const HANGMENTLE_PUZZLE_COUNT = 2;
+// scripts/hangmentle/answers.txt의 정답 수와 맞춘다 (문제 파일 1~N)
+export const HANGMENTLE_PUZZLE_COUNT = 8;
+// 하루에 보여 주는 연습 문제 수 (연습 1, 연습 2)
+export const HANGMENTLE_PRACTICE_SLOTS = 2;
+// 이날(한국 시간)은 1·2번 문제, 다음 날부터 자정마다 두 문제씩 넘어가고 끝까지 가면 처음부터 다시 돈다
+const PRACTICE_START_DAY = Date.UTC(2026, 9, 25) / 86_400_000;
+const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
+
+// 오늘(한국 시간) 연습 1·2에 해당하는 문제 번호. 시작일 전이면 첫날 문제
+export const practicePuzzleNos = (nowMs: number): number[] => {
+  const kstDay = Math.floor((nowMs + KST_OFFSET_MS) / 86_400_000);
+  const dayIndex = Math.max(0, kstDay - PRACTICE_START_DAY);
+  return Array.from(
+    { length: HANGMENTLE_PRACTICE_SLOTS },
+    (_, slot) => ((dayIndex * HANGMENTLE_PRACTICE_SLOTS + slot) % HANGMENTLE_PUZZLE_COUNT) + 1,
+  );
+};
 // 이 순위 안에 들면 몇 위인지 알려 준다 (그 밖은 '1000위 밖')
 export const HANGMENTLE_TOP_RANK = 1000;
 // 정답을 맞힌 뒤 보여 주는 유사도 순위를 몇 개씩 늘릴지
