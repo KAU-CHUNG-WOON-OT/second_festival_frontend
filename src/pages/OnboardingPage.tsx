@@ -173,7 +173,7 @@ const OnboardingPage = () => {
                 <p className="mt-4 text-center font-body-kr text-[15px] leading-[1.45]">
                   비회원으로 접속하면
                   <br />
-                  <span className="font-bold">게임 경품</span>은 받을 수 없어요.
+                  <span className="font-bold">게임 행사</span>에 참여할 수 없어요.
                 </p>
 
                 <button
