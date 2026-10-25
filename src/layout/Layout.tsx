@@ -73,7 +73,8 @@ const Layout = ({ children }: LayoutProps) => {
       <div
         data-theme={timeOfDay}
         className="relative flex h-dvh w-full justify-center overflow-hidden"
-        style={{ background: isRedesignedPath ? 'var(--gradient-retro-dusk)' : 'var(--bg-gradient)' }}
+        // 온보딩도 넓은 화면에서 양옆에 보이는 바깥 배경은 다른 화면과 같은 노을 하늘로 맞춘다
+        style={{ background: isRedesignedPath || isOnboardingPath ? 'var(--gradient-retro-dusk)' : 'var(--bg-gradient)' }}
       >
         <div className="relative flex h-full w-full max-w-[430px] flex-col overflow-clip bg-transparent">
           {/* 새 디자인 페이지: 노을 하늘과 별은 화면에 고정되고 콘텐츠만 그 위로 스크롤 */}
