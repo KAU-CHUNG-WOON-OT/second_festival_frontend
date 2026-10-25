@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import heroImage from '@/assets/home_hero.png';
 import cheongunLogo from '@/assets/cheongun_logo.svg';
 import reelIcon from '@/assets/cassette_reel.svg';
 import kakaoIcon from '@/assets/kakao_icon.svg';
@@ -11,6 +10,15 @@ import { markOnboardingSeenInCurrentTab } from '../lib/onboardingSession';
 import { track } from '@/lib/mixpanel';
 import { getKakaoLoginUrl } from '@/lib/kakaoLogin';
 import { saveLoginReturnPath } from '@/lib/loginReturn';
+import SkyDots from '@/components/common/SkyDots';
+import { FestivalPill } from '@/components/common/RetroPageTitle';
+
+// 로그인 버튼: 다른 화면의 큰 버튼(gameStyles)과 같은 알약 모양
+const LOGIN_BUTTON =
+  'flex h-14 w-full items-center justify-center gap-3 rounded-full border-2 border-ink font-body-kr text-[16px] font-bold leading-6 drop-shadow-[4px_4px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px]';
+// 안내 창 안의 작은 버튼
+const NOTICE_BUTTON =
+  'h-12 flex-1 rounded-full border-2 border-ink font-body-kr text-[15px] font-bold drop-shadow-[3px_3px_0px_var(--color-ink)] transition-transform active:translate-x-[2px] active:translate-y-[2px]';
 
 const OnboardingPage = () => {
   const navigate = useNavigate();
@@ -47,21 +55,22 @@ const OnboardingPage = () => {
   const reel = <img src={reelIcon} alt="" width={44} height={44} className="shrink-0 rotate-[7.27deg]" />;
 
   return (
-    <section className="relative flex h-[100dvh] flex-col overflow-hidden bg-ink text-ink" aria-label="로그인 화면">
+    // 다른 화면과 같은 노을 하늘(Layout이 깔아 줌) + 별 위에 카세트와 로그인 버튼
+    <section className="relative flex h-[100dvh] flex-col overflow-hidden text-ink" aria-label="로그인 화면">
       <div className="relative flex flex-1 flex-col overflow-clip">
-        <img src={heroImage} alt="" className="absolute inset-0 size-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-b from-ink/50 via-ink/0 to-ink/80" />
+        <SkyDots night />
 
         <div className="relative flex items-center justify-between px-5 pt-5">
-          <span className="font-typewriter text-[12px] leading-4 tracking-[3.6px] text-paper">SIDE A</span>
-          <img src={cheongunLogo} alt="청운" width={51} height={36} />
+          <FestivalPill />
+          <img src={cheongunLogo} alt="청운" width={46} height={32} className="brightness-0 invert" />
         </div>
 
         <div className="relative flex flex-1 items-center justify-center px-5">
           <div className="w-full max-w-[363px] -rotate-1">
             <div className="rounded-[26px] border-2 border-ink bg-rust p-3 drop-shadow-[8px_8px_0px_var(--color-ink)]">
               <div className="rounded-[12px] border-2 border-ink bg-cream p-4">
-                <p className="font-typewriter text-[11px] font-bold leading-[16.5px] tracking-[3.3px] text-rust">
+                {/* 좁은 폰(390px 미만)에서는 글자 간격을 줄여 두 줄로 나뉘지 않게 */}
+                <p className="font-typewriter text-[11px] font-bold leading-[16.5px] tracking-[2.2px] text-rust min-[390px]:tracking-[3.3px]">
                   KOREA AEROSPACE UNIVERSITY
                 </p>
                 <h1 className="pt-1 font-condensed text-[64px] font-black leading-[61px]">활주로</h1>
@@ -80,7 +89,7 @@ const OnboardingPage = () => {
                   setGuestNoticeStep(1);
                   setIsGuestNoticeOpen(true);
                 }}
-                className="flex items-center justify-center gap-3 rounded-[16px] border-2 border-ink bg-[#fee500] px-6 py-[14px] font-body-kr text-[16px] font-bold leading-6 drop-shadow-[4px_4px_0px_var(--color-ink)]"
+                className={`${LOGIN_BUTTON} bg-[#fee500] text-ink`}
               >
                 <img src={kakaoIcon} alt="" width={20} height={19} />
                 카카오톡 로그인
@@ -91,7 +100,7 @@ const OnboardingPage = () => {
                   setGuestNoticeStep(2);
                   setIsGuestNoticeOpen(true);
                 }}
-                className="rounded-[16px] border-2 border-ink bg-[#2750b9] px-6 py-[14px] font-body-kr text-[16px] font-bold leading-6 text-paper drop-shadow-[4px_4px_0px_var(--color-ink)]"
+                className={`${LOGIN_BUTTON} bg-paper text-ink`}
               >
                 비회원으로 접속하기
               </button>
@@ -133,13 +142,14 @@ const OnboardingPage = () => {
           onClick={() => setIsGuestNoticeOpen(false)}
         >
           <div
-            className="relative w-full max-w-[340px] rounded-[20px] border-2 border-ink bg-paper px-5 pb-5 pt-6 drop-shadow-[6px_6px_0px_var(--color-ink)] onboarding-modal-in"
+            className="relative w-full max-w-[340px] rounded-[24px] border-2 border-ink bg-paper px-5 pb-5 pt-5 drop-shadow-[6px_6px_0px_var(--color-mustard)] onboarding-modal-in"
             role="dialog"
             aria-modal="true"
             aria-labelledby="guest-notice-title"
             onClick={(event) => event.stopPropagation()}
           >
-            <p id="guest-notice-title" className="text-center font-display text-[28px] leading-none">
+            <p className="text-center font-typewriter text-[12px] leading-4 tracking-[3.6px] text-rust">NOTICE</p>
+            <p id="guest-notice-title" className="pt-2 text-center font-display text-[28px] leading-none">
               주의
             </p>
 
@@ -155,7 +165,7 @@ const OnboardingPage = () => {
                   <button
                     type="button"
                     onClick={() => setGuestNoticeStep(2)}
-                    className="h-[46px] flex-1 rounded-[14px] border-2 border-ink bg-cream font-body-kr text-[15px] font-semibold"
+                    className={`${NOTICE_BUTTON} bg-cream`}
                   >
                     비회원으로 계속
                   </button>
@@ -165,7 +175,7 @@ const OnboardingPage = () => {
                       setIsGuestNoticeOpen(false);
                       handleKakaoLogin();
                     }}
-                    className="h-[46px] flex-1 rounded-[14px] border-2 border-ink bg-[#fee500] font-body-kr text-[15px] font-semibold"
+                    className={`${NOTICE_BUTTON} bg-[#fee500]`}
                   >
                     카카오로 가입
                   </button>
@@ -182,7 +192,7 @@ const OnboardingPage = () => {
                 <button
                   type="button"
                   onClick={completeOnboarding}
-                  className="mt-5 h-[46px] w-full rounded-[14px] border-2 border-ink bg-ink font-body-kr text-[15px] font-semibold text-paper"
+                  className={`${NOTICE_BUTTON} mt-5 w-full bg-ink text-paper`}
                 >
                   접속하기
                 </button>

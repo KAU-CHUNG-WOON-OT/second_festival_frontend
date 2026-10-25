@@ -45,7 +45,7 @@ const PubPage = () => {
       <RetroPageTitle title={t('nav.pub')} />
 
       <div className="pt-6">
-        <FestivalMap images={PUB_MAP_IMAGES} onClick={setMapImageSrc} />
+        <FestivalMap title="PUB MAP" images={PUB_MAP_IMAGES} onClick={setMapImageSrc} />
       </div>
       {/* 스크롤해도 검색창은 상단바 아래에 붙어 있다 */}
       <StickyBar>

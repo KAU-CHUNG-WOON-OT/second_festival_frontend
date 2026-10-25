@@ -27,7 +27,7 @@
 
 - 투명도는 `/숫자`로: `text-ink/60` (메타 정보), `border-ink/50` (점선), `bg-ink/70` (모달 배경)
 - 노을 그라디언트는 `--gradient-retro-dusk` 변수 하나로 정의돼 있다. 페이지 배경은 Layout이 깔아 주므로 페이지·섹션에 배경색을 따로 칠하지 않는다
-- 예외: 카카오 노랑 `#fee500`, 비회원 버튼 `#2750b9` (온보딩만)
+- 예외: 카카오 노랑 `#fee500` (카카오 로그인 버튼만)
 
 ## 2. 글꼴 역할
 
@@ -70,12 +70,12 @@
 
 ### 컨트롤 (칩 · 검색창 · 아이콘)
 
-카드는 레트로 테두리를 쓰지만, 노을 배경 위 작은 컨트롤은 테두리 없이 부드럽게 둔다.
+작은 컨트롤도 카드처럼 `border-2 border-ink` + 흐림 없는 작은 그림자로 맞춘다 (번지는 그림자·링은 주황 배경에서 지저분해 보이니 쓰지 않는다).
 
 | 요소 | 규칙 |
 |---|---|
-| 필터 칩 (`CategoryList`) | `h-9 rounded-full font-body-kr text-[14px] font-semibold`. 선택은 `bg-ink text-paper`, 나머지는 `bg-paper text-ink/70`. 번지는 그림자·링은 주황 배경에서 지저분해 보이니 쓰지 않는다. 스크롤 줄은 `-mx-5 px-5`로 화면 끝까지 넓혀 첫 칩이 잘리지 않게 한다 |
-| 검색창 (`SearchBar`) | `h-12 rounded-full bg-paper`, 포커스 시 `outline-paper`, 오른쪽 `FiSearch` |
+| 필터 칩 (`CategoryList`) | `h-9 rounded-full border-2 border-ink font-body-kr text-[14px] font-semibold` + 2px 그림자. 선택은 `bg-ink text-paper`, 나머지는 `bg-paper text-ink`. 스크롤 줄은 `-mx-5 px-5`로 화면 끝까지 넓혀 첫 칩이 잘리지 않게 하고, 스크롤 영역이 그림자를 자르지 않게 아래 여백 3px을 둔다 |
+| 검색창 (`SearchBar`) | `h-12 rounded-full border-2 border-ink bg-paper` + 3px 그림자, 포커스 시 안쪽 `bg-cream`, 오른쪽 `FiSearch` (입력이 있으면 진한 동그라미 `FiX`) |
 | 아이콘 | `react-icons/fi`(Feather)만 쓴다. `✕ ⌕ ▶ − +` 같은 글자 기호는 기기마다 이모지로 바뀌거나 크기가 어긋나므로 쓰지 않는다 (`FiX`, `FiSearch`, `FiPlay fill="currentColor"`, `FiMinus`, `FiPlus`, `FiChevronLeft/Right`) |
 
 ## 4. 페이지 뼈대
@@ -93,7 +93,7 @@ import RetroPageTitle from '../components/common/RetroPageTitle';
 
 | 컴포넌트 | props | 설명 |
 |---|---|---|
-| `RetroPageHeader` | `title?`, `showMenu?` | 흰 아이콘 헤더. 목록 페이지는 `showMenu`(사이드바 열기), 상세 페이지는 뒤로가기 `‹` + 가운데 `title` |
+| `RetroPageHeader` | `title?`, `showMenu?`, `logoLink?` | 흰 아이콘 헤더. 목록 페이지는 `showMenu`(사이드바 열기), 상세 페이지는 뒤로가기 `‹` + 가운데 `title`. `logoLink={false}`면 로고를 눌러도 홈으로 가지 않는다 (운영진 로그인) |
 | `RetroPageTitle` | `title`, `caption?`, `aside?` | 반투명 알약 "활주로: 항대인의 밤" → 얇은 48px 흰 제목 → 타자기 부제. `aside`는 제목 오른쪽 요소(새로고침 버튼 등) |
 | `FestivalPill` | — | 알약만 따로 쓸 때 (홈 히어로) |
 
@@ -110,6 +110,8 @@ import RetroPageTitle from '../components/common/RetroPageTitle';
 - 티켓 펀치 구멍은 배경을 흉내 낼 수 없으므로 `border border-ink bg-cream` 동그라미로 그린다
 - 별(`NIGHT_DOTS`)은 헤더·알약·제목·부제가 놓이는 왼쪽 위(y 80~220, x 300 미만)를 피해 둔다. 글자 사이에 박히면 마침표처럼 보인다
 - 한글 줄바꿈은 `body`의 `word-break: keep-all`로 단어 단위다. 계좌번호처럼 끊어야 하는 곳만 `break-all`
+- `body`에 `text-wrap: pretty`가 있어 마지막 줄에 낱말 하나만 남지 않는다. `(예: 가수)`처럼 붙어 있어야 읽히는 묶음은 `whitespace-nowrap` 조각으로 감싸고,
+  두 문장짜리 안내는 문장 사이에서 줄을 바꾼다 (`\n` + `whitespace-pre-line`)
 
 ## 5. 반복 장식 모티프
 

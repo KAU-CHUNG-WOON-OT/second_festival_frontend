@@ -84,7 +84,13 @@ const HangmentlePracticeView = ({
       <p className="font-body-kr text-[14px] leading-5 text-paper/80">
         {isEng
           ? 'Practice puzzles for anyone, no login needed. Each guess shows how close its meaning is — use the scores as clues.'
-          : '로그인 없이 누구나 풀 수 있는 연습 문제예요. 유사도가 높은 단어를 실마리 삼아 정답을 찾아보세요.'}
+          : (
+            <>
+              로그인 없이 누구나 풀 수 있는 연습 문제예요.
+              <br />
+              유사도가 높은 단어를 실마리 삼아 정답을 찾아보세요.
+            </>
+          )}
       </p>
 
       <CategoryList

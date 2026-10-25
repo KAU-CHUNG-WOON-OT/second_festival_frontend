@@ -37,15 +37,15 @@ const ChosungGame = () => {
           <ol className="list-decimal pt-3 pl-5 font-body-kr text-[14px] leading-6 opacity-80">
             {isEng ? (
               <>
-                <li>A pair of Korean initial consonants appears (e.g. ㄱㅅ).</li>
-                <li>Take turns saying a word with those initials within 10 seconds (e.g. 가수).</li>
+                <li>A pair of Korean initial consonants appears <span className="whitespace-nowrap">(e.g. ㄱㅅ).</span></li>
+                <li>Take turns saying a word with those initials within 10 seconds <span className="whitespace-nowrap">(e.g. 가수).</span></li>
                 <li>No repeats! Tap "Correct" to pass the turn.</li>
                 <li>Whoever runs out of time gets the penalty.</li>
               </>
             ) : (
               <>
-                <li>초성 두 개가 나와요. (예: ㄱㅅ)</li>
-                <li>돌아가며 10초 안에 그 초성으로 된 단어를 말해요. (예: 가수)</li>
+                <li>초성 두 개가 나와요. <span className="whitespace-nowrap">(예: ㄱㅅ)</span></li>
+                <li>돌아가며 10초 안에 그 초성으로 된 단어를 말해요. <span className="whitespace-nowrap">(예: 가수)</span></li>
                 <li>이미 나온 단어는 안 돼요! 맞히면 ‘성공’을 눌러 넘겨요.</li>
                 <li>시간 안에 못 말한 사람이 벌칙!</li>
               </>

@@ -17,6 +17,13 @@ import { HANGMENTLE_EVENT_ROUNDS, formatKstTime } from '@/data/hangmentleEvent';
 const AXIS_LOCK_PX = 8;
 // 이만큼(또는 카드 폭의 20%) 넘게 끌면 다음·이전 장으로 넘긴다
 const SWIPE_MIN_PX = 56;
+// 짧게 끌어도 이 속도(px/ms)보다 빠르게 튕기면 넘긴다
+const FLICK_PX_PER_MS = 0.35;
+// 손을 멈추고 이만큼 지나서 놓으면 튕긴 것으로 보지 않는다
+const FLICK_IDLE_MS = 100;
+// 이 시간 안에 이만큼 넘게 밀고 놓아도 튕긴 것으로 본다
+const QUICK_SWIPE_MS = 250;
+const QUICK_SWIPE_PX = 24;
 
 interface Slide {
   title: string;
@@ -30,6 +37,11 @@ interface Gesture {
   y: number;
   width: number;
   axis: 'x' | 'y' | null;
+  // 튕긴 속도를 재기 위한 시작 시각, 마지막 위치·시각과 속도(px/ms, 최근 움직임에 무게)
+  startT: number;
+  lastX: number;
+  lastT: number;
+  vx: number;
 }
 
 const MOCK_BOX = 'rounded-[12px] border border-ink bg-cream';
@@ -54,7 +66,8 @@ const HangmentleIntro = () => {
       title: isEng ? 'Find the secret word' : '정답 단어를 찾는 게임이에요',
       body: isEng
         ? 'Type a word and we tell you how close its meaning is to the answer, as a similarity score (%).'
-        : '단어를 입력하면 정답과 뜻이 얼마나 가까운지 유사도(%)로 알려 줘요.',
+        : // \u2060(단어 잇기): '유사도(%)로'가 중간에서 줄이 바뀌지 않게
+          '단어를 입력하면 정답과 뜻이 얼마나 가까운지 유사도\u2060(%)\u2060로 알려 줘요.',
       visual: (
         <div aria-hidden className="flex gap-2">
           <span className="flex h-10 min-w-0 flex-1 items-center rounded-full border border-ink/20 bg-cream px-4 font-body-kr text-[14px] text-ink/50">
@@ -151,6 +164,10 @@ const HangmentleIntro = () => {
       y: e.clientY,
       width: e.currentTarget.clientWidth,
       axis: null,
+      startT: e.timeStamp,
+      lastX: e.clientX,
+      lastT: e.timeStamp,
+      vx: 0,
     };
   };
 
@@ -168,6 +185,10 @@ const HangmentleIntro = () => {
       }
     }
     if (g.axis !== 'x') return;
+    const dt = e.timeStamp - g.lastT;
+    if (dt > 0) g.vx = 0.8 * ((e.clientX - g.lastX) / dt) + 0.2 * g.vx;
+    g.lastX = e.clientX;
+    g.lastT = e.timeStamp;
     // 첫 장·마지막 장에서 바깥으로 끌면 덜 따라온다
     const pastEdge = (index === 0 && dx > 0) || (index === last && dx < 0);
     setDragX(pastEdge ? dx / 3 : dx);
@@ -180,8 +201,12 @@ const HangmentleIntro = () => {
     if (g.axis === 'x' && !cancelled) {
       const dx = e.clientX - g.x;
       const threshold = Math.min(SWIPE_MIN_PX, g.width * 0.2);
-      if (dx <= -threshold) go(index + 1);
-      else if (dx >= threshold) go(index - 1);
+      // 멀리 끌었거나, 짧아도 같은 쪽으로 빠르게 튕겼으면 넘긴다
+      const vx = e.timeStamp - g.lastT > FLICK_IDLE_MS ? 0 : g.vx;
+      const quick = e.timeStamp - g.startT < QUICK_SWIPE_MS && Math.abs(dx) > QUICK_SWIPE_PX;
+      const flick = quick || (Math.abs(vx) >= FLICK_PX_PER_MS && Math.sign(vx) === Math.sign(dx));
+      if (dx <= -threshold || (flick && dx < 0)) go(index + 1);
+      else if (dx >= threshold || (flick && dx > 0)) go(index - 1);
     }
     setDragging(false);
     setDragX(0);
@@ -226,7 +251,7 @@ const HangmentleIntro = () => {
         }`}
       >
         <div
-          className={`flex ${dragging ? '' : 'transition-transform duration-300 ease-out motion-reduce:transition-none'}`}
+          className={`flex ${dragging ? '' : 'transition-transform duration-[380ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none'}`}
           style={{ transform: `translateX(calc(${-index * 100}% + ${dragX}px))` }}
         >
           {slides.map((slide, i) => (

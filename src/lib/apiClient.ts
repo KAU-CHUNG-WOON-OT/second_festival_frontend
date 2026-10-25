@@ -4,6 +4,8 @@ interface ApiErrorDetail {
   code?: string;
   message?: string;
   fieldErrors?: Array<{ field?: string; reason?: string }>;
+  // 관리자 로그인이 3번 틀려 잠겼을 때 다시 시도할 수 있을 때까지 남은 초
+  retryAfterSeconds?: number;
 }
 
 interface ApiResponse<T> {
