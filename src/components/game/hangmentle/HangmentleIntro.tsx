@@ -83,7 +83,7 @@ const HangmentleIntro = () => {
       title: isEng ? 'Similarity is your clue' : '유사도가 힌트예요',
       body: isEng
         ? 'The closer the meaning, the nearer to 100%. Words in the top 1000 also show their rank.'
-        : '가까울수록 100%에 가까워지고, 1000위 안에 들면 순위도 알려 줘요.',
+        : '정답과 가까울수록 100%에 가까워져요. 1000위 안에 들면 순위도 나와요.',
       visual: (
         <ul aria-hidden className="grid grid-cols-4 gap-2 text-center">
           {[
@@ -104,7 +104,7 @@ const HangmentleIntro = () => {
       title: isEng ? '10 PM & 11 PM events' : '밤 10시·11시 이벤트',
       body: isEng
         ? 'New puzzles open at 10 PM and 11 PM on Oct 28. The first 10 to solve each one make the ranking.'
-        : '10월 28일 밤 10시와 11시에 새 문제가 열려요. 먼저 맞힌 10명이 랭킹에 올라요.',
+        : '10월 28일 밤 10시와 11시에 새 문제가 열립니다. 먼저 맞힌 10명이 랭킹에 올라요.',
       visual: (
         <div aria-hidden className="grid grid-cols-2 gap-2">
           {HANGMENTLE_EVENT_ROUNDS.map((event) => (
@@ -124,7 +124,7 @@ const HangmentleIntro = () => {
       title: isEng ? 'Log in to join' : '로그인하고 참여하세요',
       body: isEng
         ? 'Only players logged in with Kakao can join the events. Anyone can play the practice puzzles.'
-        : '이벤트는 카카오 로그인한 사람만 참여할 수 있어요. 연습 문제는 누구나 풀 수 있어요.',
+        : '이벤트는 카카오 로그인 후 참여할 수 있습니다. 연습 문제는 누구나 풀 수 있어요.',
       visual: isLogin ? (
         <p className="flex h-11 items-center justify-center gap-2 rounded-full border border-ink bg-cream font-body-kr text-[14px] font-semibold">
           <FiCheck aria-hidden size={16} />

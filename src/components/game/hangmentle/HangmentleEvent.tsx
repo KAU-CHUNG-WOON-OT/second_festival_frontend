@@ -72,7 +72,7 @@ const UnstableNote = ({ isEng }: { isEng: boolean }) => (
     className="-mb-3 flex items-center justify-center gap-1.5 font-body-kr text-[13px] font-semibold leading-5 text-paper/80"
   >
     <span aria-hidden className="size-1.5 shrink-0 rounded-full bg-mustard" />
-    {isEng ? 'Connection is unstable' : '연결이 불안정해요'}
+    {isEng ? 'Connection is unstable' : '연결이 불안정합니다'}
   </p>
 );
 
@@ -224,7 +224,7 @@ const HangmentleEvent = ({ event, onShowHub }: HangmentleEventProps) => {
         <>
           <StatusCard
             label={cardLabel}
-            title={isEng ? 'Loading the puzzle…' : '문제를 불러오는 중이에요…'}
+            title={isEng ? 'Loading the puzzle…' : '문제를 불러오는 중입니다…'}
           />
           {ranking}
         </>
@@ -239,10 +239,10 @@ const HangmentleEvent = ({ event, onShowHub }: HangmentleEventProps) => {
             notFound
               ? isEng
                 ? 'This round does not exist.'
-                : '없는 문제예요'
+                : '없는 문제입니다'
               : isEng
                 ? 'Could not load the puzzle.'
-                : '문제를 불러오지 못했어요'
+                : '문제를 불러오지 못했습니다'
           }
         >
           {notFound ? (
@@ -282,12 +282,12 @@ const HangmentleEvent = ({ event, onShowHub }: HangmentleEventProps) => {
           <p className="pt-1 font-body-kr text-[14px] leading-5 opacity-70">
             {isEng
               ? `Opens ${formatOpensAt(opensAtMs, true)}`
-              : `${formatOpensAt(opensAtMs, false)}에 열려요`}
+              : `${formatOpensAt(opensAtMs, false)}에 열립니다.`}
           </p>
           <p className="mt-4 border-t border-dashed border-ink/50 pt-4 font-body-kr text-[13px] leading-5 opacity-70">
             {isEng
               ? 'Keep this page open — it turns into the puzzle the moment it opens.'
-              : '이 화면을 켜 두면 시간이 되는 순간 바로 문제로 바뀌어요.'}
+              : '화면을 켜 두면 시간이 되자마자 문제가 열려요.'}
           </p>
         </section>
         {loginCard}
@@ -322,7 +322,7 @@ const HangmentleEvent = ({ event, onShowHub }: HangmentleEventProps) => {
         {unstableNote}
         <StatusCard
           label={cardLabel}
-          title={isEng ? 'The puzzle is being prepared' : '문제를 준비하고 있어요'}
+          title={isEng ? 'The puzzle is being prepared' : '문제를 준비하고 있습니다'}
         >
           <StatusNote>
             {isEng ? 'Please check again in a moment.' : '잠시 후 다시 확인해 주세요.'}
@@ -338,7 +338,7 @@ const HangmentleEvent = ({ event, onShowHub }: HangmentleEventProps) => {
     return (
       <>
         {unstableNote}
-        <StatusCard label={cardLabel} title={isEng ? 'Not open yet' : '아직 열리지 않은 문제예요'} />
+        <StatusCard label={cardLabel} title={isEng ? 'Not open yet' : '아직 열리지 않은 문제입니다'} />
         {loginCard}
         {ranking}
       </>
@@ -388,7 +388,7 @@ const HangmentleEvent = ({ event, onShowHub }: HangmentleEventProps) => {
               <p className="pt-1 font-body-kr text-[14px] leading-5 opacity-90">
                 {isEng
                   ? `Solved in ${progress.guesses.length} guesses`
-                  : `${progress.guesses.length}번 만에 맞혔어요`}
+                  : `${progress.guesses.length}번 만에 맞혔어요.`}
               </p>
             )}
           </section>

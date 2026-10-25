@@ -105,7 +105,7 @@ export const solveRankText = (rank: number, isEng: boolean) => {
   if (rank <= HANGMENTLE_RANKING_SIZE) {
     return isEng ? `You placed ${ordinal(rank)}!` : `${rank}등으로 맞혔어요!`;
   }
-  return isEng ? `You were the ${ordinal(rank)} to solve it` : `${rank}번째로 맞혔어요`;
+  return isEng ? `You were the ${ordinal(rank)} to solve it` : `${rank}번째로 맞혔어요.`;
 };
 
 // 서버 채점 결과를 추측 목록 한 줄로. 모르는 단어면 null
@@ -153,28 +153,28 @@ export const classifyGuessError = (error: unknown): GuessErrorKind => {
 export const guessErrorText = (kind: GuessErrorKind, isEng: boolean, serverMessage?: string) => {
   switch (kind) {
     case 'notOpen':
-      return isEng ? 'This round is not open yet.' : '아직 열리지 않은 문제예요';
+      return isEng ? 'This round is not open yet.' : '아직 열리지 않은 문제입니다.';
     case 'tooMany':
       if (isEng) return 'Too many guesses. Please wait a moment and try again.';
-      return serverMessage?.trim() || '너무 빨리 추측하고 있어요. 잠시 후 다시 시도해 주세요';
+      return serverMessage?.trim() || '너무 빨리 추측하고 있습니다. 잠시 후 다시 시도해 주세요.';
     case 'invalid':
       return isEng
         ? 'Please check the word (up to 50 characters).'
-        : '단어를 확인해 주세요 (50자까지 입력할 수 있어요)';
+        : '단어를 확인해 주세요. 50자까지 입력할 수 있습니다.';
     case 'notReady':
       return isEng
         ? 'The puzzle is being prepared. Please try again shortly.'
-        : '문제를 준비하고 있어요. 잠시 후 다시 시도해 주세요';
+        : '문제를 준비하고 있습니다. 잠시 후 다시 시도해 주세요.';
     case 'notFound':
-      return isEng ? 'This round does not exist.' : '없는 문제예요';
+      return isEng ? 'This round does not exist.' : '없는 문제입니다.';
     case 'auth':
-      return isEng ? 'Please log in again.' : '로그인이 풀렸어요. 다시 로그인해 주세요';
+      return isEng ? 'Please log in again.' : '로그인이 만료되었습니다. 다시 로그인해 주세요.';
     case 'network':
       return isEng
         ? 'Connection problem. Please try again.'
-        : '연결이 불안정해요. 다시 시도해 주세요';
+        : '연결이 불안정합니다. 다시 시도해 주세요.';
     default:
-      return isEng ? 'Something went wrong. Please try again.' : '잠시 후 다시 시도해 주세요';
+      return isEng ? 'Something went wrong. Please try again.' : '잠시 후 다시 시도해 주세요.';
   }
 };
 

@@ -61,7 +61,7 @@ export const congestionDescription = (level: CongestionLevel, isEng: boolean) =>
 // 여유 1 ~ 만석 4 (게이지 칸 수)
 export const congestionStep = (level: CongestionLevel) => CONGESTION_LEVELS.indexOf(level) + 1;
 
-// 혼잡도 서비스 시작(축제 당일 0시, 서울). 이 전에는 현황이 없거나 불러오지 못해도 '축제날에 서비스됩니다'로 안내
+// 혼잡도 서비스 시작(축제 당일 0시, 서울). 이 전에는 현황이 없거나 불러오지 못해도 '축제 당일에 서비스됩니다'로 안내
 export const CONGESTION_SERVICE_START_MS = Date.parse('2026-10-28T00:00:00+09:00');
 
 const MINUTE_MS = 60_000;

@@ -74,7 +74,7 @@ const Makers = () => {
           )}
         </h2>
         <p className="pt-3 font-typewriter text-[16px] font-bold leading-6 tracking-[1.6px] text-rust">
-          2026
+          2026.10.28
         </p>
       </section>
 

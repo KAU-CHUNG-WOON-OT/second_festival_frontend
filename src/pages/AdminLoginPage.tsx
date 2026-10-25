@@ -13,12 +13,12 @@ export interface AdminLoginState {
 // 두 문장이면 문장 사이에서 줄을 바꾼다 (\n, 오류 칸은 whitespace-pre-line)
 const loginErrorMessage = (error: unknown) => {
   if (error instanceof ApiError) {
-    if (error.status === 401) return '비밀번호가 맞지 않아요';
-    if (error.status === 400) return '비밀번호를 입력해 주세요';
-    if (error.status === 429) return error.message || '잠시 후 다시 시도해 주세요';
-    return '로그인하지 못했어요.\n잠시 후 다시 시도해 주세요.';
+    if (error.status === 401) return '비밀번호가 맞지 않습니다.';
+    if (error.status === 400) return '비밀번호를 입력해 주세요.';
+    if (error.status === 429) return error.message || '잠시 후 다시 시도해 주세요.';
+    return '로그인하지 못했습니다.\n잠시 후 다시 시도해 주세요.';
   }
-  return '연결이 불안정해요.\n잠시 후 다시 시도해 주세요.';
+  return '연결이 불안정합니다.\n잠시 후 다시 시도해 주세요.';
 };
 
 // 같은 기기(IP)에서 연속으로 3번 틀리면 서버가 30초 동안 막고 남은 초를 보낸다. 그 밖의 오류는 null
@@ -85,7 +85,7 @@ const AdminLoginPage = () => {
       setPassword('');
       const seconds = lockSecondsOf(error);
       if (seconds !== null) {
-        setErrorMessage('비밀번호를 3번 틀렸어요.\n잠시 후 다시 시도해 주세요');
+        setErrorMessage('비밀번호를 3번 틀렸습니다.\n잠시 후 다시 시도해 주세요.');
         setLockSeconds(seconds);
         setLockedUntil(Date.now() + seconds * 1000);
       } else {
@@ -179,7 +179,7 @@ const AdminLoginPage = () => {
         <div className="relative flex items-center justify-between gap-3 border-t border-dashed border-ink/50 px-6 py-4">
           <span className="absolute -left-[10px] -top-[10px] size-5 rounded-full border border-ink bg-cream" />
           <span className="absolute -right-[10px] -top-[10px] size-5 rounded-full border border-ink bg-cream" />
-          <p className="text-balance font-body-kr text-[14px] leading-5 text-ink/70">운영진이 아니라면 나가기를 눌러 주세요</p>
+          <p className="text-balance font-body-kr text-[14px] leading-5 text-ink/70">운영진이 아니라면 나가기를 눌러 주세요.</p>
           <button
             type="button"
             onClick={() => {

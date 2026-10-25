@@ -33,7 +33,7 @@ const FoodTruckDetailPage = () => {
             dummyTrucks.length === 0
               ? isEng
                 ? 'Food truck info will be announced soon.'
-                : '푸드트럭 정보는 추후 공개 예정이에요.'
+                : '푸드트럭 정보는 추후 공개 예정입니다.'
               : t('common.truckNotFound')
           }
           action={{ label: t('common.backToList'), onClick: () => navigate('/foodtruck') }}

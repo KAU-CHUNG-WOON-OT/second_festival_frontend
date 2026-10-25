@@ -47,7 +47,7 @@ const HangmentleRanking = ({ round, label, myRank, live }: HangmentleRankingProp
       {entries === undefined ? (
         rankingQuery.isError ? (
           <div className="pt-2 text-center">
-            {status(isEng ? 'Could not load the ranking.' : '랭킹을 불러오지 못했어요.')}
+            {status(isEng ? 'Could not load the ranking.' : '랭킹을 불러오지 못했습니다.')}
             <button
               type="button"
               onClick={() => rankingQuery.refetch()}
@@ -57,10 +57,10 @@ const HangmentleRanking = ({ round, label, myRank, live }: HangmentleRankingProp
             </button>
           </div>
         ) : (
-          status(isEng ? 'Loading…' : '랭킹을 불러오는 중이에요…')
+          status(isEng ? 'Loading…' : '랭킹을 불러오는 중입니다…')
         )
       ) : entries.length === 0 ? (
-        status(isEng ? 'No one has solved it yet.' : '아직 맞힌 사람이 없어요')
+        status(isEng ? 'No one has solved it yet.' : '아직 맞힌 사람이 없어요.')
       ) : (
         <ol className="pt-2">
           {entries.map((entry) => {
@@ -110,7 +110,7 @@ const HangmentleRanking = ({ round, label, myRank, live }: HangmentleRankingProp
         {live
           ? isEng
             ? 'Times are KST. Refreshes every 30 seconds.'
-            : '맞힌 시각 기준이에요. 30초마다 새로 고쳐요.'
+            : '맞힌 시각 기준이며 30초마다 갱신됩니다.'
           : isEng
             ? `When the puzzle opens, the first ${HANGMENTLE_RANKING_SIZE} to solve it show up here.`
             : `문제가 열리면 먼저 맞힌 ${HANGMENTLE_RANKING_SIZE}명이 여기에 올라요.`}
