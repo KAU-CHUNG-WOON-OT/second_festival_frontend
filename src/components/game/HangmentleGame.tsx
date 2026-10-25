@@ -26,8 +26,8 @@ const HangmentleGame = () => {
   const event = view.kind === 'round' ? findEventRound(view.round) : null;
   const rootRef = useRef<HTMLDivElement>(null);
 
-  // 회차 요약 + 서버 시계 맞추기 (1분마다, 화면이 다시 보일 때)
-  const overviewQuery = useEventRoundsOverview();
+  // 회차 요약 + 서버 시계 맞추기 (1분마다, 화면이 다시 보일 때). 연습 화면에서는 회차가 열리기 5분 전부터 열릴 때까지만
+  const overviewQuery = useEventRoundsOverview(view.kind === 'practice');
 
   const go = useCallback(
     (next: HangmentleView, replace = false) =>

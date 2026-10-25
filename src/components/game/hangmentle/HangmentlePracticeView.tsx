@@ -64,6 +64,7 @@ interface HangmentlePracticeViewProps {
 }
 
 // 연습 화면: 연습 1·2 (브라우저에서 채점, 이벤트 API는 부르지 않음). 보는 동안 이벤트 문제가 열리면 안내만 띄운다
+// (회차 요약은 HangmentleGame이 회차가 열리기 5분 전부터 열릴 때까지만 받아 넘겨 준다)
 const HangmentlePracticeView = ({
   overview,
   puzzleNo,

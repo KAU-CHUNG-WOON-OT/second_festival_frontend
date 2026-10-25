@@ -42,9 +42,9 @@ export const useServerNow = () => {
   return now;
 };
 
-// 서버 시각(ms). 매초가 아니라 targets(열리는 시각 등)를 지나는 순간에만 새 값으로 다시 그린다
-export const useServerNowAt = (targets: readonly (number | null)[]) => {
-  const [now, setNow] = useState(serverNow);
+// clock으로 잰 지금 시각(ms). 매초가 아니라 targets를 지나는 순간에만 새 값으로 다시 그린다
+const useNowAt = (targets: readonly (number | null)[], clock: () => number) => {
+  const [now, setNow] = useState(clock);
   const key = targets.filter((target): target is number => target !== null).join(',');
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export const useServerNowAt = (targets: readonly (number | null)[]) => {
     let timer = 0;
     const update = () => {
       window.clearTimeout(timer);
-      const t = serverNow();
+      const t = clock();
       setNow(t);
       const upcoming = list.filter((target) => target > t);
       if (upcoming.length === 0) return;
@@ -65,7 +65,15 @@ export const useServerNowAt = (targets: readonly (number | null)[]) => {
       window.clearTimeout(timer);
       unsubscribe();
     };
-  }, [key]);
+  }, [key, clock]);
 
   return now;
 };
+
+// 서버 시각(ms). targets(열리는 시각 등)를 지나는 순간에만 새 값으로 다시 그린다
+export const useServerNowAt = (targets: readonly (number | null)[]) => useNowAt(targets, serverNow);
+
+const deviceNow = () => Date.now();
+
+// 기기 시각(ms). 서버 시계를 맞추기 전, 언제부터 서버에 물을지 정할 때 쓴다
+export const useDeviceNowAt = (targets: readonly (number | null)[]) => useNowAt(targets, deviceNow);

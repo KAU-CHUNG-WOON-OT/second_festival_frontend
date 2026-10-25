@@ -29,6 +29,7 @@ import {
   classifyRoundError,
   guessErrorText,
   guessFromResponse,
+  isNotSolvedError,
   resolveEventProgress,
   roundPhase,
   roundPollInterval,
@@ -62,6 +63,17 @@ const StatusCard = ({ label, title, children }: StatusCardProps) => (
 
 const StatusNote = ({ children }: { children: ReactNode }) => (
   <p className="pt-1 font-body-kr text-[14px] leading-5 opacity-70">{children}</p>
+);
+
+// 받아 둔 회차 정보는 그대로 보여 주면서, 다시 받기에 실패했다는 것만 작게 알린다
+const UnstableNote = ({ isEng }: { isEng: boolean }) => (
+  <p
+    role="status"
+    className="-mb-3 flex items-center justify-center gap-1.5 font-body-kr text-[13px] font-semibold leading-5 text-paper/80"
+  >
+    <span aria-hidden className="size-1.5 shrink-0 rounded-full bg-mustard" />
+    {isEng ? 'Connection is unstable' : '연결이 불안정해요'}
+  </p>
 );
 
 interface HangmentleEventProps {
@@ -123,14 +135,25 @@ const HangmentleEvent = ({ event, onShowHub }: HangmentleEventProps) => {
   // 이 기기에서 맞혔으면 정답을 안다 (서버는 정답을 따로 알려 주지 않는다)
   const answer = progress.guesses.find((guess) => guess.rank === 0)?.word ?? null;
   const myRank = record?.solved ? record.rank : null;
+  // 서버 기록(records/me)을 받지 못해 맞혔는지 아직 모름
+  const recordFailed = isLogin && recordQuery.isError && !record;
 
+  // 유사도 순위는 서버가 맞혔다고 할 때만 묻는다 (기기 기록만으로 물으면 403)
   const nearestQuery = useQuery({
     queryKey: hangmentleEventKeys.nearest(round, nearestCount),
     queryFn: () => fetchHangmentleNearest(round, nearestCount),
-    enabled: isLogin && solved && phase === 'open',
+    enabled: isLogin && record?.solved === true && phase === 'open',
     placeholderData: keepPreviousData,
     staleTime: Infinity,
+    retry: (failureCount, error) => !isNotSolvedError(error) && failureCount < 1,
   });
+  // 서버가 아직 안 맞혔다고(403 GAME-403) 하면 내 기록을 다시 받아 맞힌 상태를 서버에 맞춘다
+  const nearestError = nearestQuery.error;
+  useEffect(() => {
+    if (isNotSolvedError(nearestError)) {
+      queryClient.invalidateQueries({ queryKey: hangmentleEventKeys.myRecord(round) });
+    }
+  }, [nearestError, queryClient, round]);
 
   useEffect(() => {
     saveProgress(storageKey, localProgress);
@@ -194,16 +217,19 @@ const HangmentleEvent = ({ event, onShowHub }: HangmentleEventProps) => {
     </button>
   );
 
-  if (infoQuery.isPending) {
-    return (
-      <>
-        <StatusCard label={cardLabel} title={isEng ? 'Loading the puzzle…' : '문제를 불러오는 중이에요…'} />
-        {ranking}
-      </>
-    );
-  }
-
-  if (infoQuery.isError) {
+  // 처음 받는 중이거나 처음부터 받지 못했을 때만 이 화면. 받아 둔 정보가 있으면 다시 받기에 실패해도 아래에서 그대로 보여 준다
+  if (!info) {
+    if (!infoQuery.isError) {
+      return (
+        <>
+          <StatusCard
+            label={cardLabel}
+            title={isEng ? 'Loading the puzzle…' : '문제를 불러오는 중이에요…'}
+          />
+          {ranking}
+        </>
+      );
+    }
     const notFound = classifyRoundError(infoQuery.error) === 'notFound';
     return (
       <>
@@ -233,11 +259,14 @@ const HangmentleEvent = ({ event, onShowHub }: HangmentleEventProps) => {
   }
 
   // 여기부터 info가 있다
-  const loaded = infoQuery.data;
+  const loaded = info;
+  // 받아 둔 정보로 계속 보여 주는 중에 다시 받기가 실패함 (열리기 전에는 원래 간격대로 다시 묻는다)
+  const unstableNote = infoQuery.isError && <UnstableNote isEng={isEng} />;
 
   if (phase === 'countdown' && opensAtMs !== null) {
     return (
       <>
+        {unstableNote}
         <section className={`${GAME_CARD} text-center`}>
           <p className="font-typewriter text-[12px] leading-4 opacity-60">{cardLabel}</p>
           <p className="pt-4 font-body-kr text-[14px] font-semibold leading-5 opacity-70">
@@ -272,6 +301,7 @@ const HangmentleEvent = ({ event, onShowHub }: HangmentleEventProps) => {
     const waitedLong = opensAtMs !== null && now >= opensAtMs + OPENING_FAST_RETRY_MS;
     return (
       <>
+        {unstableNote}
         <StatusCard label={cardLabel} title={isEng ? 'Opening soon…' : '곧 열려요'}>
           <StatusNote>
             {isEng
@@ -289,6 +319,7 @@ const HangmentleEvent = ({ event, onShowHub }: HangmentleEventProps) => {
   if (phase === 'notReady' || !loaded.hints) {
     return (
       <>
+        {unstableNote}
         <StatusCard
           label={cardLabel}
           title={isEng ? 'The puzzle is being prepared' : '문제를 준비하고 있어요'}
@@ -306,6 +337,7 @@ const HangmentleEvent = ({ event, onShowHub }: HangmentleEventProps) => {
   if (phase === 'closed') {
     return (
       <>
+        {unstableNote}
         <StatusCard label={cardLabel} title={isEng ? 'Not open yet' : '아직 열리지 않은 문제예요'} />
         {loginCard}
         {ranking}
@@ -321,6 +353,7 @@ const HangmentleEvent = ({ event, onShowHub }: HangmentleEventProps) => {
   if (!isLogin) {
     return (
       <>
+        {unstableNote}
         <HintCard label={cardLabel} hints={hints} showScore={showScore} />
         {loginCard}
         {ranking}
@@ -330,6 +363,7 @@ const HangmentleEvent = ({ event, onShowHub }: HangmentleEventProps) => {
 
   return (
     <>
+      {unstableNote}
       <HangmentleBoard
         label={cardLabel}
         hints={hints}
@@ -373,9 +407,10 @@ const HangmentleEvent = ({ event, onShowHub }: HangmentleEventProps) => {
           }
           guessedWords={new Set(progress.guesses.map((guess) => guess.word))}
           showScore={showScore}
-          loading={nearestQuery.isPending || nearestQuery.isPlaceholderData}
-          error={nearestQuery.isError}
-          onRetry={() => nearestQuery.refetch()}
+          // 서버 기록을 받기 전에는 순위를 묻지 않으므로 기록을 못 받았으면 그쪽을 다시 받는다
+          loading={!recordFailed && (nearestQuery.isPending || nearestQuery.isPlaceholderData)}
+          error={recordFailed || nearestQuery.isError}
+          onRetry={() => (recordFailed ? recordQuery.refetch() : nearestQuery.refetch())}
         />
       )}
 

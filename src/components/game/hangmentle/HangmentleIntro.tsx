@@ -1,4 +1,11 @@
-import { useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type PointerEvent,
+  type ReactNode,
+} from 'react';
 import { FiCheck, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useIsLogin } from '@/hooks/useIsLogin';
@@ -37,6 +44,10 @@ const HangmentleIntro = () => {
   const [dragX, setDragX] = useState(0);
   const [dragging, setDragging] = useState(false);
   const gesture = useRef<Gesture | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
+  // 넘기기 직전에 포커스가 카드 안에 있었는지 (넘긴 뒤 포커스를 잃으면 카드 화면으로 옮긴다)
+  const keepFocus = useRef(false);
 
   const slides: Slide[] = [
     {
@@ -112,7 +123,24 @@ const HangmentleIntro = () => {
     },
   ];
   const last = slides.length - 1;
-  const go = (next: number) => setIndex(Math.max(0, Math.min(last, next)));
+  const go = (next: number) => {
+    keepFocus.current = !!sectionRef.current?.contains(document.activeElement);
+    setIndex(Math.max(0, Math.min(last, next)));
+  };
+
+  // 포커스가 있던 컨트롤이 넘긴 뒤 쓸 수 없게 되면(다른 장의 카카오 버튼은 inert, 끝에서는 이전·다음 버튼이 disabled)
+  // 포커스가 문서 맨 위로 빠져 화살표가 더는 듣지 않는다. 그럴 때는 카드 화면으로 옮겨 계속 넘길 수 있게 한다
+  useEffect(() => {
+    if (!keepFocus.current) return;
+    keepFocus.current = false;
+    const active = document.activeElement;
+    const lost =
+      !(active instanceof HTMLElement) ||
+      !sectionRef.current?.contains(active) ||
+      active.matches(':disabled') ||
+      active.closest('[inert]') !== null;
+    if (lost) viewportRef.current?.focus({ preventScroll: true });
+  }, [index]);
 
   // 세로로 끌면 페이지 스크롤에 맡기고(touch-action: pan-y), 가로로 끌 때만 카드를 따라 움직인다
   const handlePointerDown = (e: PointerEvent<HTMLDivElement>) => {
@@ -171,6 +199,8 @@ const HangmentleIntro = () => {
 
   return (
     <section
+      ref={sectionRef}
+      role="region"
       aria-roledescription={isEng ? 'carousel' : '슬라이드'}
       aria-label={isEng ? 'How to play Hangmentle' : '항멘틀 안내'}
       onKeyDown={handleKeyDown}
@@ -184,6 +214,7 @@ const HangmentleIntro = () => {
       </div>
 
       <div
+        ref={viewportRef}
         tabIndex={0}
         aria-label={isEng ? 'Slides. Use the arrow keys to move.' : '설명 카드. 좌우 화살표로 넘겨요'}
         onPointerDown={handlePointerDown}

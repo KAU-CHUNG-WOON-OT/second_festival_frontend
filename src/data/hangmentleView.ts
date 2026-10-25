@@ -11,6 +11,10 @@ export type HangmentleView =
 // 항멘틀이 쓰는 쿼리 키. 다른 쿼리(utm 등)는 건드리지 않는다
 const VIEW_KEYS = ['round', 'view', 'puzzle'] as const;
 
+// 항멘틀 안쪽 화면(회차·연습)을 가리키는 쿼리가 있는지 (?utm_source=… 같은 다른 쿼리만 있으면 false)
+export const hasHangmentleViewKey = (params: URLSearchParams) =>
+  VIEW_KEYS.some((key) => params.has(key));
+
 const toWholeNumber = (value: string | null) =>
   value !== null && /^\d+$/.test(value) ? Number(value) : null;
 

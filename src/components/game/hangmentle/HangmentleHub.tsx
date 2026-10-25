@@ -17,17 +17,27 @@ interface EventRoundCardProps {
   event: HangmentleEventRound;
   info: HangmentleRoundInfo | null;
   phase: RoundPhase | null;
-  // 회차 요약을 아직 받는 중 / 받지 못함
+  // 회차 요약을 받았는지 / 아직 받는 중 / 받지 못함
+  loaded: boolean;
   loading: boolean;
   failed: boolean;
   onOpen: () => void;
 }
 
 // 회차 카드: 열리기 전에는 남은 시간, 열리면 '진행 중'과 참여하기. 카드 어디를 눌러도 그 회차 화면으로 간다
-const EventRoundCard = ({ event, info, phase, loading, failed, onOpen }: EventRoundCardProps) => {
+const EventRoundCard = ({
+  event,
+  info,
+  phase,
+  loaded,
+  loading,
+  failed,
+  onOpen,
+}: EventRoundCardProps) => {
   const { language } = useLanguage();
   const isEng = language === 'ENG';
-  const opensAtMs = parseServerTime(info?.opensAt ?? event.scheduledAt);
+  // 예정 시각은 회차 요약을 받기 전에만 보여 준다. 받은 뒤에는 서버 값만 (비어 있으면 시간을 준비하는 중)
+  const opensAtMs = parseServerTime(loaded ? info?.opensAt : event.scheduledAt);
 
   const note = (text: string) => (
     <span className="font-body-kr text-[14px] font-semibold leading-5 opacity-70">{text}</span>
@@ -38,6 +48,9 @@ const EventRoundCard = ({ event, info, phase, loading, failed, onOpen }: EventRo
       if (loading) return note(isEng ? 'Loading…' : '불러오는 중이에요…');
       if (failed) return note(isEng ? 'Could not load the time' : '시간을 불러오지 못했어요');
       return note(isEng ? 'Not open yet' : '아직 열리지 않았어요');
+    }
+    if (info && !info.open && opensAtMs === null) {
+      return note(isEng ? 'Time to be announced' : '시간을 준비하고 있어요');
     }
     if (phase === 'countdown' && opensAtMs !== null) {
       return (
@@ -142,6 +155,7 @@ const HangmentleHub = ({
             event={event}
             info={phases[i].info}
             phase={phases[i].phase}
+            loaded={!!overview}
             loading={!overview && !overviewFailed}
             failed={overviewFailed}
             onOpen={() => onOpenRound(event.round, false)}

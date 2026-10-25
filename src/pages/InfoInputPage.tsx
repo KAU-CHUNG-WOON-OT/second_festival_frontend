@@ -5,6 +5,7 @@ import RetroPageTitle from '../components/common/RetroPageTitle';
 import { markOnboardingSeenInCurrentTab } from '../lib/onboardingSession';
 import { saveUserInfo, type StudentType } from '../lib/userInfoStorage';
 import { ApiError, apiFetch } from '../lib/apiClient';
+import { takeLoginReturnPath } from '../lib/loginReturn';
 import { identify, setPeople, track } from '@/lib/mixpanel';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -74,7 +75,8 @@ const InfoInputPage = () => {
       setPeople({ $name: trimmedName, department: trimmedDepartment, student_type: studentType });
       track('user_info_submitted', { student_type: studentType });
       markOnboardingSeenInCurrentTab();
-      navigate('/home', { replace: true });
+      // 로그인 버튼을 누른 화면으로 돌아간다 (없으면 홈)
+      navigate(takeLoginReturnPath() ?? '/home', { replace: true });
     } catch (error) {
       const message =
         error instanceof ApiError

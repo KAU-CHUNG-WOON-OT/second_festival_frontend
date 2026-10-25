@@ -5,6 +5,7 @@ import type {
   HangmentleGuessResponse,
   HangmentleMyRecord,
   HangmentleRoundInfo,
+  HangmentleRoundsOverview,
 } from '@/lib/api/hangmentle';
 import type { HangmentleProgress } from '@/lib/hangmentleProgress';
 import type { HangmentleGuess } from './hangmentleData';
@@ -163,6 +164,10 @@ export const guessErrorText = (kind: GuessErrorKind, isEng: boolean, serverMessa
 export const classifyRoundError = (error: unknown): 'notFound' | 'failed' =>
   error instanceof ApiError && hasCode(error, 404, 'GAME-404') ? 'notFound' : 'failed';
 
+// 유사도 순위(nearest)를 서버가 '아직 맞히지 않음'(403 GAME-403)으로 거절했는지. 다시 물어도 같으므로 재시도하지 않는다
+export const isNotSolvedError = (error: unknown) =>
+  error instanceof ApiError && hasCode(error, 403, 'GAME-403');
+
 // 회차 화면 상태
 // open: 풀 수 있음 / countdown: 열리기 전 / opening: 열릴 시각이 지났는데 서버는 아직 닫혀 있다고 함(시계 차이) /
 // notReady: 문제 데이터를 준비 중(힌트 없음) / closed: 열리는 시각이 정해지지 않음
@@ -250,3 +255,34 @@ export const resolveEventProgress = (
   }
   return record?.solved ? { ...local, status: 'solved' } : local;
 };
+
+// 연습 화면은 평소 이벤트 API를 부르지 않는다. 회차가 열리기 이만큼 전부터 서버가 열렸다고 할 때까지만 회차 요약을 받는다
+export const PRACTICE_SYNC_LEAD_MS = 5 * 60_000;
+
+export interface PracticeSyncRound {
+  // 열리는 시각. 서버 요약이 없거나 비어 있으면 예정 시각
+  opensAtMs: number | null;
+  // 서버가 열렸다고 했는지 (요약을 받기 전에는 false)
+  open: boolean;
+}
+
+export const practiceSyncRounds = (
+  overview: Pick<HangmentleRoundsOverview, 'rounds'> | undefined,
+): PracticeSyncRound[] =>
+  HANGMENTLE_EVENT_ROUNDS.map((event) => {
+    const info = overview?.rounds.find((round) => round.round === event.round);
+    return {
+      opensAtMs: parseServerTime(info?.opensAt ?? event.scheduledAt),
+      open: info?.open ?? false,
+    };
+  });
+
+// 연습 화면이 회차 요약을 받기 시작하는 시각들 (아직 열리지 않은 회차의 열리기 5분 전)
+export const practiceSyncStarts = (rounds: readonly PracticeSyncRound[]): number[] =>
+  rounds.flatMap((round) =>
+    !round.open && round.opensAtMs !== null ? [round.opensAtMs - PRACTICE_SYNC_LEAD_MS] : [],
+  );
+
+// 연습 화면에서 지금 회차 요약을 받아야 하는지. 서버 시계를 맞추기 전이므로 기기 시계(Date.now)로 정한다
+export const isPracticeSyncWindow = (rounds: readonly PracticeSyncRound[], deviceNowMs: number) =>
+  practiceSyncStarts(rounds).some((start) => deviceNowMs >= start);

@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useIsLogin } from '../hooks/useIsLogin';
 import { getKakaoLoginUrl } from '../lib/kakaoLogin';
+import { saveLoginReturnPath } from '../lib/loginReturn';
 import { track } from '@/lib/mixpanel';
 import closeIcon from '../assets/sidebar_close.svg';
 import kakaoIcon from '../assets/kakao_icon.svg';
@@ -40,6 +41,8 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     const loginUrl = getKakaoLoginUrl();
     if (!loginUrl) return;
     track('sidebar_kakao_login_clicked');
+    // 로그인하고 나면 지금 보던 페이지로 돌아온다
+    saveLoginReturnPath();
     window.location.href = loginUrl;
   };
 

@@ -18,7 +18,7 @@ export interface HangmentleRoundInfo {
   // 정답을 뺀 가장 가까운 단어·10번째·1000번째의 유사도. 서버가 문제 데이터를 못 읽었으면 null
   hints: HangmentleHints | null;
   // 응답을 만든 서버 시각 (서울 기준, ms까지). 카운트다운을 서버 시계에 맞추는 데 쓴다
-  serverTime?: string;
+  serverTime: string;
 }
 
 // 모든 회차 요약 (이벤트 안내 카드·시계 맞추기)

@@ -5,13 +5,18 @@ import type { HangmentleProgress } from '@/lib/hangmentleProgress';
 import {
   HANGMENTLE_EVENT_ROUNDS,
   OPENING_FAST_RETRY_MS,
+  PRACTICE_SYNC_LEAD_MS,
   classifyGuessError,
   classifyRoundError,
   findEventRound,
   formatKstTime,
   guessErrorText,
   guessFromResponse,
+  isNotSolvedError,
+  isPracticeSyncWindow,
   openedWhileWatching,
+  practiceSyncRounds,
+  practiceSyncStarts,
   resolveEventProgress,
   roundPhase,
   roundPollInterval,
@@ -172,6 +177,18 @@ describe('classifyRoundError', () => {
   });
 });
 
+describe('isNotSolvedError', () => {
+  it('403 GAME-403만 아직 안 맞힘 (다시 묻지 않는다)', () => {
+    expect(isNotSolvedError(new ApiError('정답을 맞힌 뒤에 볼 수 있어요', 403, 'GAME-403'))).toBe(
+      true,
+    );
+    expect(isNotSolvedError(new ApiError('권한 없음', 403, 'AUTH-403'))).toBe(false);
+    expect(isNotSolvedError(new ApiError('서버 오류', 500, 'COMMON-500'))).toBe(false);
+    expect(isNotSolvedError(new TypeError('Failed to fetch'))).toBe(false);
+    expect(isNotSolvedError(null)).toBe(false);
+  });
+});
+
 describe('roundPhase · roundPollInterval', () => {
   const HINTS = { first: 4200, tenth: 3300, thousandth: 1900 };
   const OPENS_AT = '2026-10-28T22:00:00';
@@ -298,5 +315,83 @@ describe('HANGMENTLE_EVENT_ROUNDS', () => {
   it('번호로 회차를 찾는다', () => {
     expect(findEventRound(2)?.label).toBe('11시');
     expect(findEventRound(3)).toBeNull();
+  });
+});
+
+describe('연습 화면의 회차 요약 받기 (practiceSyncRounds · isPracticeSyncWindow)', () => {
+  const at10 = parseServerTime('2026-10-28T22:00:00')!;
+  const at11 = parseServerTime('2026-10-28T23:00:00')!;
+  const info = (round: number, open: boolean, opensAt: string | null) => ({
+    round,
+    open,
+    opensAt,
+    hints: null,
+    serverTime: '2026-10-28T21:00:00',
+  });
+  const overview = (r1: ReturnType<typeof info>, r2: ReturnType<typeof info>) => ({
+    rounds: [r1, r2],
+  });
+
+  it('요약을 받기 전에는 예정 시각(10시·11시), 아직 안 열린 것으로 본다', () => {
+    expect(practiceSyncRounds(undefined)).toEqual([
+      { opensAtMs: at10, open: false },
+      { opensAtMs: at11, open: false },
+    ]);
+  });
+
+  it('요약을 받았으면 서버의 열리는 시각·열림을 쓰고, 시각이 비어 있으면 예정 시각', () => {
+    const rounds = practiceSyncRounds(
+      overview(info(1, true, '2026-10-28T21:30:00'), info(2, false, null)),
+    );
+    expect(rounds).toEqual([
+      { opensAtMs: parseServerTime('2026-10-28T21:30:00'), open: true },
+      { opensAtMs: at11, open: false },
+    ]);
+  });
+
+  it('열리기 5분 전부터 받는다 (그 전에는 받지 않음)', () => {
+    const rounds = practiceSyncRounds(undefined);
+    expect(PRACTICE_SYNC_LEAD_MS).toBe(5 * 60_000);
+    // 이벤트와 먼 날(사흘 전)·5분 1초 전
+    expect(isPracticeSyncWindow(rounds, at10 - 3 * 86_400_000)).toBe(false);
+    expect(isPracticeSyncWindow(rounds, at10 - PRACTICE_SYNC_LEAD_MS - 1000)).toBe(false);
+    expect(isPracticeSyncWindow(rounds, at10 - PRACTICE_SYNC_LEAD_MS)).toBe(true);
+    expect(isPracticeSyncWindow(rounds, at10 + 3000)).toBe(true);
+  });
+
+  it('서버가 열렸다고 하면 그 회차 때문에는 더 받지 않고, 다음 회차 5분 전에 다시 받는다', () => {
+    const tenOpen = practiceSyncRounds(
+      overview(info(1, true, '2026-10-28T22:00:00'), info(2, false, '2026-10-28T23:00:00')),
+    );
+    expect(isPracticeSyncWindow(tenOpen, at10 + 1000)).toBe(false);
+    expect(isPracticeSyncWindow(tenOpen, at11 - PRACTICE_SYNC_LEAD_MS - 1)).toBe(false);
+    expect(isPracticeSyncWindow(tenOpen, at11 - PRACTICE_SYNC_LEAD_MS)).toBe(true);
+    const bothOpen = practiceSyncRounds(
+      overview(info(1, true, '2026-10-28T22:00:00'), info(2, true, '2026-10-28T23:00:00')),
+    );
+    expect(isPracticeSyncWindow(bothOpen, at11 + 60_000)).toBe(false);
+  });
+
+  it('서버가 열리는 시각을 바꾸면 그 시각 5분 전부터', () => {
+    const moved = practiceSyncRounds(
+      overview(info(1, false, '2026-10-28T22:30:00'), info(2, false, '2026-10-28T23:00:00')),
+    );
+    const at1030 = parseServerTime('2026-10-28T22:30:00')!;
+    expect(isPracticeSyncWindow(moved, at10 - PRACTICE_SYNC_LEAD_MS)).toBe(false);
+    expect(isPracticeSyncWindow(moved, at1030 - PRACTICE_SYNC_LEAD_MS)).toBe(true);
+  });
+
+  it('받기 시작할 시각은 아직 안 열린 회차만 (화면을 다시 그릴 때로 쓴다)', () => {
+    expect(practiceSyncStarts(practiceSyncRounds(undefined))).toEqual([
+      at10 - PRACTICE_SYNC_LEAD_MS,
+      at11 - PRACTICE_SYNC_LEAD_MS,
+    ]);
+    expect(
+      practiceSyncStarts(
+        practiceSyncRounds(
+          overview(info(1, true, '2026-10-28T22:00:00'), info(2, false, '2026-10-28T23:00:00')),
+        ),
+      ),
+    ).toEqual([at11 - PRACTICE_SYNC_LEAD_MS]);
   });
 });

@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useServerNowAt } from '@/hooks/useServerNow';
+import { useDeviceNowAt, useServerNowAt } from '@/hooks/useServerNow';
 import { serverNow } from '@/lib/serverClock';
 import { parseServerTime } from '@/data/hangmentleClock';
 import {
   HANGMENTLE_EVENT_ROUNDS,
+  isPracticeSyncWindow,
   openedWhileWatching,
+  practiceSyncRounds,
+  practiceSyncStarts,
   roundPhase,
   roundPollInterval,
   watchClosedRounds,
@@ -31,22 +34,34 @@ const overviewPollInterval = (data: HangmentleRoundsOverview | undefined) => {
   }, CLOCK_SYNC_MS);
 };
 
-// 모든 회차 요약 + 서버 시계 맞추기. 항멘틀 화면 맨 위에서 한 번만 부른다
-export const useEventRoundsOverview = () => {
+// 모든 회차 요약 + 서버 시계 맞추기. 항멘틀 화면 맨 위에서 한 번만 부른다.
+// 연습 화면(practice)에서는 회차가 열리기 5분 전(기기 시계)부터 서버가 열렸다고 할 때까지만 받고, 그 밖에는 API를 부르지 않는다
+export const useEventRoundsOverview = (practice: boolean) => {
+  // 처음 그릴 때는 받지 않는 쪽으로 두고, 아래에서 정한 값으로 바로 고친다 (마운트하자마자 한 번 받아 버리지 않게)
+  const [syncing, setSyncing] = useState(false);
   const query = useQuery({
     queryKey: hangmentleEventKeys.overview,
     queryFn: fetchHangmentleRounds,
     refetchInterval: (q) => overviewPollInterval(q.state.data),
+    enabled: syncing,
   });
   const { refetch } = query;
 
+  const rounds = practiceSyncRounds(query.data);
+  // 받기 시작할 시각을 지나는 순간 다시 그린다
+  const deviceNow = useDeviceNowAt(practice ? practiceSyncStarts(rounds) : []);
+  const shouldSync = !practice || isPracticeSyncWindow(rounds, deviceNow);
+  // 렌더 중에 고친다 (useRoundOpenedHere와 같은 방식). 켜지면 react-query가 바로 받고 간격대로 다시 받는다
+  if (shouldSync !== syncing) setSyncing(shouldSync);
+
   useEffect(() => {
+    if (!syncing) return;
     const onVisibility = () => {
       if (document.visibilityState === 'visible') refetch();
     };
     document.addEventListener('visibilitychange', onVisibility);
     return () => document.removeEventListener('visibilitychange', onVisibility);
-  }, [refetch]);
+  }, [refetch, syncing]);
 
   return query;
 };

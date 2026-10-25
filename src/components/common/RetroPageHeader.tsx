@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FiChevronLeft } from 'react-icons/fi';
 import { useSidebar } from '../../contexts/SidebarContext';
+import { fallbackPath } from '@/util/backFallback';
 import SkyDots from './SkyDots';
 import { skyBackground } from './retroLayout';
 import cheongunLogo from '../../assets/cheongun_logo.svg';
@@ -11,14 +12,6 @@ interface RetroPageHeaderProps {
   // 뒤로가기 대신 사이드바 메뉴 버튼 (목록 페이지)
   showMenu?: boolean;
 }
-
-// 앱 안에 이전 기록이 없을 때(공유 링크로 바로 들어온 경우) 뒤로가기로 갈 곳: 상세는 그 목록, 나머지는 홈.
-// 게임 안의 화면(항멘틀 ?round=1 등)으로 바로 들어왔으면 그 게임의 첫 화면으로
-const fallbackPath = (pathname: string, search: string) => {
-  if (search && /^\/game\/[^/]+$/.test(pathname)) return pathname;
-  const list = pathname.match(/^\/(yard|pub|foodtruck|game)\/[^/]+$/)?.[1];
-  return list ? `/${list}` : '/home';
-};
 
 // 노을 배경 위 흰 아이콘 헤더: 메뉴 또는 뒤로가기 · (선택) 가운데 제목 · 청운 로고(홈 링크)
 // 스크롤해도 화면 맨 위에 고정된다. 뒤에 하늘·별을 똑같이 깔고 아래 12px을 흐리게 해 내용이 자연스럽게 밑으로 들어간다.

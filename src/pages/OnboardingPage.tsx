@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { markOnboardingSeenInCurrentTab } from '../lib/onboardingSession';
 import { track } from '@/lib/mixpanel';
 import { getKakaoLoginUrl } from '@/lib/kakaoLogin';
+import { saveLoginReturnPath } from '@/lib/loginReturn';
 
 const OnboardingPage = () => {
   const navigate = useNavigate();
@@ -28,6 +29,8 @@ const OnboardingPage = () => {
     if (!loginUrl) return;
     track('onboarding_kakao_login_clicked');
     markOnboardingSeenInCurrentTab();
+    // 온보딩 화면 자체로는 돌아오지 않으므로 예전에 넣어 둔 주소만 지워진다 (로그인하면 지금처럼 홈으로)
+    saveLoginReturnPath();
     window.location.href = loginUrl;
   }, []);
 

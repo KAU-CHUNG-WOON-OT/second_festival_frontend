@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  hasHangmentleViewKey,
   hangmentleViewKey,
   hangmentleViewParams,
   isCanonicalHangmentleView,
@@ -85,5 +86,17 @@ describe('hangmentleViewKey', () => {
     expect(hangmentleViewKey({ kind: 'round', round: 1 })).not.toBe(
       hangmentleViewKey({ kind: 'round', round: 2 }),
     );
+  });
+});
+
+describe('hasHangmentleViewKey', () => {
+  it('회차·연습 쿼리가 있을 때만 true (추적용 쿼리만 있으면 false)', () => {
+    expect(hasHangmentleViewKey(params('round=1'))).toBe(true);
+    expect(hasHangmentleViewKey(params('view=practice'))).toBe(true);
+    expect(hasHangmentleViewKey(params('puzzle=2'))).toBe(true);
+    expect(hasHangmentleViewKey(params('utm_source=insta&round=2'))).toBe(true);
+    expect(hasHangmentleViewKey(params('utm_source=insta'))).toBe(false);
+    expect(hasHangmentleViewKey(params('fbclid=abc'))).toBe(false);
+    expect(hasHangmentleViewKey(params(''))).toBe(false);
   });
 });

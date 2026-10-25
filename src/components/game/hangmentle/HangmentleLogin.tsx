@@ -1,5 +1,6 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getKakaoLoginUrl } from '@/lib/kakaoLogin';
+import { saveLoginReturnPath } from '@/lib/loginReturn';
 import { track } from '@/lib/mixpanel';
 import kakaoIcon from '@/assets/kakao_icon.svg';
 import { GAME_CARD } from '../gameStyles';
@@ -19,6 +20,8 @@ export const KakaoLoginButton = ({ source, round }: KakaoLoginButtonProps) => {
     const loginUrl = getKakaoLoginUrl();
     if (!loginUrl) return;
     track('hangmentle_kakao_login_clicked', { source, round });
+    // 로그인하고 나면 보던 화면(안내·회차)으로 돌아온다
+    saveLoginReturnPath();
     window.location.href = loginUrl;
   };
 
