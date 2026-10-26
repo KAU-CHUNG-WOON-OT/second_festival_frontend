@@ -1,15 +1,15 @@
 ﻿{
   "nav": {
     "home": "Home",
-    "notice": "Notice",
+    "notice": "Notices",
     "timetable": "Timetable",
-    "performance": "Performance",
+    "performance": "Live Shows",
     "foodtruck": "Food Truck",
     "stores": "Store Deals",
     "pub": "Pub Guide",
-    "yard": "Yard Events",
+    "yard": "Booths",
     "makers": "Makers",
-    "game": "Game",
+    "game": "Games",
     "infoGuide": "Location, Goods, Partners"
   },
   "header": {

@@ -153,7 +153,7 @@ const HangmentleHub = ({ overview, onOpenRound, onPractice }: HangmentleHubProps
       <HangmentleIntro />
 
       <button type="button" onClick={onPractice} className={SECONDARY_BUTTON}>
-        {isEng ? 'Go Practice' : '연습하러 가기'}
+        {isEng ? 'Practice Puzzles' : '연습하러 가기'}
       </button>
 
       <div className="flex flex-col gap-4">
