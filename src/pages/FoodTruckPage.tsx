@@ -11,11 +11,10 @@ import MapModal from '../components/common/MapModal';
 import TruckList from '../components/foodtruck/TruckList';
 import { useUrlFilters } from '../hooks/useUrlFilters';
 import { useLanguage } from '../contexts/LanguageContext';
-import day13Food from '../assets/day1,3_food.jpg';
+import truckMap from '../assets/foodtruck/map.jpg';
 import { TRUCK_CATEGORIES, dummyTrucks } from '../data/foodTruckData';
 
-// TODO: 새 축제 푸드트럭 배치도로 교체 (현재 지난 축제 이미지)
-const TRUCK_MAP_IMAGES = [{ src: day13Food, label: '푸드트럭 배치도' }];
+const TRUCK_MAP_IMAGES = [{ src: truckMap, label: '푸드트럭 배치도' }];
 const FILTER_DEFAULTS = { category: '전체', q: '' };
 
 // 시안이 없어 부스 정보 시안과 같은 구성으로 맞춤
