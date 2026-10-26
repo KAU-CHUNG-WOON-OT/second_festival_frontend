@@ -23,7 +23,7 @@ interface MemberSection {
 const SECTIONS: MemberSection[] = [
   {
     title: '전체 총괄',
-    title_en: 'Director',
+    title_en: 'Project Leads',
     members: [
       { name: '홍석담', dept: '경영학부 22', dept_en: "Business '22" },
       { name: '주민재', dept: '소프트웨어 24', dept_en: "Software '24" },
@@ -63,31 +63,32 @@ const STAFF_SECTIONS: MemberSection[] = [
     title: 'Director',
     title_en: 'Director',
     members: [
-      { role: '정책국장', role_en: 'Policy', name: '이나라', dept: '경영 21', dept_en: "Business '21" },
-      { role: '협력국장', role_en: 'Partnership', name: '장현진', dept: '항우기 20', dept_en: "Aerospace '20" },
-      { role: '기획국장', role_en: 'Planning', name: '이승주', dept: '소프트웨어 23', dept_en: "Software '23" },
-      { role: '문화국장', role_en: 'Culture', name: '최성훈', dept: '교통 23', dept_en: "Transport '23" },
-      { role: '홍보국장', role_en: 'Promotion', name: '최길웅', dept: '자율주행 22', dept_en: "Auto Drive '22", wide: true },
+      { role: '정책국장', role_en: 'Policy Director', name: '이나라', dept: '경영 21', dept_en: "Business '21" },
+      { role: '협력국장', role_en: 'Partnerships Director', name: '장현진', dept: '항우기 20', dept_en: '항우기 20' },
+      { role: '기획국장', role_en: 'Planning Director', name: '이승주', dept: '소프트웨어 23', dept_en: "Software '23" },
+      { role: '문화국장', role_en: 'Culture Director', name: '최성훈', dept: '교통 23', dept_en: '교통 23' },
+      { role: '홍보국장', role_en: 'Promotion Director', name: '최길웅', dept: '자율주행 22', dept_en: '자율주행 22', wide: true },
     ],
   },
   {
     title: 'Office',
     title_en: 'Office',
     members: [
-      { role: '사업전략실장', role_en: 'Business Strategy', name: '김민겸', dept: '물류 22', dept_en: "Logistics '22", wide: true },
+      { role: '사업전략실장', role_en: 'Head of Business Strategy', name: '김민겸', dept: '물류 22', dept_en: "Logistics '22", wide: true },
       { role: '집행위원장', role_en: 'Executive Chair', name: '김가빈', dept: '경영 23', dept_en: "Business '23" },
-      { role: '예산실장', role_en: 'Budget', name: '강미주', dept: '자율주행 24', dept_en: "Auto Drive '24" },
-      { role: '공보실장', role_en: 'PR', name: '윤여범', dept: '교통 22', dept_en: "Transport '22" },
-      { role: '개발실장', role_en: 'Dev Office', name: '윤정민', dept: '소프트 23', dept_en: "Software '23" },
+      { role: '예산실장', role_en: 'Head of Budget', name: '강미주', dept: '자율주행 24', dept_en: '자율주행 24' },
+      { role: '공보실장', role_en: 'Head of PR', name: '윤여범', dept: '교통 22', dept_en: '교통 22' },
+      { role: '개발실장', role_en: 'Head of Development', name: '윤정민', dept: '소프트 23', dept_en: "Software '23" },
     ],
   },
 ];
 
-// 위쪽 버튼으로 바꿔 보는 명단
+// 위쪽 버튼으로 바꿔 보는 명단 (버튼은 개발자가 앞, 처음 보이는 건 운영진)
 const TABS = [
-  { label: '운영진', label_en: 'Staff', sections: STAFF_SECTIONS },
   { label: '개발자', label_en: 'Developers', sections: SECTIONS },
+  { label: '운영진', label_en: 'Staff', sections: STAFF_SECTIONS },
 ];
+const FIRST_TAB = 1;
 
 const LINKS = [
   {
@@ -101,7 +102,7 @@ const LINKS = [
 const Makers = () => {
   const { language } = useLanguage();
   const isEng = language === 'ENG';
-  const [tabIndex, setTabIndex] = useState(0);
+  const [tabIndex, setTabIndex] = useState(FIRST_TAB);
   const tabLabels = TABS.map((tab) => (isEng ? tab.label_en : tab.label));
 
   const sectionList = (sections: MemberSection[]) =>
