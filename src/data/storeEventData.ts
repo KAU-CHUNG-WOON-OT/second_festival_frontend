@@ -97,7 +97,7 @@ export const storeEvents: StoreEvent[] = [
   },
   {
     id: 404,
-    name: '카페161',
+    name: '카페161(와인바)',
     naverMapUrl: 'https://map.naver.com/p/entry/place/2053440858',
     image: cafe161Image,
     deals: [

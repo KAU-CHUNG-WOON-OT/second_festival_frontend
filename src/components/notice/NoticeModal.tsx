@@ -22,7 +22,7 @@ const NoticeModal = ({ notice, onClose }: NoticeModalProps) => {
   // 이번 터치로 시트를 끌어 닫을 수 있는지. 본문을 내려 둔 채 아래로 쓸면 본문만 스크롤한다
   const canDrag = useRef(false);
   const sheetRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLParagraphElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (notice) {
@@ -109,6 +109,11 @@ const NoticeModal = ({ notice, onClose }: NoticeModalProps) => {
             <FiBell size={26} aria-hidden />
           </span>
           <div className="flex gap-2 pt-4">
+            {notice.isHot && (
+              <span className="rounded-full border border-ink bg-mustard px-3 py-[2px] font-typewriter text-[12px] font-bold leading-4">
+                {t('notice.hot')}
+              </span>
+            )}
             {notice.isNew && (
               <span className="rounded-full border border-ink bg-rust px-3 py-[2px] font-typewriter text-[12px] font-bold leading-4 text-paper">
                 {t('notice.new')}
@@ -122,9 +127,20 @@ const NoticeModal = ({ notice, onClose }: NoticeModalProps) => {
           </div>
 
           <h2 className="pt-3 font-display text-[20px] leading-[27.5px]">{title}</h2>
-          <p ref={contentRef} className="max-h-[40vh] overflow-y-auto whitespace-pre-line pt-3 font-body-kr text-[15px] leading-7 opacity-80">
-            {content}
-          </p>
+          {/* 이미지와 본문을 한 영역에서 같이 스크롤 */}
+          <div ref={contentRef} className="mt-3 max-h-[50vh] overflow-y-auto">
+            {notice.images?.map((src, index) => (
+              <img
+                key={src}
+                src={src}
+                alt={`${title} ${index + 1}`}
+                className={`w-full rounded-[12px] border border-ink ${index > 0 ? "mt-3" : ""}`}
+              />
+            ))}
+            <p className={`whitespace-pre-line font-body-kr text-[15px] leading-7 opacity-80 ${notice.images?.length ? "pt-3" : ""}`}>
+              {content}
+            </p>
+          </div>
 
           <div className="mt-5 flex items-center gap-4 rounded-[16px] border border-dashed border-ink/50 bg-cream p-3">
             <span className="flex size-11 shrink-0 items-center justify-center rounded-[12px] border border-ink bg-paper">

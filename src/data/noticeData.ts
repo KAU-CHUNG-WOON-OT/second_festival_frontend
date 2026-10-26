@@ -1,3 +1,5 @@
+import smokingAreaImage from '../assets/notice/smoking_area.jpg';
+
 // 공지는 한국어로만 쓴다 (영어 화면에서도 한국어 그대로)
 export interface NoticeData {
   id: number;
@@ -6,7 +8,11 @@ export interface NoticeData {
   date: string;
   isNew: boolean;
   isImportant: boolean;
+  // HOT 라벨. 홈 공지 띠에 가장 먼저 뜬다
+  isHot?: boolean;
   category: string;
+  // 본문 위에 차례로 보이는 카드뉴스·안내 이미지
+  images?: string[];
 }
     
 // 같은 날짜끼리는 이 순서대로 보이고, 맨 앞 공지가 홈 공지 띠에 나온다
@@ -63,8 +69,9 @@ export const dummyNotices: NoticeData[] = [
       "문의사항은 카카오톡 플러스친구 '한국항공대학교\u00a0총학생회'로 부탁드립니다.\n\n" +
       '제52대 총학생회 x 중앙운영위원회',
     date: '2026.10.26',
-    isNew: true,
+    isNew: false,
     isImportant: false,
+    isHot: true,
     category: '행사',
   },
   {
@@ -82,6 +89,25 @@ export const dummyNotices: NoticeData[] = [
     isNew: true,
     isImportant: false,
     category: '행사',
+  },
+  {
+    id: 13,
+    title: '[흡연구역] 흡연구역 안내',
+    content:
+      '활주로 기간 동안 흡연구역을 다음과 같이 설정합니다.\n\n' +
+      '✔일정 : 강의동 임시 흡연장, 학생회관 후면 흡연장 - 10.28 (수)\n\n' +
+      '[주의사항]\n' +
+      '❗지정된 구역에서만 흡연을 해주시기 바랍니다.\n' +
+      '❗지정된 구역 이외에서 흡연을 할 경우 흡연이 제지될 수 있습니다.\n' +
+      '❗흡연 후 꽁초, 쓰레기 등은 쓰레기통에 버려주시기 바랍니다.\n\n' +
+      // \u00a0: 채널 이름이 줄 중간에서 끊기지 않게
+      "문의사항은 카카오톡 플러스친구 '한국항공대학교\u00a0총학생회'로 부탁드립니다.\n\n" +
+      '카드뉴스 속 유의사항 숙지 후 안전하고 즐거운 행사를 위해 많은 협조 부탁드립니다.',
+    date: '2026.10.26',
+    isNew: true,
+    isImportant: false,
+    category: '장소',
+    images: [smokingAreaImage],
   },
   {
     id: 8,

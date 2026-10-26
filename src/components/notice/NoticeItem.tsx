@@ -18,6 +18,11 @@ const NoticeItem = ({ notice, compact = false, onClick }: NoticeItemProps) => {
         compact ? "py-3" : "py-4"
       }`}
     >
+      {notice.isHot && (
+        <span className="shrink-0 rounded-full border border-ink bg-mustard px-3 py-[2px] font-typewriter text-[12px] font-bold leading-4">
+          {t("notice.hot")}
+        </span>
+      )}
       {notice.isNew && (
         <span className="shrink-0 rounded-full border border-ink bg-rust px-3 py-[2px] font-typewriter text-[12px] font-bold leading-4 text-paper">
           {t("notice.new")}

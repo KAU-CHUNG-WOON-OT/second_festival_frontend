@@ -79,6 +79,7 @@
   },
   "notice": {
     "new": "NEW",
+    "hot": "HOT",
     "important": "IMPORTANT"
   },
   "timetable": {
