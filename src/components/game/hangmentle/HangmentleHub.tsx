@@ -11,7 +11,7 @@ import { KakaoLoginButton } from './HangmentleLogin';
 import { useEventRoundPhases, useRoundOpenedHere } from './useEventRounds';
 import { formatOpensAt, parseServerTime } from '@/data/hangmentleClock';
 import {
-  HANGMENTLE_HUB_ROUNDS,
+  HANGMENTLE_EVENT_ROUNDS,
   type HangmentleEventRound,
   type RoundPhase,
 } from '@/data/hangmentleEvent';
@@ -91,20 +91,14 @@ const EventRoundCard = ({ event, info, phase, loaded, isLogin, onOpen, onNeedLog
   const body = (
     <>
       <span className="flex items-center gap-4 px-5 pb-4 pt-5">
-        {event.test ? (
-          <span className="shrink-0 rounded-[4px] border border-rust bg-rust px-[6px] font-typewriter text-[12px] font-bold leading-4 text-paper">
-            TEST
-          </span>
-        ) : (
-          <span className="shrink-0 rounded-[4px] border border-current px-[6px] font-typewriter text-[12px] leading-4">
-            EVENT {String(event.round).padStart(2, '0')}
-          </span>
-        )}
+        <span className="shrink-0 rounded-[4px] border border-current px-[6px] font-typewriter text-[12px] leading-4">
+          EVENT {String(event.round).padStart(2, '0')}
+        </span>
         <span className="min-w-0 flex-1">
           <span className="block font-display text-[24px] leading-[30px]">
             {isEng ? event.titleEn : event.title}
           </span>
-          {!event.test && opensAtMs !== null && (
+          {opensAtMs !== null && (
             <span className="block pt-1 font-body-kr text-[14px] leading-5 opacity-70">
               {formatOpensAt(opensAtMs, isEng)}
             </span>
@@ -139,7 +133,7 @@ interface HangmentleHubProps {
   onPractice: () => void;
 }
 
-// 항멘틀 첫 화면(이벤트 안내): 테스트 문제 카드 · 설명 카드 · 연습하러 가기 · 10시·11시 문제 카드
+// 항멘틀 첫 화면(이벤트 안내): 설명 카드 · 연습하러 가기 · 10시·11시 문제 카드
 const HangmentleHub = ({ overview, onOpenRound, onPractice }: HangmentleHubProps) => {
   const { language } = useLanguage();
   const isEng = language === 'ENG';
@@ -147,31 +141,15 @@ const HangmentleHub = ({ overview, onOpenRound, onPractice }: HangmentleHubProps
   // 비회원이 회차 카드를 눌렀을 때 띄우는 로그인 부탁
   const [loginFor, setLoginFor] = useState<HangmentleEventRound | null>(null);
 
-  const phases = useEventRoundPhases(overview, HANGMENTLE_HUB_ROUNDS);
+  const phases = useEventRoundPhases(overview);
   // 이 화면을 보는 동안 문제가 열리면 그 문제 화면으로 데려간다
   const openedHere = useRoundOpenedHere(phases);
   useEffect(() => {
     if (openedHere !== null) onOpenRound(openedHere, true);
   }, [openedHere, onOpenRound]);
 
-  const card = (event: HangmentleEventRound, i: number) => (
-    <EventRoundCard
-      key={event.round}
-      event={event}
-      info={phases[i].info}
-      phase={phases[i].phase}
-      loaded={!!overview}
-      isLogin={isLogin}
-      onOpen={() => onOpenRound(event.round, false)}
-      onNeedLogin={() => setLoginFor(event)}
-    />
-  );
-
   return (
     <>
-      {/* 테스트 문제는 화면 맨 위에 */}
-      {HANGMENTLE_HUB_ROUNDS.map((event, i) => event.test && card(event, i))}
-
       <HangmentleIntro />
 
       <button type="button" onClick={onPractice} className={SECONDARY_BUTTON}>
@@ -179,7 +157,18 @@ const HangmentleHub = ({ overview, onOpenRound, onPractice }: HangmentleHubProps
       </button>
 
       <div className="flex flex-col gap-4">
-        {HANGMENTLE_HUB_ROUNDS.map((event, i) => !event.test && card(event, i))}
+        {HANGMENTLE_EVENT_ROUNDS.map((event, i) => (
+          <EventRoundCard
+            key={event.round}
+            event={event}
+            info={phases[i].info}
+            phase={phases[i].phase}
+            loaded={!!overview}
+            isLogin={isLogin}
+            onOpen={() => onOpenRound(event.round, false)}
+            onNeedLogin={() => setLoginFor(event)}
+          />
+        ))}
       </div>
 
       {loginFor && (

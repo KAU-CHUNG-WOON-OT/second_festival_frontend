@@ -208,7 +208,7 @@ const HangmentleEvent = ({ event, onShowHub }: HangmentleEventProps) => {
   const ranking = (
     <HangmentleRanking round={round} label={label} myRank={myRank} live={phase === 'open'} />
   );
-  const cardLabel = `${event.test ? 'TEST' : `EVENT ${String(round).padStart(2, '0')}`} · ${title}`;
+  const cardLabel = `EVENT ${String(round).padStart(2, '0')} · ${title}`;
   const loginCard = !isLogin && <LoginCard round={round} />;
 
   const retryButton = (text: string) => (

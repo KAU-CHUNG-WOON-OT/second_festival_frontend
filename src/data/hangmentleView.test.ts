@@ -19,10 +19,6 @@ describe('parseHangmentleView', () => {
     expect(parseHangmentleView(params('round=2'))).toEqual({ kind: 'round', round: 2 });
   });
 
-  it('?round=9는 숨은 테스트 회차 화면', () => {
-    expect(parseHangmentleView(params('round=9'))).toEqual({ kind: 'round', round: 9 });
-  });
-
   it('없는 회차·이상한 값은 허브', () => {
     expect(parseHangmentleView(params('round=3'))).toEqual({ kind: 'hub' });
     expect(parseHangmentleView(params('round=0'))).toEqual({ kind: 'hub' });
@@ -76,8 +72,7 @@ describe('isCanonicalHangmentleView', () => {
     expect(isCanonicalHangmentleView(params(''))).toBe(true);
     expect(isCanonicalHangmentleView(params('round=2'))).toBe(true);
     expect(isCanonicalHangmentleView(params('utm_source=insta&view=practice'))).toBe(true);
-    expect(isCanonicalHangmentleView(params('round=8'))).toBe(false);
-    expect(isCanonicalHangmentleView(params('round=9'))).toBe(true);
+    expect(isCanonicalHangmentleView(params('round=9'))).toBe(false);
     expect(isCanonicalHangmentleView(params('view=practice&puzzle=1'))).toBe(false);
     expect(isCanonicalHangmentleView(params('round=1&view=practice'))).toBe(false);
   });
