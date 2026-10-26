@@ -67,13 +67,13 @@ const NearestList = ({
       </ul>
       {loading && (
         <p className="py-3 text-center font-body-kr text-[14px] font-semibold opacity-60">
-          {isEng ? 'Loading…' : '불러오는 중이에요…'}
+          {isEng ? 'Loading…' : '불러오는 중입니다…'}
         </p>
       )}
       {error && !loading && (
         <div className="pt-3 text-center">
           <p className="font-body-kr text-[14px] font-semibold opacity-70">
-            {isEng ? 'Could not load the ranking.' : '유사도 순위를 불러오지 못했어요.'}
+            {isEng ? 'Could not load the ranking.' : '유사도 순위를 불러오지 못했습니다.'}
           </p>
           {onRetry && (
             <button type="button" onClick={onRetry} className={`${SECONDARY_BUTTON} mt-3`}>
@@ -92,7 +92,7 @@ const NearestList = ({
         </button>
       )}
       <p className="pt-3 font-body-kr text-[12px] leading-4 opacity-60">
-        {isEng ? 'Highlighted words are ones you guessed.' : '노란 줄은 내가 추측했던 단어예요.'}
+        {isEng ? 'Highlighted words are ones you guessed.' : '노란 줄은 내가 입력한 단어.'}
       </p>
     </section>
   );

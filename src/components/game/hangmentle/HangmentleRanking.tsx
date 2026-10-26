@@ -17,7 +17,7 @@ interface HangmentleRankingProps {
   live: boolean;
 }
 
-// 이벤트 회차 랭킹: 먼저 맞힌 10명 (가린 이름·학과·맞힌 시각)
+// 이벤트 회차 랭킹: 먼저 맞힌 5명 (가린 이름·학과·맞힌 시각)
 const HangmentleRanking = ({ round, label, myRank, live }: HangmentleRankingProps) => {
   const { language } = useLanguage();
   const isEng = language === 'ENG';
@@ -27,7 +27,8 @@ const HangmentleRanking = ({ round, label, myRank, live }: HangmentleRankingProp
     queryFn: () => fetchHangmentleRankings(round),
     refetchInterval: live ? RANKING_REFRESH_MS : false,
   });
-  const entries = rankingQuery.data;
+  // 서버가 더 보내도 화면에는 HANGMENTLE_RANKING_SIZE 명까지만
+  const entries = rankingQuery.data?.slice(0, HANGMENTLE_RANKING_SIZE);
 
   const status = (text: string) => (
     <p className="py-4 text-center font-body-kr text-[14px] font-semibold opacity-60">{text}</p>
@@ -47,7 +48,7 @@ const HangmentleRanking = ({ round, label, myRank, live }: HangmentleRankingProp
       {entries === undefined ? (
         rankingQuery.isError ? (
           <div className="pt-2 text-center">
-            {status(isEng ? 'Could not load the ranking.' : '랭킹을 불러오지 못했어요.')}
+            {status(isEng ? 'Could not load the ranking.' : '랭킹을 불러오지 못했습니다.')}
             <button
               type="button"
               onClick={() => rankingQuery.refetch()}
@@ -57,10 +58,10 @@ const HangmentleRanking = ({ round, label, myRank, live }: HangmentleRankingProp
             </button>
           </div>
         ) : (
-          status(isEng ? 'Loading…' : '랭킹을 불러오는 중이에요…')
+          status(isEng ? 'Loading…' : '랭킹을 불러오는 중입니다…')
         )
       ) : entries.length === 0 ? (
-        status(isEng ? 'No one has solved it yet.' : '아직 맞힌 사람이 없어요')
+        status(isEng ? 'No one has solved it yet.' : '아직 맞힌 사람이 없어요.')
       ) : (
         <ol className="pt-2">
           {entries.map((entry) => {
@@ -110,7 +111,7 @@ const HangmentleRanking = ({ round, label, myRank, live }: HangmentleRankingProp
         {live
           ? isEng
             ? 'Times are KST. Refreshes every 30 seconds.'
-            : '맞힌 시각 기준이에요. 30초마다 새로 고쳐요.'
+            : '맞힌 시각 기준이며 30초마다 갱신.'
           : isEng
             ? `When the puzzle opens, the first ${HANGMENTLE_RANKING_SIZE} to solve it show up here.`
             : `문제가 열리면 먼저 맞힌 ${HANGMENTLE_RANKING_SIZE}명이 여기에 올라요.`}

@@ -158,7 +158,7 @@ const OnboardingPage = () => {
                 <p className="mt-4 text-center font-body-kr text-[15px] leading-[1.45]">
                   한국항공대학교 재학생들을 위한 서비스입니다.
                   <br />
-                  졸업생 및 외부인은 비회원으로 접속해주세요.
+                  졸업생 및 외부인은 비회원으로 접속해 주세요.
                 </p>
 
                 <div className="mt-5 flex items-center justify-between gap-[10px]">
@@ -186,7 +186,7 @@ const OnboardingPage = () => {
                 <p className="mt-4 text-center font-body-kr text-[15px] leading-[1.45]">
                   비회원으로 접속하면
                   <br />
-                  <span className="font-bold">게임 행사</span>에 참여할 수 없어요.
+                  <span className="font-bold">게임 행사</span>에 참여할 수 없습니다.
                 </p>
 
                 <button

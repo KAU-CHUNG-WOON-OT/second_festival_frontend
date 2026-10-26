@@ -8,12 +8,6 @@ interface NoticeItemProps {
   onClick: () => void;
 }
 
-const getNoticeIcon = (notice: NoticeData) => {
-  if (notice.isNew) return "📢";
-  if (notice.category === "공연") return "🎉";
-  return "ℹ️";
-};
-
 const NoticeItem = ({ notice, compact = false, onClick }: NoticeItemProps) => {
   const { t } = useTranslation();
   const { language } = useLanguage();
@@ -27,7 +21,6 @@ const NoticeItem = ({ notice, compact = false, onClick }: NoticeItemProps) => {
         compact ? "py-3" : "py-4"
       }`}
     >
-      <span className="font-body-kr text-[24px] leading-8">{getNoticeIcon(notice)}</span>
       {notice.isNew && (
         <span className="shrink-0 rounded-full border border-ink bg-rust px-3 py-[2px] font-typewriter text-[12px] font-bold leading-4 text-paper">
           {t("notice.new")}

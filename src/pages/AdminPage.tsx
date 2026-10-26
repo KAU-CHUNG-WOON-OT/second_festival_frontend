@@ -35,16 +35,16 @@ import {
 } from '../data/storeCongestion';
 import type { AdminLoginState } from './AdminLoginPage';
 
-const EXPIRED_NOTICE: AdminLoginState = { notice: '로그인이 만료됐어요. 다시 로그인해 주세요.' };
+const EXPIRED_NOTICE: AdminLoginState = { notice: '로그인이 만료되었습니다. 다시 로그인해 주세요.' };
 const isUnauthorized = (error: unknown) => error instanceof ApiError && error.status === 401;
 
 const updateErrorMessage = (error: unknown) => {
   if (error instanceof ApiError) {
-    if (error.status === 404) return '등록되지 않은 가게예요. 서버 설정을 확인해 주세요.';
-    if (error.status === 400) return '잘못된 값이에요. 다시 눌러 주세요.';
-    return '바꾸지 못했어요. 다시 눌러 주세요.';
+    if (error.status === 404) return '등록되지 않은 가게입니다. 서버 설정을 확인해 주세요.';
+    if (error.status === 400) return '잘못된 값입니다. 다시 눌러 주세요.';
+    return '변경하지 못했습니다. 다시 눌러 주세요.';
   }
-  return '연결이 불안정해 바꾸지 못했어요. 다시 눌러 주세요.';
+  return '연결이 불안정해 변경하지 못했습니다. 다시 눌러 주세요.';
 };
 
 interface StoreAdminCardProps {
@@ -141,11 +141,11 @@ const StoreAdminCard = ({
             ? '저장 중…'
             : updatedMs !== null
               ? `${formatUpdatedAgo(updatedMs, now, false)} · ${formatSeoulClock(updatedMs)}`
-              : '아직 현황이 등록되지 않았어요'}
+              : '아직 등록된 현황 없음.'}
         </p>
         {/* 화면 읽기 프로그램에는 저장 중·저장 결과만 알린다 (지난 시간 표시는 계속 바뀌므로 알리지 않음) */}
         <span className="sr-only" aria-live="polite">
-          {mutation.isPending ? '저장 중' : mutation.isSuccess ? `${store.name} 저장했어요` : ''}
+          {mutation.isPending ? '저장 중' : mutation.isSuccess ? `${store.name} 저장했습니다.` : ''}
         </span>
 
         <div
@@ -248,7 +248,7 @@ const AdminConsole = ({
       {!data && isError && (
         <div className="pt-4">
           <EmptyState
-            message="지금 현황을 불러오지 못했어요."
+            message="현황을 불러오지 못했습니다."
             action={{ label: '다시 불러오기', onClick: () => refetch() }}
           />
         </div>
@@ -271,8 +271,7 @@ const AdminConsole = ({
       </div>
 
       <p className="pt-6 font-body-kr text-[13px] leading-5 text-ink/70">
-        손님 화면(가게 정보)&#8288;은 30초마다 새로 받아요. 바꾼 뒤 손님 화면에 보이기까지 최대 30초 걸릴
-        수 있어요.
+        손님 화면(가게 정보)&#8288;은 30초마다 갱신. 반영까지 최대 30초 소요.
       </p>
     </>
   );
@@ -324,12 +323,12 @@ const AdminPage = () => {
 
       {sessionQuery.isPending ? (
         <div className="mt-6 rounded-[16px] border-2 border-ink bg-paper px-5 py-8 text-center font-body-kr text-[15px] font-semibold text-ink/70 shadow-[5px_5px_0px_0px_var(--color-ink)]">
-          로그인을 확인하고 있어요…
+          로그인을 확인하는 중입니다…
         </div>
       ) : sessionQuery.isError ? (
         <div className="pt-6">
           <EmptyState
-            message="로그인을 확인하지 못했어요. 연결을 확인해 주세요."
+            message="로그인을 확인하지 못했습니다. 연결을 확인해 주세요."
             action={{ label: '다시 시도', onClick: () => sessionQuery.refetch() }}
           />
         </div>

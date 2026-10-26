@@ -13,9 +13,9 @@ const HomePage = () => {
   const { language } = useLanguage();
   const isEng = language === 'ENG';
 
-  const importantNotice = dummyNotices
-    .filter((n) => n.isImportant)
-    .sort((a, b) => b.date.localeCompare(a.date))[0];
+  // 홈 공지 띠: 중요 공지가 있으면 그중 최신, 없으면 가장 최근 공지
+  const latestNotices = [...dummyNotices].sort((a, b) => b.date.localeCompare(a.date));
+  const bannerNotice = latestNotices.find((n) => n.isImportant) ?? latestNotices[0];
 
   // 시안의 '가게 정보'·'실시간 좌석' 자리는 부스 정보·가게 정보로 연결 (실시간 좌석은 가게 화면에서 보여 줌)
   const QUICK_MENUS: HomeQuickMenuItem[] = [
@@ -29,11 +29,11 @@ const HomePage = () => {
     <div className="flex flex-col text-ink">
       <HomeHero />
 
-      {importantNotice && (
+      {bannerNotice && (
         <HomeNoticeBanner
-          to={`/notice?id=${importantNotice.id}`}
-          title={isEng ? importantNotice.title_en : importantNotice.title}
-          dateText={importantNotice.date}
+          to={`/notice?id=${bannerNotice.id}`}
+          title={isEng ? bannerNotice.title_en : bannerNotice.title}
+          dateText={bannerNotice.date}
         />
       )}
 

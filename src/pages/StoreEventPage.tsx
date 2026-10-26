@@ -55,7 +55,7 @@ const StoreCard = ({
     )}
 
     <p className="flex items-center justify-between gap-2 border-t-2 border-ink bg-cream px-5 py-3 font-body-kr text-[13px] font-semibold leading-5">
-      {isEng ? 'Tap to see the live status' : '누르면 실시간 현황을 볼 수 있어요'}
+      {isEng ? 'Tap to see the live status' : '누르면 실시간 현황을 볼 수 있어요.'}
       <FiChevronRight size={18} aria-hidden className="shrink-0" />
     </p>
   </Link>

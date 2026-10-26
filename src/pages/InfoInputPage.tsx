@@ -80,8 +80,8 @@ const InfoInputPage = () => {
     } catch (error) {
       const message =
         error instanceof ApiError
-          ? error.message || '정보 등록에 실패했습니다. 잠시 후 다시 시도해주세요.'
-          : '네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+          ? error.message || '정보 등록에 실패했습니다. 잠시 후 다시 시도해 주세요.'
+          : '네트워크 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.';
       setErrorMessage(message);
       setIsConfirmModalOpen(false);
     } finally {
@@ -143,7 +143,7 @@ const InfoInputPage = () => {
           />
           {showStudentIdError && (
             <p id="student-id-error" role="alert" className="pl-5 pt-[6px] font-body-kr text-[13px] font-bold text-rust">
-              학번 형식에 맞지 않습니다
+              학번 형식에 맞지 않습니다.
             </p>
           )}
         </div>
@@ -216,7 +216,7 @@ const InfoInputPage = () => {
           disabled={!isValid || isSubmitting}
           className="mt-2 h-16 w-full rounded-[16px] border-2 border-ink bg-rust font-display text-[20px] leading-7 text-paper shadow-[4px_4px_0px_0px_var(--color-ink)] disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {isSubmitting ? '저장 중...' : '입력 완료'}
+          {isSubmitting ? '저장 중…' : '입력 완료'}
         </button>
       </form>
 
@@ -258,7 +258,7 @@ const InfoInputPage = () => {
                 disabled={isSubmitting}
                 className="h-[46px] flex-1 rounded-[14px] border-2 border-ink bg-ink font-body-kr text-[15px] font-semibold text-paper disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {isSubmitting ? '저장 중...' : '확인'}
+                {isSubmitting ? '저장 중…' : '확인'}
               </button>
             </div>
           </div>

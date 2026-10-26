@@ -63,7 +63,7 @@ const AuthBootGate = ({ children }: AuthBootGateProps) => {
   if (!ready) {
     return (
       <div className="flex min-h-[100dvh] items-center justify-center bg-white">
-        <p className="text-[16px] font-medium text-[#314158]">로딩 중...</p>
+        <p className="text-[16px] font-medium text-[#314158]">불러오는 중…</p>
       </div>
     );
   }

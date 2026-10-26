@@ -34,12 +34,12 @@
     "central": "중앙단위"
   },
   "search": {
-    "menuPlaceholder": "메뉴를 검색해주세요",
-    "pubPlaceholder": "주점명 혹은 학과를 입력해주세요",
-    "noResults": "검색 결과가 없습니다",
+    "menuPlaceholder": "메뉴를 검색해 주세요",
+    "pubPlaceholder": "주점명 혹은 학과를 입력해 주세요",
+    "noResults": "검색 결과가 없습니다.",
     "reset": "검색 초기화",
     "clear": "검색어 지우기",
-    "boothPlaceholder": "부스명 혹은 학과를 입력해주세요"
+    "boothPlaceholder": "부스명 혹은 학과를 입력해 주세요"
   },
   "sidebar": {
     "login": "로그인하기"
@@ -50,15 +50,15 @@
   },
   "payment": {
     "title": "QR 입금",
-    "copied": "계좌번호가 복사되었습니다"
+    "copied": "계좌번호가 복사되었습니다."
   },
   "common": {
     "cancel": "취소",
     "confirm": "확인",
     "backToList": "돌아가기",
-    "boothNotFound": "부스를 찾을 수 없습니다",
-    "pubNotFound": "주점을 찾을 수 없습니다",
-    "truckNotFound": "푸드트럭을 찾을 수 없습니다",
+    "boothNotFound": "부스를 찾을 수 없습니다.",
+    "pubNotFound": "주점을 찾을 수 없습니다.",
+    "truckNotFound": "푸드트럭을 찾을 수 없습니다.",
     "operatingTime": "운영 시간",
     "operatingDays": "운영 일자",
     "location": "위치",
