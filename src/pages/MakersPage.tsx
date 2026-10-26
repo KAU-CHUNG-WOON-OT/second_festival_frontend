@@ -169,7 +169,8 @@ const Makers = () => {
             <button
               key={label}
               type="button"
-              onClick={() => setTabIndex(i)}
+              // 어느 쪽을 눌러도 다른 명단으로 바뀐다 (한/영 버튼과 같이)
+              onClick={() => setTabIndex((tabIndex + 1) % TABS.length)}
               aria-pressed={tabIndex === i}
               className={`rounded-full px-3 py-[6px] text-[12px] font-bold leading-4 ${
                 isEng ? 'font-typewriter' : 'font-body-kr'
