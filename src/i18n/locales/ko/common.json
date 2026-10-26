@@ -30,7 +30,8 @@
     "meal": "식사",
     "department": "학과",
     "club": "동아리",
-    "studentParticipation": "학생참여"
+    "studentParticipation": "학생참여",
+    "central": "중앙단위"
   },
   "search": {
     "menuPlaceholder": "메뉴를 검색해 주세요",
@@ -63,7 +64,6 @@
     "location": "위치",
     "instagram": "인스타그램",
     "department": "학과",
-    "boothLocation": "부스 위치",
     "truckLocation": "트럭 위치"
   },
   "home": {

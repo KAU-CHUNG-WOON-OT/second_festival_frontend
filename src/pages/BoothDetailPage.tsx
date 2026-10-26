@@ -12,9 +12,6 @@ import PaymentCard from '../components/common/PaymentCard';
 import { dummyBooths } from '../data/boothData';
 import { track } from '@/lib/mixpanel';
 
-// 영어 화면의 구분 (중앙단위처럼 애매한 이름은 한글 그대로)
-const CATEGORY_EN: Record<string, string> = { 학과: 'Dept.', 동아리: 'Club' };
-
 const BoothDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -40,8 +37,15 @@ const BoothDetailPage = () => {
     );
   }
 
+  // 구분은 목록의 카테고리 버튼과 같은 번역
+  const categoryLabel: Record<string, string> = {
+    학과: t('category.department'),
+    동아리: t('category.club'),
+    중앙단위: t('category.central'),
+  };
+
   const infoRows = [
-    { label: isEng ? 'Type' : '구분', value: isEng ? (CATEGORY_EN[booth.category] ?? booth.category) : booth.category },
+    { label: isEng ? 'Type' : '구분', value: categoryLabel[booth.category] ?? booth.category },
     { label: isEng ? 'Hours' : '운영 시간', value: booth.operatingTime },
     { label: isEng ? 'Instagram' : '인스타그램', value: booth.insta },
   ];
@@ -56,7 +60,7 @@ const BoothDetailPage = () => {
       <InfoCard rows={infoRows} />
       <BoothIntroCard introduction={booth.introduction} introduction_en={booth.introduction_en} />
       <MenuList menu={booth.menu} title={isEng ? 'Items & Activities' : '판매 · 참여 항목'} />
-      <PaymentCard account={booth.account} qrCode={booth.qr_img} />
+      {booth.account && <PaymentCard account={booth.account} qrCode={booth.qr_img} />}
     </div>
   );
 };
