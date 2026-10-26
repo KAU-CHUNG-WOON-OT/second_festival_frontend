@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import CategoryList from '../components/common/CategoryList';
 import RetroPageHeader from '../components/common/RetroPageHeader';
 import cheongunLogoLarge from '../assets/cheongun_logo_large.svg';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -75,11 +74,11 @@ const STAFF_SECTIONS: MemberSection[] = [
     title: 'Office',
     title_en: 'Office',
     members: [
-      { role: '집행위원장', role_en: 'Executive Chair', name: '김가빈', dept: '경영 23', dept_en: "Business '23", wide: true },
+      { role: '사업전략실장', role_en: 'Business Strategy', name: '김민겸', dept: '물류 22', dept_en: "Logistics '22", wide: true },
+      { role: '집행위원장', role_en: 'Executive Chair', name: '김가빈', dept: '경영 23', dept_en: "Business '23" },
       { role: '예산실장', role_en: 'Budget', name: '강미주', dept: '자율주행 24', dept_en: "Auto Drive '24" },
       { role: '공보실장', role_en: 'PR', name: '윤여범', dept: '교통 22', dept_en: "Transport '22" },
       { role: '개발실장', role_en: 'Dev Office', name: '윤정민', dept: '소프트 23', dept_en: "Software '23" },
-      { role: '사업전략실장', role_en: 'Business Strategy', name: '김민겸', dept: '물류 22', dept_en: "Logistics '22" },
     ],
   },
 ];
@@ -163,12 +162,23 @@ const Makers = () => {
         </p>
       </section>
 
+      {/* 한/영 버튼(LanguageToggle)과 같은 모양 */}
       <div className="mt-8 flex justify-center">
-        <CategoryList
-          categories={tabLabels}
-          selectedCategory={tabLabels[tabIndex]}
-          onSelect={(label) => setTabIndex(Math.max(0, tabLabels.indexOf(label)))}
-        />
+        <div className="flex rounded-full border border-paper/80 bg-ink/40 p-[2px] backdrop-blur-[8px]">
+          {tabLabels.map((label, i) => (
+            <button
+              key={label}
+              type="button"
+              onClick={() => setTabIndex(i)}
+              aria-pressed={tabIndex === i}
+              className={`rounded-full px-3 py-[6px] text-[12px] font-bold leading-4 ${
+                isEng ? 'font-typewriter' : 'font-body-kr'
+              } ${tabIndex === i ? 'bg-mustard text-ink' : 'text-paper'}`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="mt-5 flex flex-col gap-7 rounded-[16px] border-2 border-ink bg-paper px-5 py-7 shadow-[5px_5px_0px_0px_var(--color-ink)]">
