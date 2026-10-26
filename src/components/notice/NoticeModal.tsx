@@ -68,8 +68,7 @@ const NoticeModal = ({ notice, onClose }: NoticeModalProps) => {
   };
 
   const isEng = language === "ENG";
-  const title = isEng ? notice.title_en : notice.title;
-  const content = isEng ? notice.content_en : notice.content;
+  const { title, content } = notice;
 
   return createPortal(
     <>

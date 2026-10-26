@@ -51,19 +51,19 @@ export const dummyBooths: BoothData[] = [
     {
         id: 101,
         name: '우리부모',
-        name_en: 'Woori Bumo',
+        name_en: '우리부모',
         category: '동아리',
         description: '우리부모 부스',
-        description_en: 'Woori Bumo Booth',
+        description_en: '우리부모 Booth',
         logo_img: wooriBumoLogo,
         images: [],
         insta: '@kau_wooboo',
-        operatingTime: '',
+        operatingTime: '10:00 ~ 17:00',
         introduction:
             '밴드 동아리 우리부모의 활동과 공연을 소개하고, 기타 피크를 활용해 나만의 키링을 만들어 보는 체험 부스입니다. ' +
             '스티커와 유성펜 등으로 피크를 자유롭게 꾸미고 키링 고리를 연결해 세상에 하나뿐인 키링을 완성해 보세요!',
         introduction_en:
-            'Meet Woori Bumo, our band club, learn about our activities and performances, and make your own keyring out of a guitar pick! ' +
+            'Meet 우리부모, our band club, learn about our activities and performances, and make your own keyring out of a guitar pick! ' +
             'Decorate a pick however you like with stickers and permanent markers, attach a keyring, and take home a one-of-a-kind keyring!',
         menu: [
             {
@@ -81,10 +81,10 @@ export const dummyBooths: BoothData[] = [
     {
         id: 102,
         name: '세인영',
-        name_en: 'Saint-Young',
+        name_en: '세인영',
         category: '동아리',
         description: '세인영 부스',
-        description_en: 'Saint-Young Booth',
+        description_en: '세인영 Booth',
         logo_img: seinyeongLogo,
         images: [],
         insta: '@kau_saintyoung',
@@ -95,7 +95,7 @@ export const dummyBooths: BoothData[] = [
             ' - 영화 취향 랜덤 소개팅 운영\n' +
             ' - 군고구마 아이스크림 및 아포카토 판매',
         introduction_en:
-            'Saint-Young Booth Activities\n' +
+            '세인영 Booth Activities\n' +
             ' - Brawl Stars 2v2 matches\n' +
             ' - Random blind dates matched by movie taste\n' +
             ' - Roasted sweet potato ice cream and affogato',
@@ -118,10 +118,10 @@ export const dummyBooths: BoothData[] = [
     {
         id: 103,
         name: '이웃사촌부',
-        name_en: 'Friendly neighborhood',
+        name_en: '이웃사촌부',
         category: '동아리',
         description: '이웃사촌부 부스',
-        description_en: 'Friendly Neighbourhood Booth',
+        description_en: '이웃사촌부 Booth',
         logo_img: neighborLogo,
         images: [],
         insta: '@kau_fn_arumi',

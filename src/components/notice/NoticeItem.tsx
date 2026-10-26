@@ -1,5 +1,4 @@
 import { useTranslation } from "react-i18next";
-import { useLanguage } from "../../contexts/LanguageContext";
 import type { NoticeData } from "../../data/noticeData";
 
 interface NoticeItemProps {
@@ -10,8 +9,6 @@ interface NoticeItemProps {
 
 const NoticeItem = ({ notice, compact = false, onClick }: NoticeItemProps) => {
   const { t } = useTranslation();
-  const { language } = useLanguage();
-  const isEng = language === "ENG";
 
   return (
     <button
@@ -33,7 +30,7 @@ const NoticeItem = ({ notice, compact = false, onClick }: NoticeItemProps) => {
       )}
       <div className="min-w-0 flex-1">
         <p className="line-clamp-2 font-display text-[16px] leading-6">
-          {isEng ? notice.title_en : notice.title}
+          {notice.title}
         </p>
         <p className="pt-2 font-typewriter text-[12px] leading-4 opacity-60">{notice.date}</p>
       </div>

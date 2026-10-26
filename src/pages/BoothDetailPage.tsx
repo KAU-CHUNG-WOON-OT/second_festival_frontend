@@ -37,10 +37,20 @@ const BoothDetailPage = () => {
     );
   }
 
+  // 구분은 목록의 카테고리 버튼과 같은 번역
+  const categoryLabel: Record<string, string> = {
+    학과: t('category.department'),
+    동아리: t('category.club'),
+    중앙단위: t('category.central'),
+  };
+
+  // 아직 안 정해진 칸('업데이트 예정')은 영어 화면에서 TBA
+  const tba = (value: string) => (isEng && value === '업데이트 예정' ? 'TBA' : value);
+
   const infoRows = [
-    { label: isEng ? 'Type' : '구분', value: booth.category },
-    { label: isEng ? 'Hours' : '운영 시간', value: booth.operatingTime },
-    { label: isEng ? 'Instagram' : '인스타그램', value: booth.insta },
+    { label: isEng ? 'Type' : '구분', value: categoryLabel[booth.category] ?? booth.category },
+    { label: isEng ? 'Hours' : '운영 시간', value: tba(booth.operatingTime) },
+    { label: isEng ? 'Instagram' : '인스타그램', value: tba(booth.insta) },
   ];
 
   return (
@@ -52,7 +62,7 @@ const BoothDetailPage = () => {
       )}
       <InfoCard rows={infoRows} />
       <BoothIntroCard introduction={booth.introduction} introduction_en={booth.introduction_en} />
-      <MenuList menu={booth.menu} title="판매 · 참여 항목" />
+      <MenuList menu={booth.menu} title={isEng ? 'Items & Activities' : '판매 · 참여 항목'} />
       {booth.account && <PaymentCard account={booth.account} qrCode={booth.qr_img} />}
     </div>
   );

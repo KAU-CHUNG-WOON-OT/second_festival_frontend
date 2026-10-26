@@ -88,7 +88,7 @@ const NearestList = ({
           onClick={onMore}
           className="mt-3 h-10 w-full rounded-full border border-ink/20 font-body-kr text-[14px] font-semibold active:bg-ink/5"
         >
-          {isEng ? 'Show more' : `더 보기 (${count}/${HANGMENTLE_TOP_RANK})`}
+          {isEng ? `Show more (${count}/${HANGMENTLE_TOP_RANK})` : `더 보기 (${count}/${HANGMENTLE_TOP_RANK})`}
         </button>
       )}
       <p className="pt-3 font-body-kr text-[12px] leading-4 opacity-60">

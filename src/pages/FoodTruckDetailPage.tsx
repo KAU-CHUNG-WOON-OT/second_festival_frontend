@@ -43,7 +43,7 @@ const FoodTruckDetailPage = () => {
   }
 
   const infoRows = [
-    { label: isEng ? "Days"  : "운영 일자",  value: truck.operatingDays },
+    { label: isEng ? "Days"  : "운영 일자",  value: isEng ? truck.operatingDays_en : truck.operatingDays },
     { label: isEng ? "Hours" : "운영 시간",  value: truck.operatingTime },
   ];
 

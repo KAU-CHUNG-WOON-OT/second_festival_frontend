@@ -13,7 +13,8 @@ const LanguageToggle = () => {
           <button
             key={option}
             type="button"
-            onClick={() => !isActive && toggleLanguage()}
+            // 지금 언어를 눌러도 다른 언어로 바뀐다
+            onClick={toggleLanguage}
             aria-pressed={isActive}
             className={`rounded-full px-3 py-[6px] font-typewriter text-[12px] font-bold leading-4 ${
               isActive ? "bg-mustard text-ink" : "text-paper"

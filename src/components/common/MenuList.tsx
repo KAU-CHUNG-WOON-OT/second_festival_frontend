@@ -15,6 +15,13 @@ interface MenuListProps {
   title?: string;
 }
 
+// 영어 화면 가격: '2,000원' → '₩2,000', '무료' → 'Free' (그 밖의 글자는 그대로)
+const priceText = (price: string, isEng: boolean) => {
+  if (!isEng) return price;
+  if (price === '무료') return 'Free';
+  return price.replace(/^([\d,]+)원$/, '₩$1');
+};
+
 const MenuList = ({ menu, title }: MenuListProps) => {
   const { language } = useLanguage();
 
@@ -45,7 +52,7 @@ const MenuList = ({ menu, title }: MenuListProps) => {
               {language === 'ENG' && item.name_en ? item.name_en : item.name}
             </span>
             <span className="shrink-0 font-typewriter text-[18px] font-bold leading-7">
-              {item.price}
+              {priceText(item.price, language === 'ENG')}
             </span>
           </li>
         ))}

@@ -110,7 +110,7 @@ const HangmentleRanking = ({ round, label, myRank, live }: HangmentleRankingProp
       <p className="pt-3 font-body-kr text-[12px] leading-4 opacity-60">
         {live
           ? isEng
-            ? 'Times are KST. Refreshes every 30 seconds.'
+            ? 'Ranked by solve time. Updates every 30 seconds.'
             : '맞힌 시각 기준이며 30초마다 갱신.'
           : isEng
             ? `When the puzzle opens, the first ${HANGMENTLE_RANKING_SIZE} to solve it show up here.`

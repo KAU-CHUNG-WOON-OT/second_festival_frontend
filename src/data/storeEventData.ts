@@ -114,7 +114,7 @@ export const storeEvents: StoreEvent[] = [
     ],
     intro: '보드게임존, 야구경기응원존 운영\n활주로 축제 한정 특별 메뉴 제공',
     intro_en:
-      'Board game zone and baseball cheering zone\nSpecial menu only for the Runway Festival',
+      'Board game zone and baseball cheering zone\nSpecial menu only during the 활주로 festival',
     about: [
       {
         label: '3F',
@@ -122,7 +122,7 @@ export const storeEvents: StoreEvent[] = [
         title: '보드게임존',
         title_en: 'Board game zone',
         body: '우노, 할리갈리, 텔레스트레이션, 꼬치의 달인 등',
-        body_en: 'UNO, Halli Galli, Telestrations, Kkochi Master, and more',
+        body_en: 'UNO, Halli Galli, Telestrations, 꼬치의 달인, and more',
       },
       {
         label: '4F',
