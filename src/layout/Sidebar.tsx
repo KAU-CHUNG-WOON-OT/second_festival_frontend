@@ -7,6 +7,9 @@ import { track } from '@/lib/mixpanel';
 import closeIcon from '../assets/sidebar_close.svg';
 import kakaoIcon from '../assets/kakao_icon.svg';
 
+// 맨 아래 '활주로' 글씨 (public/hwaljuro.svg)
+const HWALJURO_LOGO = '/hwaljuro.svg';
+
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
@@ -93,11 +96,27 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           </button>
         )}
 
-        <p
-          className={`whitespace-nowrap px-[31px] pb-10 font-display text-[36px] leading-9 text-rust ${isLogin ? 'mt-auto' : 'mt-6'}`}
+        <div
+          className={`flex items-end gap-[10px] whitespace-nowrap px-[31px] pb-10 text-rust ${isLogin ? 'mt-auto' : 'mt-6'}`}
         >
-          활주로 <span className="font-typewriter text-[14px] tracking-[1.4px]">festival</span>
-        </p>
+          {/* hwaljuro.svg 모양에 글자색(rust)을 칠한다 (원본 291×98) */}
+          <span
+            role="img"
+            aria-label="활주로"
+            className="block h-8 w-[95px] shrink-0 bg-current"
+            style={{
+              maskImage: `url(${HWALJURO_LOGO})`,
+              WebkitMaskImage: `url(${HWALJURO_LOGO})`,
+              maskSize: 'contain',
+              WebkitMaskSize: 'contain',
+              maskRepeat: 'no-repeat',
+              WebkitMaskRepeat: 'no-repeat',
+              maskPosition: 'left bottom',
+              WebkitMaskPosition: 'left bottom',
+            }}
+          />
+          <span className="font-typewriter text-[14px] font-bold leading-4 tracking-[1.4px]">festival</span>
+        </div>
       </aside>
     </div>
   );
