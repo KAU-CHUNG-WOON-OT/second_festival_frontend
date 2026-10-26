@@ -57,6 +57,7 @@ const STAFF_SECTIONS: MemberSection[] = [
     members: [
       { role: '총학생회장', role_en: 'President', name: '홍석담', dept: '경영 22', dept_en: "Business '22" },
       { role: '부총학생회장', role_en: 'Vice President', name: '주민재', dept: '소프트 24', dept_en: "Software '24" },
+      { role: '사업전략실장', role_en: 'Head of Business Strategy', name: '김민겸', dept: '물류 22', dept_en: "Logistics '22", wide: true },
     ],
   },
   {
@@ -74,7 +75,6 @@ const STAFF_SECTIONS: MemberSection[] = [
     title: 'Office',
     title_en: 'Office',
     members: [
-      { role: '사업전략실장', role_en: 'Head of Business Strategy', name: '김민겸', dept: '물류 22', dept_en: "Logistics '22", wide: true },
       { role: '집행위원장', role_en: 'Executive Chair', name: '김가빈', dept: '경영 23', dept_en: "Business '23" },
       { role: '예산실장', role_en: 'Head of Budget', name: '강미주', dept: '자율주행 24', dept_en: '자율주행 24' },
       { role: '공보실장', role_en: 'Head of PR', name: '윤여범', dept: '교통 22', dept_en: '교통 22' },
@@ -145,8 +145,9 @@ const Makers = () => {
     <div className="flex flex-col px-5 pb-16 pt-5 text-ink">
       <RetroPageHeader title={isEng ? 'Makers' : '만든이'} showMenu />
 
-      <section className="mt-6 flex flex-col items-center rounded-[16px] border-2 border-ink bg-paper px-5 py-8 text-center shadow-[6px_6px_0px_0px_var(--color-ink)]">
-        <img src={cheongunLogoLarge} alt="청운" width={160} height={108} />
+      {/* 박스 없이 노을 배경 위에 바로: 로고·글자는 밝게 */}
+      <section className="mt-6 flex flex-col items-center text-center text-paper">
+        <img src={cheongunLogoLarge} alt="청운" width={160} height={108} className="brightness-0 invert" />
         <h2 className="pt-5 font-display text-[24px] leading-[33px]">
           {isEng ? (
             'Korea Aerospace University 52nd Student Council CHUNGWOON'
@@ -158,7 +159,7 @@ const Makers = () => {
             </>
           )}
         </h2>
-        <p className="pt-3 font-typewriter text-[16px] font-bold leading-6 tracking-[1.6px] text-rust">
+        <p className="pt-3 font-typewriter text-[16px] font-bold leading-6 tracking-[1.6px] text-mustard">
           2026.10.28
         </p>
       </section>
