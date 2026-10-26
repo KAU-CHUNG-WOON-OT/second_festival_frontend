@@ -5,7 +5,6 @@ import HomeNoticeBanner from '../components/home/HomeNoticeBanner';
 import HomeQuickMenuGrid, { type HomeQuickMenuItem } from '../components/home/HomeQuickMenuGrid';
 import HomeGameSection from '../components/home/HomeGameSection';
 import { dummyNotices } from '../data/noticeData';
-import { SHOW_CELEBRITY } from '../data/performanceData';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const HomePage = () => {
@@ -13,9 +12,10 @@ const HomePage = () => {
   const { language } = useLanguage();
   const isEng = language === 'ENG';
 
-  // 홈 공지 띠: 중요 공지가 있으면 그중 최신, 없으면 가장 최근 공지
+  // 홈 공지 띠: HOT 공지 → 중요 공지 → 가장 최근 공지 순으로 하나 (각각 그중 최신)
   const latestNotices = [...dummyNotices].sort((a, b) => b.date.localeCompare(a.date));
-  const bannerNotice = latestNotices.find((n) => n.isImportant) ?? latestNotices[0];
+  const bannerNotice =
+    latestNotices.find((n) => n.isHot) ?? latestNotices.find((n) => n.isImportant) ?? latestNotices[0];
 
   // 시안의 '가게 정보'·'실시간 좌석' 자리는 부스 정보·가게 정보로 연결 (실시간 좌석은 가게 화면에서 보여 줌)
   const QUICK_MENUS: HomeQuickMenuItem[] = [
@@ -43,12 +43,9 @@ const HomePage = () => {
         <HomeQuickMenuGrid items={QUICK_MENUS} />
       </section>
 
-      {/* 연예인 라인업은 공개 전까지 숨김 (data/performanceData의 SHOW_CELEBRITY) */}
-      {SHOW_CELEBRITY && (
-        <section className="px-5 pb-12">
-          <HomeLineupCard />
-        </section>
-      )}
+      <section className="px-5 pb-12">
+        <HomeLineupCard />
+      </section>
     </div>
   );
 };

@@ -14,6 +14,9 @@ import liftPoster3 from '../assets/booth/lift_poster_3.jpeg';
 import liftQr from '../assets/booth/lift_qr.jpeg';
 import liftMenuMandu from '../assets/booth/lift_menu_mandu.png';
 import liftMenuSki from '../assets/booth/lift_menu_ski.png';
+import hakbokLogo from '../assets/booth/hakbok.png';
+import hakbokPoster from '../assets/booth/hakbok_poster.jpeg';
+import hakbokMenuMochi from '../assets/booth/hakbok_menu_mochi.jpeg';
 
 export interface MenuItem {
     id: number;
@@ -176,22 +179,44 @@ export const dummyBooths: BoothData[] = [
         poster: [liftPoster1, liftPoster2, liftPoster3],
         qr_img: liftQr,
     },
-    // TODO: 학생복지회 부스 내용 받으면 채우기 (지금은 업데이트 예정 표시만)
     {
         id: 105,
-        name: '학생복지회',
+        name: '학생복지위원회',
         name_en: 'Student Welfare Committee',
         category: '중앙단위',
-        description: '학생복지회 부스',
+        description: '학생복지위원회 부스',
         description_en: 'Student Welfare Committee Booth',
-        logo_img: '',
+        logo_img: hakbokLogo,
         images: [],
-        insta: '업데이트 예정',
-        operatingTime: '업데이트 예정',
-        introduction: '부스 내용은 업데이트 예정입니다.',
-        introduction_en: 'Booth details will be updated soon.',
-        menu: [],
+        insta: '@kau_hakbock',
+        operatingTime: '10:00 ~ 16:00',
+        introduction:
+            '航貞仙 (항정선) | 과일모찌 만들기\n\n' +
+            '상큼달콤한 샤인머스캣 & 블루베리 요거트 과일모찌를 직접 만들고 맛있게 즐겨보세요!\n\n' +
+            '일시 | 2026년 10월 28일 (수) 10:00 - 16:00\n' +
+            '장소 | 학생회관 앞\n' +
+            '참가비 | 3,500원\n' +
+            '인원 | 선착순 100명 한정\n' +
+            // \u00a0: 채널 이름이 줄 중간에서 끊기지 않게
+            "문의 | Instagram @kau_hakbock / 카카오톡 채널 '한국항공대학교\u00a0학생복지회'",
+        introduction_en:
+            'Hangjeongseon (航貞仙) | Make Your Own Fruit Mochi\n\n' +
+            'Make sweet and tangy Shine Muscat & blueberry yogurt fruit mochi yourself and enjoy!\n\n' +
+            'When | Wed, Oct 28, 2026, 10:00 - 16:00\n' +
+            'Where | In front of the Student Union Building\n' +
+            'Fee | 3,500 won\n' +
+            'Spots | First 100 people only\n' +
+            "Contact | Instagram @kau_hakbock / KakaoTalk channel 'Korea Aerospace University Student Welfare Committee'",
+        menu: [
+            {
+                id: 1051,
+                name: '항정선 (선착순 100명)',
+                name_en: 'Hangjeongseon Fruit Mochi (First 100)',
+                price: '3,500원',
+                image: hakbokMenuMochi,
+            },
+        ],
         account: '',
-        poster: [],
+        poster: [hakbokPoster],
     },
 ];

@@ -17,8 +17,10 @@ const NoticePage = () => {
   );
 
   const sortedNotices = [...dummyNotices].sort((a, b) => b.date.localeCompare(a.date));
-  const newNotices = sortedNotices.filter((n) => n.isNew);
-  const otherNotices = sortedNotices.filter((n) => !n.isNew);
+  // HOT 공지를 맨 위에, 그다음 NEW, 나머지 순서
+  const hotNotices = sortedNotices.filter((n) => n.isHot);
+  const newNotices = sortedNotices.filter((n) => !n.isHot && n.isNew);
+  const otherNotices = sortedNotices.filter((n) => !n.isHot && !n.isNew);
 
   const closeNotice = () => {
     setSelectedNotice(null);
@@ -30,6 +32,23 @@ const NoticePage = () => {
       <RetroPageHeader showMenu />
 
       <RetroPageTitle title={t("nav.notice")} />
+
+      {hotNotices.length > 0 && (
+        <>
+          <p className="pt-6 font-typewriter text-[12px] font-bold leading-4 tracking-[3.6px] text-paper/80">HOT</p>
+          <div className="flex flex-col gap-4 pt-3">
+            {hotNotices.map((notice) => (
+              <NoticeItem
+                key={notice.id}
+                notice={notice}
+                compact
+                onClick={() => setSelectedNotice(notice)}
+              />
+            ))}
+          </div>
+          <div className="mt-6 border-t-2 border-paper/40" />
+        </>
+      )}
 
       {newNotices.length > 0 && (
         <>
