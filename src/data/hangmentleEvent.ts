@@ -173,14 +173,21 @@ export const isNotSolvedError = (error: unknown) =>
 // notReady: 문제 데이터를 준비 중(힌트 없음) / closed: 열리는 시각이 정해지지 않음
 export type RoundPhase = 'open' | 'countdown' | 'opening' | 'notReady' | 'closed';
 
+// 정각에 모두 한꺼번에 서버에 묻지 않게, 기기마다 '열렸나' 확인을 0~1초 늦춘다 (페이지를 열 때 한 번 정한다).
+// 그동안 카운트다운은 0에 머문다
+export const OPEN_CHECK_SPREAD_MS = 1_000;
+export const openCheckDelayMs = Math.floor(Math.random() * OPEN_CHECK_SPREAD_MS);
+
+// delayMs: 위의 openCheckDelayMs (열릴 시각을 그만큼 늦게 본다)
 export const roundPhase = (
   info: Pick<HangmentleRoundInfo, 'open' | 'opensAt' | 'hints'>,
   nowMs: number,
+  delayMs = 0,
 ): RoundPhase => {
   // 열렸는지는 서버 말을 따른다. 시계로는 열리기 전이라도 서버가 열렸다고 하면 연다
   if (info.open) return info.hints ? 'open' : 'notReady';
   const opensAtMs = parseServerTime(info.opensAt);
-  if (opensAtMs !== null && nowMs < opensAtMs) return 'countdown';
+  if (opensAtMs !== null && nowMs < opensAtMs + delayMs) return 'countdown';
   // 열릴 시각이 지났는데 힌트가 없으면 '곧 열려요'라고 하지 않는다
   if (!info.hints) return 'notReady';
   return opensAtMs === null ? 'closed' : 'opening';
@@ -198,12 +205,13 @@ const WAITING_POLL_MS = 60_000;
 export const roundPollInterval = (
   info: Pick<HangmentleRoundInfo, 'open' | 'opensAt' | 'hints'>,
   nowMs: number,
+  delayMs = 0,
 ): number | false => {
-  switch (roundPhase(info, nowMs)) {
+  switch (roundPhase(info, nowMs, delayMs)) {
     case 'open':
       return false;
     case 'opening': {
-      const sinceOpen = nowMs - (parseServerTime(info.opensAt) ?? nowMs);
+      const sinceOpen = nowMs - ((parseServerTime(info.opensAt) ?? nowMs) + delayMs);
       return sinceOpen < OPENING_FAST_RETRY_MS ? OPENING_FAST_POLL_MS : OPENING_SLOW_POLL_MS;
     }
     case 'notReady':

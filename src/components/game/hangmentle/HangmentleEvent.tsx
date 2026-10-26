@@ -30,6 +30,7 @@ import {
   guessErrorText,
   guessFromResponse,
   isNotSolvedError,
+  openCheckDelayMs,
   resolveEventProgress,
   roundPhase,
   roundPollInterval,
@@ -103,22 +104,23 @@ const HangmentleEvent = ({ event, onShowHub }: HangmentleEventProps) => {
     queryKey: hangmentleEventKeys.round(round),
     queryFn: () => fetchHangmentleRound(round),
     refetchInterval: (query) =>
-      query.state.data ? roundPollInterval(query.state.data, serverNow()) : false,
+      query.state.data ? roundPollInterval(query.state.data, serverNow(), openCheckDelayMs) : false,
     // 없는 회차는 다시 물어도 같으므로 바로 안내한다
     retry: (failureCount, error) => classifyRoundError(error) !== 'notFound' && failureCount < 1,
   });
   const info = infoQuery.data;
   const opensAtMs = parseServerTime(info?.opensAt);
-  // 열리는 순간과, 열린 뒤에도 서버가 닫혀 있다고 할 때 1초마다 묻기를 멈추는 순간에 다시 그린다
+  // 열리는 순간(기기마다 0~1초 늦게)과, 열린 뒤에도 서버가 닫혀 있다고 할 때 1초마다 묻기를 멈추는 순간에 다시 그린다
+  const checkAtMs = opensAtMs === null ? null : opensAtMs + openCheckDelayMs;
   const now = useServerNowAt([
-    opensAtMs,
-    opensAtMs === null ? null : opensAtMs + OPENING_FAST_RETRY_MS,
+    checkAtMs,
+    checkAtMs === null ? null : checkAtMs + OPENING_FAST_RETRY_MS,
   ]);
-  const phase = info ? roundPhase(info, now) : null;
+  const phase = info ? roundPhase(info, now, openCheckDelayMs) : null;
 
   // 카운트다운이 0이 되면 바로 서버에 묻는다 (이후 서버가 아직 닫혀 있다고 하면 refetchInterval이 1초마다 다시 묻는다)
   const { refetch: refetchInfo } = infoQuery;
-  const passedOpensAt = !!info && !info.open && opensAtMs !== null && now >= opensAtMs;
+  const passedOpensAt = !!info && !info.open && checkAtMs !== null && now >= checkAtMs;
   useEffect(() => {
     if (passedOpensAt) refetchInfo();
   }, [passedOpensAt, refetchInfo]);
