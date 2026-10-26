@@ -77,7 +77,7 @@ export const GuessRow = ({ guess, showScore, highlight = false, rowRef }: GuessR
   const isEng = language === 'ENG';
 
   const rankLabel = () => {
-    if (guess.rank === 0) return isEng ? 'Answer!' : '정답!';
+    if (guess.rank === 0) return isEng ? 'Correct!' : '정답!';
     if (guess.rank === null)
       return isEng ? `${HANGMENTLE_TOP_RANK}+` : `${HANGMENTLE_TOP_RANK}위 밖`;
     return isEng ? `#${guess.rank}` : `${guess.rank}위`;

@@ -6,12 +6,9 @@ import HomeQuickMenuGrid, { type HomeQuickMenuItem } from '../components/home/Ho
 import HomeGameSection from '../components/home/HomeGameSection';
 import { dummyNotices } from '../data/noticeData';
 import { SHOW_CELEBRITY } from '../data/performanceData';
-import { useLanguage } from '../contexts/LanguageContext';
 
 const HomePage = () => {
   const { t } = useTranslation();
-  const { language } = useLanguage();
-  const isEng = language === 'ENG';
 
   // 홈 공지 띠: 중요 공지가 있으면 그중 최신, 없으면 가장 최근 공지
   const latestNotices = [...dummyNotices].sort((a, b) => b.date.localeCompare(a.date));
@@ -32,7 +29,7 @@ const HomePage = () => {
       {bannerNotice && (
         <HomeNoticeBanner
           to={`/notice?id=${bannerNotice.id}`}
-          title={isEng ? bannerNotice.title_en : bannerNotice.title}
+          title={bannerNotice.title}
           dateText={bannerNotice.date}
         />
       )}
