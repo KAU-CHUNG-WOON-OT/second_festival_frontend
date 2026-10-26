@@ -86,8 +86,8 @@ const STAFF_SECTIONS: MemberSection[] = [
 
 // 위쪽 버튼으로 바꿔 보는 명단
 const TABS = [
-  { label: '개발자', label_en: 'Developers', sections: SECTIONS },
   { label: '운영진', label_en: 'Staff', sections: STAFF_SECTIONS },
+  { label: '개발자', label_en: 'Developers', sections: SECTIONS },
 ];
 
 const LINKS = [
@@ -163,7 +163,7 @@ const Makers = () => {
         </p>
       </section>
 
-      <div className="mt-8">
+      <div className="mt-8 flex justify-center">
         <CategoryList
           categories={tabLabels}
           selectedCategory={tabLabels[tabIndex]}
