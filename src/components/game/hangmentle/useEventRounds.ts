@@ -6,6 +6,7 @@ import { parseServerTime } from '@/data/hangmentleClock';
 import {
   HANGMENTLE_EVENT_ROUNDS,
   isPracticeSyncWindow,
+  openCheckDelayMs,
   openedWhileWatching,
   practiceSyncRounds,
   practiceSyncStarts,
@@ -29,7 +30,7 @@ const overviewPollInterval = (data: HangmentleRoundsOverview | undefined) => {
   if (!data) return CLOCK_SYNC_MS;
   const now = serverNow();
   return data.rounds.reduce<number>((min, info) => {
-    const interval = roundPollInterval(info, now);
+    const interval = roundPollInterval(info, now, openCheckDelayMs);
     return interval === false ? min : Math.min(min, interval);
   }, CLOCK_SYNC_MS);
 };
@@ -74,10 +75,15 @@ export const useEventRoundPhases = (
   overview: HangmentleRoundsOverview | undefined,
 ): (RoundPhaseEntry & { info: HangmentleRoundInfo | null })[] => {
   const infos = HANGMENTLE_EVENT_ROUNDS.map((event) => roundInfoOf(overview, event.round));
-  const now = useServerNowAt(infos.map((info) => parseServerTime(info?.opensAt)));
+  const now = useServerNowAt(
+    infos.map((info) => {
+      const opensAtMs = parseServerTime(info?.opensAt);
+      return opensAtMs === null ? null : opensAtMs + openCheckDelayMs;
+    }),
+  );
   return HANGMENTLE_EVENT_ROUNDS.map((event, i) => {
     const info = infos[i];
-    return { round: event.round, info, phase: info ? roundPhase(info, now) : null };
+    return { round: event.round, info, phase: info ? roundPhase(info, now, openCheckDelayMs) : null };
   });
 };
 

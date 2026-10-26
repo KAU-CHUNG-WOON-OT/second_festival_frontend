@@ -4,6 +4,7 @@ import type { HangmentleGuessResponse } from '@/lib/api/hangmentle';
 import type { HangmentleProgress } from '@/lib/hangmentleProgress';
 import {
   HANGMENTLE_EVENT_ROUNDS,
+  OPEN_CHECK_SPREAD_MS,
   OPENING_FAST_RETRY_MS,
   PRACTICE_SYNC_LEAD_MS,
   classifyGuessError,
@@ -14,6 +15,7 @@ import {
   guessFromResponse,
   isNotSolvedError,
   isPracticeSyncWindow,
+  openCheckDelayMs,
   openedWhileWatching,
   practiceSyncRounds,
   practiceSyncStarts,
@@ -230,6 +232,22 @@ describe('roundPhase · roundPollInterval', () => {
     expect(roundPollInterval({ ...closed, open: true }, opensAtMs + 10)).toBe(false);
     expect(roundPollInterval(closed, opensAtMs - 60_000)).toBe(60_000);
     expect(roundPollInterval({ ...closed, open: true, hints: null }, opensAtMs)).toBe(10_000);
+  });
+
+  it('기기마다 늦춘 시간(delayMs)만큼 카운트다운에 머물렀다가 묻기 시작한다', () => {
+    expect(roundPhase(closed, opensAtMs + 500, 800)).toBe('countdown');
+    expect(roundPhase(closed, opensAtMs + 800, 800)).toBe('opening');
+    expect(roundPollInterval(closed, opensAtMs + 500, 800)).toBe(60_000);
+    expect(roundPollInterval(closed, opensAtMs + 800 + OPENING_FAST_RETRY_MS - 1, 800)).toBe(1000);
+    expect(roundPollInterval(closed, opensAtMs + 800 + OPENING_FAST_RETRY_MS, 800)).toBe(5000);
+    // 서버가 열렸다고 하면 늦추지 않는다
+    expect(roundPhase({ ...closed, open: true }, opensAtMs, 800)).toBe('open');
+  });
+
+  it('늦추는 시간은 0 이상 1초 미만', () => {
+    expect(OPEN_CHECK_SPREAD_MS).toBe(1000);
+    expect(openCheckDelayMs).toBeGreaterThanOrEqual(0);
+    expect(openCheckDelayMs).toBeLessThan(OPEN_CHECK_SPREAD_MS);
   });
 });
 
