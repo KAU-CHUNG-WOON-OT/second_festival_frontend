@@ -59,7 +59,7 @@ export const dummyBooths: BoothData[] = [
         logo_img: wooriBumoLogo,
         images: [],
         insta: '@kau_wooboo',
-        operatingTime: '',
+        operatingTime: '10:00 ~ 17:00',
         introduction:
             '밴드 동아리 우리부모의 활동과 공연을 소개하고, 기타 피크를 활용해 나만의 키링을 만들어 보는 체험 부스입니다. ' +
             '스티커와 유성펜 등으로 피크를 자유롭게 꾸미고 키링 고리를 연결해 세상에 하나뿐인 키링을 완성해 보세요!',
