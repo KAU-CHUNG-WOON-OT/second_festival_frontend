@@ -18,6 +18,7 @@ const CategoryList = ({ categories, selectedCategory, onSelect }: CategoryListPr
       '학과': t('category.department'),
       '동아리': t('category.club'),
       '학생참여': t('category.studentParticipation'),
+      '중앙단위': t('category.central'),
     };
     return map[cat] ?? cat;
   };

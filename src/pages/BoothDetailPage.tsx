@@ -53,7 +53,7 @@ const BoothDetailPage = () => {
       <InfoCard rows={infoRows} />
       <BoothIntroCard introduction={booth.introduction} introduction_en={booth.introduction_en} />
       <MenuList menu={booth.menu} title="판매 · 참여 항목" />
-      <PaymentCard account={booth.account} qrCode={booth.qr_img} />
+      {booth.account && <PaymentCard account={booth.account} qrCode={booth.qr_img} />}
     </div>
   );
 };
