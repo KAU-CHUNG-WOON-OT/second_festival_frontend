@@ -5,18 +5,28 @@ import { FiMaximize2 } from 'react-icons/fi';
 import RetroPageHeader from '../components/common/RetroPageHeader';
 import RetroPageTitle from '../components/common/RetroPageTitle';
 import MapModal from '../components/common/MapModal';
+import CategoryList from '../components/common/CategoryList';
+import StickyBar from '../components/common/StickyBar';
 import BoothGrid from '../components/yard/BoothGrid';
 import BoothMap from '../components/yard/BoothMap';
 import { useLanguage } from '../contexts/LanguageContext';
-import { dummyBooths } from '../data/boothData';
+import { CATEGORIES, dummyBooths } from '../data/boothData';
+import { useUrlFilters } from '../hooks/useUrlFilters';
 
-// 부스 정보: 배치도 아래에 부스 목록 (분류·검색 없이 전체)
+const FILTER_DEFAULTS = { category: '전체' };
+
+// 부스 정보: 배치도 아래에 분류 칩과 부스 목록 (검색 없음)
 const YardPage = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { language } = useLanguage();
 
+  const { filters, setFilter, resetFilters } = useUrlFilters(FILTER_DEFAULTS);
   const [isMapZoomOpen, setIsMapZoomOpen] = useState(false);
+
+  const filteredBooths = dummyBooths.filter(
+    (booth) => filters.category === '전체' || booth.category === filters.category,
+  );
 
   return (
     <div className="flex flex-col px-5 pb-16 pt-5 text-ink">
@@ -41,8 +51,20 @@ const YardPage = () => {
         </span>
       </button>
 
-      <div className="pt-6">
-        <BoothGrid booths={dummyBooths} onBoothClick={(booth) => navigate(`/yard/${booth.id}`)} />
+      {/* 스크롤해도 분류 칩은 상단바 아래에 붙어 있다 */}
+      <StickyBar>
+        <CategoryList
+          categories={CATEGORIES}
+          selectedCategory={filters.category}
+          onSelect={(category) => setFilter('category', category)}
+        />
+      </StickyBar>
+      <div className="pt-5">
+        <BoothGrid
+          booths={filteredBooths}
+          onBoothClick={(booth) => navigate(`/yard/${booth.id}`)}
+          onReset={resetFilters}
+        />
       </div>
 
       <MapModal isOpen={isMapZoomOpen} onClose={() => setIsMapZoomOpen(false)}>

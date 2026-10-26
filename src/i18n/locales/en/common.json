@@ -30,7 +30,8 @@
     "meal": "Meal",
     "department": "Dept.",
     "club": "Club",
-    "studentParticipation": "Student"
+    "studentParticipation": "Student",
+    "central": "Central"
   },
   "search": {
     "menuPlaceholder": "Search menu",
@@ -63,7 +64,6 @@
     "location": "Location",
     "instagram": "Instagram",
     "department": "Dept.",
-    "boothLocation": "Booth",
     "truckLocation": "Truck Location"
   },
   "home": {

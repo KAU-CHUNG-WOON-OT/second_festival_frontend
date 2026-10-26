@@ -28,8 +28,6 @@ export interface BoothData {
     name: string;
     name_en: string;
     category: string;
-    room: string;
-    booth: string;
     description: string;
     description_en: string;
     logo_img: string;
@@ -44,7 +42,7 @@ export interface BoothData {
     qr_img?: string;
 }
 
-export const CATEGORIES = ['전체', '학과', '동아리', '중앙단위'];
+export const CATEGORIES = ['전체', '중앙단위', '동아리'];
 
 export const dummyBooths: BoothData[] = [
     {
@@ -52,8 +50,6 @@ export const dummyBooths: BoothData[] = [
         name: '우리부모',
         name_en: 'Woori Bumo',
         category: '동아리',
-        room: '',
-        booth: '',
         description: '우리부모 부스',
         description_en: 'Woori Bumo Booth',
         logo_img: wooriBumoLogo,
@@ -84,8 +80,6 @@ export const dummyBooths: BoothData[] = [
         name: '세인영',
         name_en: 'Saint-Young',
         category: '동아리',
-        room: '',
-        booth: '',
         description: '세인영 부스',
         description_en: 'Saint-Young Booth',
         logo_img: seinyeongLogo,
@@ -123,8 +117,6 @@ export const dummyBooths: BoothData[] = [
         name: '이웃사촌부',
         name_en: 'Friendly neighborhood',
         category: '동아리',
-        room: '',
-        booth: '',
         description: '이웃사촌부 부스',
         description_en: 'Friendly Neighbourhood Booth',
         logo_img: neighborLogo,
@@ -159,8 +151,6 @@ export const dummyBooths: BoothData[] = [
         name: 'LIFT x Hands On Top!',
         name_en: 'LIFT x Hands On Top!',
         category: '동아리',
-        room: '',
-        booth: '',
         description: 'LIFT x Hands On Top! 부스',
         description_en: 'LIFT x Hands On Top! Booth',
         logo_img: liftHandsOnTopLogo,
@@ -185,5 +175,23 @@ export const dummyBooths: BoothData[] = [
         account: '카카오뱅크 3333153310936 강성우',
         poster: [liftPoster1, liftPoster2, liftPoster3],
         qr_img: liftQr,
+    },
+    // TODO: 학생복지회 부스 내용 받으면 채우기 (지금은 업데이트 예정 표시만)
+    {
+        id: 105,
+        name: '학생복지회',
+        name_en: 'Student Welfare Committee',
+        category: '중앙단위',
+        description: '학생복지회 부스',
+        description_en: 'Student Welfare Committee Booth',
+        logo_img: '',
+        images: [],
+        insta: '업데이트 예정',
+        operatingTime: '업데이트 예정',
+        introduction: '부스 내용은 업데이트 예정입니다.',
+        introduction_en: 'Booth details will be updated soon.',
+        menu: [],
+        account: '',
+        poster: [],
     },
 ];
