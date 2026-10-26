@@ -17,6 +17,7 @@ import liftMenuSki from '../assets/booth/lift_menu_ski.png';
 import hakbokLogo from '../assets/booth/hakbok.png';
 import hakbokPoster from '../assets/booth/hakbok_poster.jpeg';
 import hakbokMenuMochi from '../assets/booth/hakbok_menu_mochi.jpeg';
+import hakbokQr from '../assets/booth/hakbok_qr.png';
 
 export interface MenuItem {
     id: number;
@@ -218,5 +219,6 @@ export const dummyBooths: BoothData[] = [
         ],
         account: '',
         poster: [hakbokPoster],
+        qr_img: hakbokQr,
     },
 ];

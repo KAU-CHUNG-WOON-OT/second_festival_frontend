@@ -1,14 +1,20 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { FiChevronRight } from 'react-icons/fi';
 import RetroPageHeader from '../components/common/RetroPageHeader';
 import RetroPageTitle from '../components/common/RetroPageTitle';
+import FestivalMap from '../components/common/FestivalMap';
+import MapModal from '../components/common/MapModal';
 import StoreDeals from '../components/stores/StoreDeals';
 import CongestionBadge from '../components/stores/CongestionBadge';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useStoreCongestion } from '../hooks/useStoreCongestion';
 import { hasStoreDeals, storeEvents, type StoreEvent } from '../data/storeEventData';
 import { congestionLabel, congestionOf, type CongestionLevel } from '../data/storeCongestion';
+import storeMap from '../assets/stores/map.jpg';
+
+const STORE_MAP_IMAGES = [{ src: storeMap, label: '화랑로 가게 배치도' }];
 
 // 쿠폰 모양 카드: 위는 가게 이름과 실시간 혼잡도 뱃지, 절취선(양옆 펀치 홈) 아래에 행사 목록, 맨 아래는 가게 화면(실시간 현황)으로 가는 안내.
 // 행사가 없는 가게는 행사 목록 없이 이름 바로 아래에 안내가 온다.
@@ -68,6 +74,7 @@ const StoreEventPage = () => {
   const isEng = language === 'ENG';
   // 가게별 실시간 혼잡도 (이 화면이 떠 있는 동안 30초마다)
   const { data: congestion } = useStoreCongestion();
+  const [mapImageSrc, setMapImageSrc] = useState<string | null>(null);
 
   return (
     <div className="flex flex-col px-5 pb-16 pt-5 text-ink">
@@ -76,6 +83,11 @@ const StoreEventPage = () => {
       <p className="pt-3 font-body-kr text-[14px] leading-5 text-paper/80">
         {isEng ? 'Special deals just for KAU students!' : '항대인들을 위한 행사입니다!'}
       </p>
+
+      {/* 푸드트럭처럼 맨 위에 화랑로 가게 배치도 */}
+      <div className="pt-6">
+        <FestivalMap title="STORE MAP" images={STORE_MAP_IMAGES} onClick={setMapImageSrc} />
+      </div>
 
       <div className="flex flex-col gap-5 pt-6">
         {storeEvents.map((store, index) => (
@@ -88,6 +100,8 @@ const StoreEventPage = () => {
           />
         ))}
       </div>
+
+      <MapModal isOpen={!!mapImageSrc} onClose={() => setMapImageSrc(null)} imageSrc={mapImageSrc ?? ''} />
     </div>
   );
 };

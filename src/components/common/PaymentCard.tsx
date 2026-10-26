@@ -56,14 +56,17 @@ const PaymentCard = ({ account, qrCode }: PaymentCardProps) => {
           </button>
         )}
 
-        <button
-          type="button"
-          onClick={handleCopy}
-          aria-label="계좌번호 복사"
-          className="block w-full break-all pt-2 text-center font-body-kr text-[16px] font-bold leading-6"
-        >
-          {account}
-        </button>
+        {/* QR만 있는 부스는 계좌번호 줄을 숨긴다 */}
+        {account && (
+          <button
+            type="button"
+            onClick={handleCopy}
+            aria-label="계좌번호 복사"
+            className="block w-full break-all pt-2 text-center font-body-kr text-[16px] font-bold leading-6"
+          >
+            {account}
+          </button>
+        )}
       </section>
 
       {isQrZoomOpen && (

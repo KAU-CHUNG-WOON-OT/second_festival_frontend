@@ -17,7 +17,7 @@ export interface PerformanceData {
 }
 
 // 연예인 공연은 공개 전까지 공연 정보에서 숨김. 공개할 때 true로 (홈 'Artist Line-up' 카드는 따로 항상 보임)
-export const SHOW_CELEBRITY = false;
+export const SHOW_CELEBRITY = true;
 
 // 2026 가을축제 타임테이블 (무대 세팅 시간은 뺌)
 const allPerformanceEvents: PerformanceData[] = [
