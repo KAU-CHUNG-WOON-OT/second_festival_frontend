@@ -46,7 +46,7 @@ export const findEventRound = (round: number) =>
   HANGMENTLE_EVENT_ROUNDS.find((event) => event.round === round) ?? null;
 
 // 랭킹에 오르는 사람 수 (이 안이면 'n등', 밖이면 'n번째')
-export const HANGMENTLE_RANKING_SIZE = 10;
+export const HANGMENTLE_RANKING_SIZE = 5;
 
 const OFFSET_PATTERN = /(Z|[+-]\d{2}:?\d{2})$/i;
 const CLOCK_PATTERN = /T(\d{2}):(\d{2})(?::(\d{2}))?/;

@@ -17,7 +17,7 @@ interface HangmentleRankingProps {
   live: boolean;
 }
 
-// 이벤트 회차 랭킹: 먼저 맞힌 10명 (가린 이름·학과·맞힌 시각)
+// 이벤트 회차 랭킹: 먼저 맞힌 5명 (가린 이름·학과·맞힌 시각)
 const HangmentleRanking = ({ round, label, myRank, live }: HangmentleRankingProps) => {
   const { language } = useLanguage();
   const isEng = language === 'ENG';
@@ -27,7 +27,8 @@ const HangmentleRanking = ({ round, label, myRank, live }: HangmentleRankingProp
     queryFn: () => fetchHangmentleRankings(round),
     refetchInterval: live ? RANKING_REFRESH_MS : false,
   });
-  const entries = rankingQuery.data;
+  // 서버가 더 보내도 화면에는 HANGMENTLE_RANKING_SIZE 명까지만
+  const entries = rankingQuery.data?.slice(0, HANGMENTLE_RANKING_SIZE);
 
   const status = (text: string) => (
     <p className="py-4 text-center font-body-kr text-[14px] font-semibold opacity-60">{text}</p>

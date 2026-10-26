@@ -63,8 +63,8 @@ describe('formatKstTime', () => {
 describe('solveRankText', () => {
   it('랭킹 안이면 n등, 밖이면 n번째', () => {
     expect(solveRankText(1, false)).toBe('1등으로 맞혔어요!');
-    expect(solveRankText(10, false)).toBe('10등으로 맞혔어요!');
-    expect(solveRankText(11, false)).toBe('11번째로 맞혔어요.');
+    expect(solveRankText(5, false)).toBe('5등으로 맞혔어요!');
+    expect(solveRankText(6, false)).toBe('6번째로 맞혔어요.');
   });
 
   it('영어는 서수로 쓴다', () => {
