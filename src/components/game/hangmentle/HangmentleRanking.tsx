@@ -17,7 +17,7 @@ interface HangmentleRankingProps {
   live: boolean;
 }
 
-// 이벤트 회차 랭킹: 먼저 맞힌 10명 (가린 이름·학과·맞힌 시각)
+// 이벤트 회차 랭킹: 먼저 맞힌 5명 (가린 이름·학과·맞힌 시각)
 const HangmentleRanking = ({ round, label, myRank, live }: HangmentleRankingProps) => {
   const { language } = useLanguage();
   const isEng = language === 'ENG';
