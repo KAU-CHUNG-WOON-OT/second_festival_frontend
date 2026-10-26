@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import CategoryList from '../components/common/CategoryList';
 import RetroPageHeader from '../components/common/RetroPageHeader';
 import cheongunLogoLarge from '../assets/cheongun_logo_large.svg';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -82,6 +84,12 @@ const STAFF_SECTIONS: MemberSection[] = [
   },
 ];
 
+// 위쪽 버튼으로 바꿔 보는 명단
+const TABS = [
+  { label: '개발자', label_en: 'Developers', sections: SECTIONS },
+  { label: '운영진', label_en: 'Staff', sections: STAFF_SECTIONS },
+];
+
 const LINKS = [
   {
     label: '인스타그램 바로가기',
@@ -94,6 +102,8 @@ const LINKS = [
 const Makers = () => {
   const { language } = useLanguage();
   const isEng = language === 'ENG';
+  const [tabIndex, setTabIndex] = useState(0);
+  const tabLabels = TABS.map((tab) => (isEng ? tab.label_en : tab.label));
 
   const sectionList = (sections: MemberSection[]) =>
     sections.map((section) => (
@@ -131,8 +141,6 @@ const Makers = () => {
       </section>
     ));
 
-  const card = 'mt-8 flex flex-col gap-7 rounded-[16px] border-2 border-ink bg-paper px-5 py-7 shadow-[5px_5px_0px_0px_var(--color-ink)]';
-
   return (
     <div className="flex flex-col px-5 pb-16 pt-5 text-ink">
       <RetroPageHeader title={isEng ? 'Makers' : '만든이'} showMenu />
@@ -155,16 +163,16 @@ const Makers = () => {
         </p>
       </section>
 
-      <div className={card}>{sectionList(SECTIONS)}</div>
+      <div className="mt-8">
+        <CategoryList
+          categories={tabLabels}
+          selectedCategory={tabLabels[tabIndex]}
+          onSelect={(label) => setTabIndex(Math.max(0, tabLabels.indexOf(label)))}
+        />
+      </div>
 
-      <div className={card}>
-        <div className="flex flex-col items-center text-center">
-          <span className="font-typewriter text-[12px] leading-4 tracking-[3.6px] opacity-60">STAFF</span>
-          <h3 className="pt-1 font-display text-[24px] leading-[30px]">
-            {isEng ? 'Student Council Staff' : '운영진'}
-          </h3>
-        </div>
-        {sectionList(STAFF_SECTIONS)}
+      <div className="mt-5 flex flex-col gap-7 rounded-[16px] border-2 border-ink bg-paper px-5 py-7 shadow-[5px_5px_0px_0px_var(--color-ink)]">
+        {sectionList(TABS[tabIndex].sections)}
       </div>
 
       <section className="mt-10 flex flex-col items-center border-t border-dashed border-ink/40 pt-8">
