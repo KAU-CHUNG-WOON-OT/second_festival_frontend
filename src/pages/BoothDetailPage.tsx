@@ -44,10 +44,13 @@ const BoothDetailPage = () => {
     중앙단위: t('category.central'),
   };
 
+  // 아직 안 정해진 칸('업데이트 예정')은 영어 화면에서 TBA
+  const tba = (value: string) => (isEng && value === '업데이트 예정' ? 'TBA' : value);
+
   const infoRows = [
     { label: isEng ? 'Type' : '구분', value: categoryLabel[booth.category] ?? booth.category },
-    { label: isEng ? 'Hours' : '운영 시간', value: booth.operatingTime },
-    { label: isEng ? 'Instagram' : '인스타그램', value: booth.insta },
+    { label: isEng ? 'Hours' : '운영 시간', value: tba(booth.operatingTime) },
+    { label: isEng ? 'Instagram' : '인스타그램', value: tba(booth.insta) },
   ];
 
   return (
