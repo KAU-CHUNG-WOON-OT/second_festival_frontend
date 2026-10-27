@@ -31,6 +31,7 @@ const HomePage = () => {
           to={`/notice?id=${bannerNotice.id}`}
           title={bannerNotice.title}
           dateText={bannerNotice.date}
+          badge={bannerNotice.isHot ? 'hot' : bannerNotice.isNew ? 'new' : undefined}
         />
       )}
 
