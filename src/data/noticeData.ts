@@ -18,6 +18,33 @@ export interface NoticeData {
 // 같은 날짜끼리는 이 순서대로 보이고, 맨 앞 공지가 홈 공지 띠에 나온다
 export const dummyNotices: NoticeData[] = [
   {
+    id: 14,
+    title: '[우천] 우천 시 안전수칙 안내',
+    content:
+      '활주로 우천시 안내수칙을 안내드립니다.\n\n' +
+      '[시간당 체감 강수량]\n' +
+      '✔시간당 2.5mm\n' +
+      '약한 비, 옷이 젖는 것을 신경쓰지 않아도 될 정도\n' +
+      '물웅덩이가 고이지 않습니다.\n\n' +
+      '✔시간당 6.5mm\n' +
+      '눈에 띄는 빗줄기로, 땅에 물웅덩이가 고이고 나뭇잎에도 빗방울이 맺히는 정도입니다.\n\n' +
+      '✔시간당 11mm\n' +
+      '우비를 입어도 비에 옷이 젖기 쉬우며 땅에 고이는 물웅덩이도 제법 크게 고입니다.\n\n' +
+      '✔시간당 20mm\n' +
+      '우산이나 우비가 소용없이 옷이 많이 젖으며 시야 확보에 어려움을 느낄 수 있습니다.\n\n' +
+      '[우비 지급 안내]\n' +
+      '✔배부 위치 : 총학생회 부스\n' +
+      '✔배부 일시 : 2026.10.28 (수), 시간 추후 공지\n' +
+      '※ 선착순 1000명을 대상으로 우비를 배부합니다.\n\n' +
+      '자세한 내용은 총학생회 인스타그램(@kau_students) 카드뉴스 확인 부탁드립니다.\n\n' +
+      // \u00a0: 채널 이름이 줄 중간에서 끊기지 않게
+      "문의사항은 카카오톡 플러스친구 '한국항공대학교\u00a0총학생회'로 부탁드립니다.",
+    date: '2026.10.27',
+    isNew: true,
+    isImportant: false,
+    category: '안전',
+  },
+  {
     id: 9,
     title: '[활주로] 푸드트럭 및 테이블 안내',
     content:
@@ -34,7 +61,7 @@ export const dummyNotices: NoticeData[] = [
       "문의사항은 카카오톡 플러스친구 '한국항공대학교\u00a0총학생회'로 부탁드립니다.\n\n" +
       '제52대 총학생회 x 중앙운영위원회',
     date: '2026.10.26',
-    isNew: true,
+    isNew: false,
     isImportant: false,
     category: '행사',
   },
@@ -50,7 +77,7 @@ export const dummyNotices: NoticeData[] = [
       "문의사항은 카카오톡 플러스친구 '한국항공대학교\u00a0총학생회'로 부탁드립니다.\n\n" +
       '제52대 총학생회 x 중앙운영위원회',
     date: '2026.10.26',
-    isNew: true,
+    isNew: false,
     isImportant: false,
     category: '행사',
   },
@@ -86,7 +113,7 @@ export const dummyNotices: NoticeData[] = [
       "문의사항은 카카오톡 플러스친구 '한국항공대학교\u00a0총학생회'로 부탁드립니다.\n\n" +
       '제52대 총학생회 x 중앙운영위원회',
     date: '2026.10.26',
-    isNew: true,
+    isNew: false,
     isImportant: false,
     category: '행사',
   },
@@ -122,7 +149,7 @@ export const dummyNotices: NoticeData[] = [
       "문의사항은 카카오톡 플러스친구 '한국항공대학교\u00a0총학생회'로 부탁드립니다.\n\n" +
       '제52대 총학생회 x 중앙운영위원회',
     date: '2026.10.26',
-    isNew: true,
+    isNew: false,
     isImportant: false,
     category: '행사',
   },
