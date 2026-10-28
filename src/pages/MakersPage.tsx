@@ -75,9 +75,9 @@ const STAFF_SECTIONS: MemberSection[] = [
     title: 'Office',
     title_en: 'Office',
     members: [
-      { role: '집행위원장', role_en: 'Executive Chair', name: '김가빈', dept: '경영 23', dept_en: "Business '23" },
+      { role: '집행위원장', role_en: 'Executive Chair', name: '윤여범', dept: '교통 22', dept_en: '교통 22' },
       { role: '예산실장', role_en: 'Head of Budget', name: '강미주', dept: '자율주행 24', dept_en: '자율주행 24' },
-      { role: '공보실장', role_en: 'Head of PR', name: '윤여범', dept: '교통 22', dept_en: '교통 22' },
+      { role: '공보실장', role_en: 'Head of PR', name: '홍정우', dept: '경영 23', dept_en: "Business '23" },
       { role: '개발실장', role_en: 'Head of Development', name: '윤정민', dept: '소프트 23', dept_en: "Software '23" },
     ],
   },
